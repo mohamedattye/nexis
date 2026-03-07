@@ -17,7 +17,7 @@
           <div>
             <p class="brand-kicker">NEXIS LOGISTICS</p>
             <h1>Nexis • Pilotage Logistique</h1>
-            <p>Suivi des courses, dépenses et rentabilité par camion pour vos opérations internes.</p>
+            <p>Suivi complet des courses + charges réelles pour mesurer la vraie performance par camion.</p>
           </div>
         </div>
       </header>
@@ -29,8 +29,23 @@
           <label>Date<input type="date" id="date" required /></label>
           <label>Zone<input type="text" id="zone" placeholder="Ex: Zone Nord" required /></label>
           <label>Revenu (FCFA)<input type="number" id="revenue" min="0" step="100" required /></label>
-          <label>Dépenses (FCFA)<input type="number" id="expense" min="0" step="100" required /></label>
+          <label>Dépenses course (FCFA)<input type="number" id="expense" min="0" step="100" required /></label>
           <button type="submit">Ajouter</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Ajouter charges véhicule (mensuelles)</h2>
+        <form id="cost-form" class="form-grid">
+          <label>Camion<input type="text" id="cost-truck" placeholder="Ex: Camion A" required /></label>
+          <label>Mois<input type="month" id="cost-month" required /></label>
+          <label>Entretien (FCFA)<input type="number" id="maintenance" min="0" step="100" value="0" required /></label>
+          <label>Dépenses mécaniques (FCFA)<input type="number" id="mechanical" min="0" step="100" value="0" required /></label>
+          <label>Assurance (FCFA)<input type="number" id="insurance" min="0" step="100" value="0" required /></label>
+          <label>Salaire chauffeur (FCFA)<input type="number" id="driver-salary" min="0" step="100" value="0" required /></label>
+          <label>Charges sociales (FCFA)<input type="number" id="social-charges" min="0" step="100" value="0" required /></label>
+          <label>Autres charges (FCFA)<input type="number" id="other-charges" min="0" step="100" value="0" required /></label>
+          <button type="submit">Ajouter charges</button>
         </form>
       </section>
 
@@ -50,11 +65,11 @@
 
       <section class="charts-grid">
         <article class="card">
-          <h2>Chiffre d'affaires vs Dépenses (mois filtré)</h2>
+          <h2>Revenus vs Dépenses réelles (mois filtré)</h2>
           <canvas id="finance-chart" width="600" height="260"></canvas>
         </article>
         <article class="card">
-          <h2>Résultat net par camion (revue mensuelle)</h2>
+          <h2>Résultat net réel par camion (revue mensuelle)</h2>
           <canvas id="truck-chart" width="600" height="260"></canvas>
         </article>
       </section>
@@ -64,7 +79,7 @@
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr><th>Date</th><th>Camion</th><th>Zone</th><th>Revenu</th><th>Dépenses</th><th>Marge</th><th>Action</th></tr>
+              <tr><th>Date</th><th>Camion</th><th>Zone</th><th>Revenu</th><th>Dépenses course</th><th>Marge opérationnelle</th><th>Action</th></tr>
             </thead>
             <tbody id="trip-table-body"></tbody>
           </table>
@@ -72,11 +87,23 @@
       </section>
 
       <section class="card">
-        <h2>Revue mensuelle par camion</h2>
+        <h2>Détail des charges véhicule</h2>
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr><th>Camion</th><th>Courses</th><th>Zones desservies</th><th>Chiffre d'affaires</th><th>Dépenses</th><th>Résultat net</th></tr>
+              <tr><th>Mois</th><th>Camion</th><th>Entretien</th><th>Mécanique</th><th>Assurance</th><th>Salaire</th><th>Charges sociales</th><th>Autres</th><th>Total charges</th><th>Action</th></tr>
+            </thead>
+            <tbody id="cost-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Revue mensuelle par camion (performance réelle)</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Camion</th><th>Courses</th><th>Zones</th><th>CA</th><th>Dépenses course</th><th>Marge opérationnelle</th><th>Charges fixes & mécaniques</th><th>Résultat net réel</th></tr>
             </thead>
             <tbody id="review-table-body"></tbody>
           </table>
