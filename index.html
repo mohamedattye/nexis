@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexis | Pilotage Logistique</title>
+    <link rel="icon" type="image/svg+xml" href="assets/logo-nexis.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero card">
+        <div class="brand">
+          <div class="brand-logo-wrap">
+            <img src="assets/logo-nexis.svg" alt="Logo Nexis" class="brand-logo" />
+          </div>
+          <div>
+            <p class="brand-kicker">NEXIS LOGISTICS</p>
+            <h1>Nexis • Pilotage Logistique</h1>
+            <p>Suivi complet des courses + charges réelles pour mesurer la vraie performance par camion.</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2>Ajouter une course</h2>
+        <form id="trip-form" class="form-grid">
+          <label>Camion<input type="text" id="truck" placeholder="Ex: Camion A" required /></label>
+          <label>Date<input type="date" id="date" required /></label>
+          <label>Zone<input type="text" id="zone" placeholder="Ex: Zone Nord" required /></label>
+          <label>Revenu (FCFA)<input type="number" id="revenue" min="0" step="100" required /></label>
+          <label>Dépenses course (FCFA)<input type="number" id="expense" min="0" step="100" required /></label>
+          <button type="submit">Ajouter</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Ajouter charges véhicule (mensuelles)</h2>
+        <form id="cost-form" class="form-grid">
+          <label>Camion<input type="text" id="cost-truck" placeholder="Ex: Camion A" required /></label>
+          <label>Mois<input type="month" id="cost-month" required /></label>
+          <label>Entretien (FCFA)<input type="number" id="maintenance" min="0" step="100" value="0" required /></label>
+          <label>Dépenses mécaniques (FCFA)<input type="number" id="mechanical" min="0" step="100" value="0" required /></label>
+          <label>Assurance (FCFA)<input type="number" id="insurance" min="0" step="100" value="0" required /></label>
+          <label>Salaire chauffeur (FCFA)<input type="number" id="driver-salary" min="0" step="100" value="0" required /></label>
+          <label>Charges sociales (FCFA)<input type="number" id="social-charges" min="0" step="100" value="0" required /></label>
+          <label>Autres charges (FCFA)<input type="number" id="other-charges" min="0" step="100" value="0" required /></label>
+          <button type="submit">Ajouter charges</button>
+        </form>
+      </section>
+
+      <section class="card filters">
+        <div class="section-title-row">
+          <h2>Filtres & actions</h2>
+          <button id="export-csv" type="button" class="secondary-btn">Exporter CSV</button>
+        </div>
+        <div class="form-grid">
+          <label>Mois<input type="month" id="month-filter" /></label>
+          <label>Camion<input type="text" id="truck-filter" placeholder="Tous les camions" /></label>
+          <label>Mois de revue<input type="month" id="review-month-filter" /></label>
+        </div>
+      </section>
+
+      <section class="stats" id="stats"></section>
+
+      <section class="charts-grid">
+        <article class="card">
+          <h2>Revenus vs Dépenses réelles (mois filtré)</h2>
+          <canvas id="finance-chart" width="600" height="260"></canvas>
+        </article>
+        <article class="card">
+          <h2>Résultat net réel par camion (revue mensuelle)</h2>
+          <canvas id="truck-chart" width="600" height="260"></canvas>
+        </article>
+      </section>
+
+      <section class="card">
+        <h2>Détail des courses</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Camion</th><th>Zone</th><th>Revenu</th><th>Dépenses course</th><th>Marge opérationnelle</th><th>Action</th></tr>
+            </thead>
+            <tbody id="trip-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Détail des charges véhicule</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Mois</th><th>Camion</th><th>Entretien</th><th>Mécanique</th><th>Assurance</th><th>Salaire</th><th>Charges sociales</th><th>Autres</th><th>Total charges</th><th>Action</th></tr>
+            </thead>
+            <tbody id="cost-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Revue mensuelle par camion (performance réelle)</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Camion</th><th>Courses</th><th>Zones</th><th>CA</th><th>Dépenses course</th><th>Marge opérationnelle</th><th>Charges fixes & mécaniques</th><th>Résultat net réel</th></tr>
+            </thead>
+            <tbody id="review-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <template id="stat-card-template">
+      <article class="card stat-card"><h3></h3><p></p></article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
