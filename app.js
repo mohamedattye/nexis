@@ -1,3 +1,9 @@
+const SUPABASE_URL = "https://ifspadsghwizzjofcscf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_XN7xuh4te5IypVwI0UySvg_A9qCUlTK";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
 const TRIPS_STORAGE_KEY = 'nexis-logistic-trips';
 const COSTS_STORAGE_KEY = 'nexis-logistic-costs';
 
