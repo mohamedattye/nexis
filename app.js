@@ -534,10 +534,10 @@ async function saveTripToSupabase(trip) {
     .insert([trip]);
 
   if (error) {
-    console.error("Erreur Supabase :", error);
-    alert("Erreur lors de l'enregistrement.");
-    return;
-  }
+  console.error("Erreur Supabase :", error);
+  alert("ERREUR SUPABASE : " + error.message);
+  return;
+}
 
   trips.push(trip);
   render();
