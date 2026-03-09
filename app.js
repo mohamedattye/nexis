@@ -527,19 +527,17 @@ function sampleCosts() {
   ];
 }
 async function saveTripToSupabase(trip) {
-  console.log("TEST SUPABASE - fonction lancée", trip);
+  alert("TEST SUPABASE LANCE");
 
   const { error } = await supabaseClient
     .from('trips')
     .insert([trip]);
 
   if (error) {
-    console.error("ERREUR SUPABASE", error);
+    console.error("Erreur Supabase :", error);
     alert("Erreur lors de l'enregistrement.");
     return;
   }
-
-  console.log("INSERTION SUPABASE OK");
 
   trips.push(trip);
   render();
