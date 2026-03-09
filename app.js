@@ -44,11 +44,11 @@ tripForm.addEventListener('submit', (event) => {
     return;
   }
 
-  trips.push(trip);
-  persistTrips();
-  tripForm.reset();
-  render();
+ saveTripToSupabase(trip);
+tripForm.reset();
+
 });
+
 
 costForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -525,4 +525,18 @@ function sampleCosts() {
       otherCharges: 15000
     }
   ];
+}
+async function saveTripToSupabase(trip) {
+  const { error } = await supabaseClient
+    .from('trips')
+    .insert([trip]);
+
+  if (error) {
+    console.error("Erreur Supabase :", error);
+    alert("Erreur lors de l'enregistrement.");
+    return;
+  }
+
+  trips.push(trip);
+  render();
 }
