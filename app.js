@@ -27,7 +27,7 @@ let trips = loadTrips();
 let costs = loadCosts();
 
 initializeFilters();
-
+loadTripsFromSupabase();
 tripForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -527,7 +527,7 @@ function sampleCosts() {
   ];
 }
 async function saveTripToSupabase(trip) {
-  alert("TEST SUPABASE LANCE");
+
 
   const { error } = await supabaseClient
     .from('trips')
@@ -540,5 +540,20 @@ async function saveTripToSupabase(trip) {
 }
 
   trips.push(trip);
+  render();
+}
+async function loadTripsFromSupabase() {
+
+  const { data, error } = await supabaseClient
+    .from('trips')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Erreur chargement Supabase :", error);
+    return;
+  }
+
+  trips = data || [];
   render();
 }
