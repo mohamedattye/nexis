@@ -559,7 +559,6 @@ async function saveTripToSupabase(trip) {
 
   if (error) {
   console.error("Erreur Supabase :", error);
-  alert("ERREUR SUPABASE : " + error.message);
   return;
 }
 
@@ -626,5 +625,3 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
 });
-
-alert("JS chargé");
