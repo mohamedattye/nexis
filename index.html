@@ -23,6 +23,7 @@
       </header>
 
       <section class="card">
+  
         <h2>Ajouter une course</h2>
         <form id="trip-form" class="form-grid">
 
@@ -49,8 +50,59 @@
   <button type="submit">Ajouter</button>
 
 </form>
-
+</section>
       <section class="card">
+
+        <h2>Ajouter dépenses de la course</h2>
+  <form id="trip-expense-form" class="form-grid">
+    <label>Camion
+      <input type="text" id="expense-truck" placeholder="Ex: Camion A" required />
+    </label>
+
+    <label>Date
+      <input type="date" id="expense-date" required />
+    </label>
+
+    <label>Zone de chargement
+      <input type="text" id="expense-loading-zone" placeholder="Ex: Dakar" required />
+    </label>
+
+    <label>Zone de déchargement
+      <input type="text" id="expense-unloading-zone" placeholder="Ex: Saint-Louis" required />
+    </label>
+
+    <label>KM
+      <input type="number" id="km" min="0" step="1" placeholder="Ex: 260" required />
+    </label>
+
+    <label>Consommation aux 100 Km
+      <input type="number" id="consumption-per-100" min="0" step="0.1" placeholder="Ex: 32" required />
+    </label>
+
+    <label>Gasoil (FCFA)
+      <input type="number" id="fuel-cost" min="0" step="100" value="0" required />
+    </label>
+
+    <label>Ration (FCFA)
+      <input type="number" id="ration-cost" min="0" step="100" value="0" required />
+    </label>
+
+    <label>Rapido (FCFA)
+      <input type="number" id="rapido-cost" min="0" step="100" value="0" required />
+    </label>
+
+    <label>Manœuvre (FCFA)
+      <input type="number" id="manoeuvre-cost" min="0" step="100" value="0" required />
+    </label>
+
+    <label>Frais annexes (FCFA)
+      <input type="number" id="misc-cost" min="0" step="100" value="0" required />
+    </label>
+
+    <button type="submit">Ajouter dépense</button>
+  </form>
+</section>
+
         <h2>Ajouter charges véhicule (mensuelles)</h2>
         <form id="cost-form" class="form-grid">
           <label>Camion<input type="text" id="cost-truck" placeholder="Ex: Camion A" required /></label>
