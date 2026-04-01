@@ -8,6 +8,7 @@ const TRIPS_STORAGE_KEY = 'nexis-logistic-trips';
 const COSTS_STORAGE_KEY = 'nexis-logistic-costs';
 
 const tripForm = document.getElementById('trip-form');
+const tripExpenseForm = document.getElementById('trip-expense-form');
 const costForm = document.getElementById('cost-form');
 const monthFilter = document.getElementById('month-filter');
 const truckFilter = document.getElementById('truck-filter');
@@ -35,18 +36,41 @@ tripForm.addEventListener('submit', (event) => {
     id: crypto.randomUUID(),
     truck: document.getElementById('truck').value.trim(),
     date: document.getElementById('date').value,
-    zone: document.getElementById('zone').value.trim(),
-    revenue: Number(document.getElementById('revenue').value),
-    expense: Number(document.getElementById('expense').value)
+    loadingZone: document.getElementById('loading-zone').value.trim(),
+    unloadingZone: document.getElementById('unloading-zone').value.trim(),
+    revenue: Number(document.getElementById('revenue').value)
   };
 
-  if (!trip.truck || !trip.zone || !trip.date || Number.isNaN(trip.revenue) || Number.isNaN(trip.expense)) {
+  if (!trip.truck || !trip.date || !trip.loadingZone || !trip.unloadingZone || Number.isNaN(trip.revenue)) {
     return;
   }
 
- saveTripToSupabase(trip);
-tripForm.reset();
+  saveTripToSupabase(trip);
+  tripForm.reset();
+});
 
+
+tripExpenseForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const expense = {
+    id: crypto.randomUUID(),
+    truck: document.getElementById('expense-truck').value.trim(),
+    date: document.getElementById('expense-date').value,
+    loadingZone: document.getElementById('expense-loading-zone').value.trim(),
+    unloadingZone: document.getElementById('expense-unloading-zone').value.trim(),
+    km: Number(document.getElementById('km').value),
+    consumption: Number(document.getElementById('consumption-per-100').value),
+    fuel: Number(document.getElementById('fuel-cost').value),
+    ration: Number(document.getElementById('ration-cost').value),
+    rapido: Number(document.getElementById('rapido-cost').value),
+    manoeuvre: Number(document.getElementById('manoeuvre-cost').value),
+    misc: Number(document.getElementById('misc-cost').value)
+  };
+
+  console.log("DEPENSE ENREGISTRÉE :", expense);
+
+  tripExpenseForm.reset();
 });
 
 
