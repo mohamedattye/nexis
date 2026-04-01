@@ -25,14 +25,30 @@
       <section class="card">
         <h2>Ajouter une course</h2>
         <form id="trip-form" class="form-grid">
-          <label>Camion<input type="text" id="truck" placeholder="Ex: Camion A" required /></label>
-          <label>Date<input type="date" id="date" required /></label>
-          <label>Zone<input type="text" id="zone" placeholder="Ex: Zone Nord" required /></label>
-          <label>Revenu (FCFA)<input type="number" id="revenue" min="0" step="100" required /></label>
-          <label>Dépenses course (FCFA)<input type="number" id="expense" min="0" step="100" required /></label>
-          <button type="submit">Ajouter</button>
-        </form>
-      </section>
+
+  <label>Camion
+    <input type="text" id="truck" required />
+  </label>
+
+  <label>Date
+    <input type="date" id="date" required />
+  </label>
+
+  <label>Zone de chargement
+    <input type="text" id="loading-zone" required />
+  </label>
+
+  <label>Zone de déchargement
+    <input type="text" id="unloading-zone" required />
+  </label>
+
+  <label>Chiffre d'Affaire (FCFA)
+    <input type="number" id="revenue" required />
+  </label>
+
+  <button type="submit">Ajouter</button>
+
+</form>
 
       <section class="card">
         <h2>Ajouter charges véhicule (mensuelles)</h2>
