@@ -589,7 +589,6 @@ async function saveExpenseToSupabase(expense) {
 
   if (error) {
     console.error("Erreur Supabase dépense :", error);
-    alert("ERREUR SUPABASE DEPENSE : " + error.message);
     return;
   }
 
@@ -621,8 +620,7 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log("EXPENSE =", expense);
 
     await saveExpenseToSupabase(expense);
-
-    alert("Dépense enregistrée ✅");
+  
 
     tripExpenseForm.reset();
   });
