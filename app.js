@@ -68,7 +68,7 @@ tripExpenseForm.addEventListener('submit', (event) => {
     misc: Number(document.getElementById('misc-cost').value)
   };
 
-  console.log("DEPENSE ENREGISTRÉE :", expense);
+  saveExpenseToSupabase(expense);
 
   tripExpenseForm.reset();
 });
@@ -581,3 +581,52 @@ async function loadTripsFromSupabase() {
   trips = data || [];
   render();
 }
+
+async function saveExpenseToSupabase(expense) {
+  const { error } = await supabaseClient
+    .from('trip_expenses')
+    .insert([expense]);
+
+  if (error) {
+    console.error("Erreur Supabase dépense :", error);
+    alert("ERREUR SUPABASE DEPENSE : " + error.message);
+    return;
+  }
+
+  console.log("DEPENSE SAUVEE DANS SUPABASE :", expense);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+
+  const tripExpenseForm = document.getElementById('trip-expense-form');
+
+  console.log("FORM =", tripExpenseForm);
+
+  tripExpenseForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const expense = {
+      id: crypto.randomUUID(),
+      truck: document.getElementById('expense-truck').value,
+      date: document.getElementById('expense-date').value,
+      km: Number(document.getElementById('km').value),
+      consumption: Number(document.getElementById('consumption-per-100').value),
+      fuel: Number(document.getElementById('fuel-cost').value),
+      ration: Number(document.getElementById('ration-cost').value),
+      rapido: Number(document.getElementById('rapido-cost').value),
+      manoeuvre: Number(document.getElementById('manoeuvre-cost').value),
+      misc: Number(document.getElementById('misc-cost').value)
+    };
+
+    console.log("EXPENSE =", expense);
+
+    await saveExpenseToSupabase(expense);
+
+    alert("Dépense enregistrée ✅");
+
+    tripExpenseForm.reset();
+  });
+
+});
+
+alert("JS chargé");
