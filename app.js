@@ -10,6 +10,7 @@ const COSTS_STORAGE_KEY = 'nexis-logistic-costs';
 const tripForm = document.getElementById('trip-form');
 const tripExpenseForm = document.getElementById('trip-expense-form');
 const costForm = document.getElementById('cost-form');
+const expenseTripSelect = document.getElementById('expense-trip-id');
 const monthFilter = document.getElementById('month-filter');
 const truckFilter = document.getElementById('truck-filter');
 const reviewMonthFilter = document.getElementById('review-month-filter');
@@ -270,6 +271,7 @@ function render() {
   renderReviewTable(truckSummary);
   renderFinanceChart(filteredTrips, filteredCosts);
   renderTruckChart(truckSummary);
+  populateTripExpenseOptions();
 }
 
 function renderStats(filteredTrips, filteredCosts) {
@@ -603,18 +605,29 @@ window.addEventListener('DOMContentLoaded', () => {
   tripExpenseForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const expense = {
-      id: crypto.randomUUID(),
-      truck: document.getElementById('expense-truck').value,
-      date: document.getElementById('expense-date').value,
-      km: Number(document.getElementById('km').value),
-      consumption: Number(document.getElementById('consumption-per-100').value),
-      fuel: Number(document.getElementById('fuel-cost').value),
-      ration: Number(document.getElementById('ration-cost').value),
-      rapido: Number(document.getElementById('rapido-cost').value),
-      manoeuvre: Number(document.getElementById('manoeuvre-cost').value),
-      misc: Number(document.getElementById('misc-cost').value)
-    };
+ const selectedTripId = expenseTripSelect.value;
+const selectedTrip = trips.find((trip) => trip.id === selectedTripId);
+
+if (!selectedTrip) {
+  console.error("Aucune course sélectionnée");
+  return;
+}
+
+const expense = {
+  id: crypto.randomUUID(),
+  trip_id: selectedTrip.id,
+  truck: selectedTrip.truck,
+  date: selectedTrip.date,
+  loadingZone: selectedTrip.loadingZone,
+  unloadingZone: selectedTrip.unloadingZone,
+  km: Number(document.getElementById('km').value),
+  consumption: Number(document.getElementById('consumption-per-100').value),
+  fuel: Number(document.getElementById('fuel-cost').value),
+  ration: Number(document.getElementById('ration-cost').value),
+  rapido: Number(document.getElementById('rapido-cost').value),
+  manoeuvre: Number(document.getElementById('manoeuvre-cost').value),
+  misc: Number(document.getElementById('misc-cost').value)
+};
 
     console.log("EXPENSE =", expense);
 
@@ -625,3 +638,19 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+function populateTripExpenseOptions() {
+  if (!expenseTripSelect) return;
+
+  expenseTripSelect.innerHTML = '<option value="">Sélectionner une course</option>';
+
+  trips
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .forEach((trip) => {
+      const option = document.createElement('option');
+      option.value = trip.id;
+      option.textContent = `${trip.truck} | ${trip.date} | ${trip.loadingZone} → ${trip.unloadingZone}`;
+      expenseTripSelect.appendChild(option);
+    });
+}

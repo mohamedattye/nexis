@@ -55,13 +55,11 @@
 
         <h2>Ajouter dépenses de la course</h2>
   <form id="trip-expense-form" class="form-grid">
-    <label>Camion
-      <input type="text" id="expense-truck" placeholder="Ex: Camion A" required />
-    </label>
-
-    <label>Date
-      <input type="date" id="expense-date" required />
-    </label>
+   <label>Course
+  <select id="expense-trip-id" required>
+    <option value="">Sélectionner une course</option>
+  </select>
+</label>
 
     <label>KM
       <input type="number" id="km" min="0" step="1" placeholder="Ex: 260" required />
