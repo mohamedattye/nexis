@@ -70,7 +70,13 @@
 
       <section class="card">
   
-        <h2>Ajouter une course</h2>
+        <div class="card-head">
+  <div class="card-head__icon">🚛</div>
+  <div>
+    <p class="card-head__kicker">OPERATIONS</p>
+    <h2>Nouvelle course</h2>
+  </div>
+</div>
         <form id="trip-form" class="form-grid">
 
   <label>Camion
@@ -99,7 +105,14 @@
 </section>
       <section class="card">
 
-        <h2>Ajouter dépenses de la course</h2>
+        <div class="card-head">
+  <div class="card-head__icon">📊</div>
+  <div>
+    <p class="card-head__kicker">VARIABLE COSTS</p>
+    <h2>Dépenses liées à la course</h2>
+  </div>
+</div>
+
   <form id="trip-expense-form" class="form-grid">
    <label>Course
   <select id="expense-trip-id" required>
@@ -152,6 +165,7 @@
           <button type="submit">Ajouter charges</button>
         </form>
       </section>
+      </div>
 
       <section class="card filters">
         <div class="section-title-row">
