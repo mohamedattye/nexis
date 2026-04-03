@@ -272,6 +272,7 @@ function render() {
   renderFinanceChart(filteredTrips, filteredCosts);
   renderTruckChart(truckSummary);
   populateTripExpenseOptions();
+  updateKPIs();
 }
 
 function renderStats(filteredTrips, filteredCosts) {
