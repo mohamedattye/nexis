@@ -400,50 +400,94 @@ function drawBarChart(canvas, items) {
   const ctx = canvas.getContext('2d');
   const width = canvas.width;
   const height = canvas.height;
+
   ctx.clearRect(0, 0, width, height);
 
-  if (items.length === 0) {
+  if (!items.length) {
     drawEmptyChart(ctx, width, height, 'Aucune donnée');
     return;
   }
 
-  const maxValue = Math.max(...items.map((item) => Math.abs(item.value)), 1);
-  const topPadding = 24;
-  const bottomPadding = 45;
-  const chartHeight = height - topPadding - bottomPadding;
-  const barWidth = Math.max(32, width / (items.length * 2.2));
-  const gap = (width - items.length * barWidth) / (items.length + 1);
+  const topPadding = 36;
+  const bottomPadding = 52;
+  const leftPadding = 24;
+  const rightPadding = 24;
 
-  ctx.font = '12px Inter, sans-serif';
-  ctx.fillStyle = '#6b7a90';
-  ctx.fillText('0', 8, topPadding + chartHeight + 4);
+  const chartHeight = height - topPadding - bottomPadding;
+  const chartWidth = width - leftPadding - rightPadding;
+
+  const maxValue = Math.max(...items.map(item => Math.abs(item.value)), 1);
+  const slotWidth = chartWidth / items.length;
+  const barWidth = Math.min(90, slotWidth * 0.48);
+
+  // Ligne de base
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(15, 23, 42, 0.08)';
+  ctx.lineWidth = 1;
+  ctx.moveTo(leftPadding, topPadding + chartHeight);
+  ctx.lineTo(width - rightPadding, topPadding + chartHeight);
+  ctx.stroke();
 
   items.forEach((item, index) => {
+    const x = leftPadding + index * slotWidth + (slotWidth - barWidth) / 2;
     const normalized = Math.abs(item.value) / maxValue;
-    const barHeight = normalized * chartHeight;
-    const x = gap + index * (barWidth + gap);
-    const y = topPadding + (chartHeight - barHeight);
+    const barHeight = Math.max(8, normalized * chartHeight);
+    const y = topPadding + chartHeight - barHeight;
+    const radius = 12;
 
+    // Ombre premium
+    ctx.save();
+    ctx.shadowColor = 'rgba(15, 23, 42, 0.10)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 4;
+
+    // Barre arrondie
     ctx.fillStyle = item.color;
-    ctx.fillRect(x, y, barWidth, barHeight);
+    roundRect(ctx, x, y, barWidth, barHeight, radius);
+    ctx.fill();
 
-    ctx.fillStyle = '#1d2a3c';
-    ctx.font = '11px Inter, sans-serif';
-    ctx.fillText(shortLabel(item.label), x, height - 25);
-    ctx.fillText(`${money(item.value)}`, x, y - 6);
+    ctx.restore();
+
+    // Valeur au-dessus
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '600 14px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(money(item.value), x + barWidth / 2, y - 10);
+
+    // Label en bas
+    ctx.fillStyle = '#64748b';
+    ctx.font = '500 12px Inter, sans-serif';
+    ctx.fillText(shortLabel(item.label), x + barWidth / 2, height - 20);
   });
 }
 
-function drawEmptyChart(ctx, width, height, text) {
-  ctx.fillStyle = '#eef3fb';
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = '#7a8799';
-  ctx.font = '14px Inter, sans-serif';
-  ctx.fillText(text, width / 2 - 45, height / 2);
+// Rectangle arrondi (style SaaS)
+function roundRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height);
+  ctx.lineTo(x, y + height);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
 }
 
+// Si aucune donnée
+function drawEmptyChart(ctx, width, height, text) {
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '500 15px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, width / 2, height / 2);
+}
+
+// Réduction des labels longs
 function shortLabel(label) {
-  return label.length > 12 ? `${label.slice(0, 10)}...` : label;
+  return label.length > 14 ? `${label.slice(0, 14)}…` : label;
 }
 
 function exportFilteredTripsAsCsv() {
