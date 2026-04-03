@@ -404,3 +404,76 @@ canvas {
     height: 46px;
   }
 }
+/* ================= HERO V2 ================= */
+
+.hero-v2 {
+  background: #0f172a !important;
+  color: white !important;
+  border-radius: 28px;
+  padding: 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+.hero-v2__title,
+.hero-v2__subtitle,
+.hero-brand__eyebrow,
+.hero-badge {
+  color: white !important;
+}
+
+.hero-v2__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.hero-brand {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.hero-brand__logo-wrap {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-brand__logo {
+  width: 50px;
+}
+
+.hero-brand__eyebrow {
+  font-size: 12px;
+  letter-spacing: 2px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.hero-v2__title {
+  font-size: 28px;
+  margin: 0 0 10px 0;
+}
+
+.hero-v2__subtitle {
+  opacity: 0.8;
+  max-width: 600px;
+}
+
+.hero-v2__badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hero-badge {
+  background: rgba(255,255,255,0.15);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+}
