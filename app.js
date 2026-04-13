@@ -51,7 +51,32 @@ tripForm.addEventListener('submit', (event) => {
   saveTripToSupabase(trip);
   tripForm.reset();
 });
+tripExpenseForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
+  const selectedTripId = expenseTripSelect.value;
+  const selectedTrip = trips.find((trip) => trip.id === selectedTripId);
+
+  if (!selectedTrip) {
+    console.error("Aucune course sélectionnée");
+    return;
+  }
+
+  const expense = {
+    id: crypto.randomUUID(),
+    trip_id: selectedTrip.id,
+    fuel: Number(document.getElementById('fuel-cost').value) || 0,
+    ration: Number(document.getElementById('ration-cost').value) || 0,
+    rapido: Number(document.getElementById('rapido-cost').value) || 0,
+    manoeuvre: Number(document.getElementById('manoeuvre-cost').value) || 0,
+    misc: Number(document.getElementById('misc-cost').value) || 0
+  };
+
+  await saveExpenseToSupabase(expense);
+  await loadTripExpensesFromSupabase();
+
+  tripExpenseForm.reset();
+});
 
 tripExpenseForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -675,49 +700,7 @@ async function saveExpenseToSupabase(expense) {
   console.log("DEPENSE SAUVEE DANS SUPABASE :", expense);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
 
-  const tripExpenseForm = document.getElementById('trip-expense-form');
-
-  console.log("FORM =", tripExpenseForm);
-
-  tripExpenseForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
- const selectedTripId = expenseTripSelect.value;
-const selectedTrip = trips.find((trip) => trip.id === selectedTripId);
-
-if (!selectedTrip) {
-  console.error("Aucune course sélectionnée");
-  return;
-}
-
-const expense = {
-  id: crypto.randomUUID(),
-  trip_id: selectedTrip.id,
-  truck: selectedTrip.truck,
-  date: selectedTrip.date,
-  loadingZone: selectedTrip.loadingZone,
-  unloadingZone: selectedTrip.unloadingZone,
-  km: Number(document.getElementById('km').value),
-  consumption: Number(document.getElementById('consumption-per-100').value),
-  fuel: Number(document.getElementById('fuel-cost').value),
-  ration: Number(document.getElementById('ration-cost').value),
-  rapido: Number(document.getElementById('rapido-cost').value),
-  manoeuvre: Number(document.getElementById('manoeuvre-cost').value),
-  misc: Number(document.getElementById('misc-cost').value)
-};
-
-    console.log("EXPENSE =", expense);
-
-    await saveExpenseToSupabase(expense);
-    await loadTripExpensesFromSupabase();
-  
-
-    tripExpenseForm.reset();
-  });
-
-});
 
 function populateTripExpenseOptions() {
   if (!expenseTripSelect) return;
