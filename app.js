@@ -263,14 +263,29 @@ function ensureTruck(map, truck) {
 
 function render() {
   const filteredTrips = getFilteredTrips();
-  const filteredCosts = getFilteredCosts();
-  const reviewTrips = getReviewTrips();
-  const reviewCosts = getReviewCosts();
-  const enrichedTrips = filteredTrips.map((trip) => ({
-  ...trip,
-  expense: getTripExpenseTotal(trip.id)
-}));
-  const truckSummary = summarizeByTruck(reviewTrips, reviewCosts);
+const filteredCosts = getFilteredCosts();
+const reviewTrips = getReviewTrips();
+const reviewCosts = getReviewCosts();
+
+const enrichedTrips = filteredTrips.map((trip) => {
+  const totalExpense = getTripExpenseTotal(trip.id);
+  return {
+    ...trip,
+    expense: totalExpense,
+    tripExpense: totalExpense
+  };
+});
+
+const enrichedReviewTrips = reviewTrips.map((trip) => {
+  const totalExpense = getTripExpenseTotal(trip.id);
+  return {
+    ...trip,
+    expense: totalExpense,
+    tripExpense: totalExpense
+  };
+});
+
+const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
 
   renderStats(enrichedTrips, filteredCosts);
   renderTripTable(enrichedTrips);
