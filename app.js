@@ -27,9 +27,11 @@ const formatter = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
 
 let trips = loadTrips();
 let costs = loadCosts();
+let tripExpenses = []
 
 initializeFilters();
 loadTripsFromSupabase();
+loadTripExpensesFromSupabase();
 tripForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -599,19 +601,20 @@ function sampleCosts() {
 }
 async function saveTripToSupabase(trip) {
 
-
   const { error } = await supabaseClient
-    .from('trips')
+    .from("trips")
     .insert([trip]);
 
   if (error) {
-  console.error("Erreur Supabase :", error);
-  return;
-}
+    console.error("Erreur Supabase :", error);
+    return;
+  }
 
   trips.push(trip);
   render();
+
 }
+
 async function loadTripsFromSupabase() {
 
   const { data, error } = await supabaseClient
