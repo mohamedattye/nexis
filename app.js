@@ -265,13 +265,17 @@ function render() {
   const filteredCosts = getFilteredCosts();
   const reviewTrips = getReviewTrips();
   const reviewCosts = getReviewCosts();
+  const enrichedTrips = filteredTrips.map((trip) => ({
+  ...trip,
+  expense: getTripExpenseTotal(trip.id)
+}));
   const truckSummary = summarizeByTruck(reviewTrips, reviewCosts);
 
-  renderStats(filteredTrips, filteredCosts);
-  renderTripTable(filteredTrips);
+  renderStats(enrichedTrips, filteredCosts);
+  renderTripTable(enrichedTrips);
   renderCostTable(reviewCosts);
   renderReviewTable(truckSummary);
-  renderFinanceChart(filteredTrips, filteredCosts);
+  renderFinanceChart(enrichedTrips, filteredCosts);
   renderTruckChart(truckSummary);
   populateTripExpenseOptions();
   updateKPIs();
@@ -631,6 +635,33 @@ async function loadTripsFromSupabase() {
   render();
 }
 
+async function loadTripExpensesFromSupabase() {
+  const { data, error } = await supabaseClient
+    .from("trip_expenses")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erreur chargement dépenses :", error);
+    return;
+  }
+
+  tripExpenses = data || [];
+  render();
+}
+function getTripExpenseTotal(tripId) {
+  return tripExpenses
+    .filter((expense) => expense.trip_id === tripId)
+    .reduce((sum, expense) => {
+      return sum
+        + (Number(expense.fuel) || 0)
+        + (Number(expense.ration) || 0)
+        + (Number(expense.rapido) || 0)
+        + (Number(expense.manoeuvre) || 0)
+        + (Number(expense.misc) || 0);
+    }, 0);
+}
+
 async function saveExpenseToSupabase(expense) {
   const { error } = await supabaseClient
     .from('trip_expenses')
@@ -680,6 +711,7 @@ const expense = {
     console.log("EXPENSE =", expense);
 
     await saveExpenseToSupabase(expense);
+    await loadTripExpensesFromSupabase();
   
 
     tripExpenseForm.reset();
