@@ -78,30 +78,6 @@ tripExpenseForm.addEventListener('submit', async (event) => {
   tripExpenseForm.reset();
 });
 
-tripExpenseForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  const expense = {
-    id: crypto.randomUUID(),
-    truck: document.getElementById('expense-truck').value.trim(),
-    date: document.getElementById('expense-date').value,
-    loadingZone: document.getElementById('expense-loading-zone').value.trim(),
-    unloadingZone: document.getElementById('expense-unloading-zone').value.trim(),
-    km: Number(document.getElementById('km').value),
-    consumption: Number(document.getElementById('consumption-per-100').value),
-    fuel: Number(document.getElementById('fuel-cost').value),
-    ration: Number(document.getElementById('ration-cost').value),
-    rapido: Number(document.getElementById('rapido-cost').value),
-    manoeuvre: Number(document.getElementById('manoeuvre-cost').value),
-    misc: Number(document.getElementById('misc-cost').value)
-  };
-
-  saveExpenseToSupabase(expense);
-
-  tripExpenseForm.reset();
-});
-
-
 costForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
