@@ -653,7 +653,7 @@ async function loadTripExpensesFromSupabase() {
 }
 function getTripExpenseTotal(tripId) {
   return tripExpenses
-    .filter((expense) => String(expense.trip_id) === String(tripId))
+    .filter(expense => String(expense.trip_id).trim() === String(tripId).trim())
     .reduce((sum, expense) => {
       return sum
         + (Number(expense.fuel) || 0)
