@@ -58,7 +58,7 @@ tripExpenseForm.addEventListener('submit', async (event) => {
   const selectedTrip = trips.find((trip) => String(trip.id) === String(selectedTripId));
 
   if (!selectedTrip) {
-    console.error("Aucune course sélectionnée ou course introuvable");
+    console.error("Aucune course sélectionnée");
     return;
   }
 
@@ -78,7 +78,7 @@ tripExpenseForm.addEventListener('submit', async (event) => {
     misc: Number(document.getElementById('misc-cost').value) || 0
   };
 
-  console.log("EXPENSE A ENVOYER =", expense);
+  console.log("DEPENSE A ENVOYER =", expense);
 
   await saveExpenseToSupabase(expense);
   await loadTripExpensesFromSupabase();
