@@ -294,7 +294,6 @@ const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
   renderFinanceChart(enrichedTrips, filteredCosts);
   renderTruckChart(truckSummary);
   populateTripExpenseOptions();
-  updateKPIs();
 }
 
 function renderStats(filteredTrips, filteredCosts) {
