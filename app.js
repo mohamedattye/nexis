@@ -32,7 +32,7 @@ let tripExpenses = []
 initializeFilters();
 loadTripsFromSupabase();
 loadTripExpensesFromSupabase();
-tripForm.addEventListener('submit', (event) => {
+tripForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const trip = {
@@ -48,7 +48,7 @@ tripForm.addEventListener('submit', (event) => {
     return;
   }
 
-  saveTripToSupabase(trip);
+  await saveTripToSupabase(trip);
   tripForm.reset();
 });
 tripExpenseForm.addEventListener('submit', async (event) => {
@@ -228,9 +228,9 @@ function summarizeByTruck(reviewTrips, reviewCosts) {
     ensureTruck(byTruck, trip.truck);
     const item = byTruck.get(trip.truck);
     item.tripCount += 1;
-    item.zones.add(trip.zone);
+    item.zones.add(`${trip.loadingZone || '-'} → ${trip.unloadingZone || '-'}`);
     item.revenue += trip.revenue;
-    item.tripExpense += trip.expense;
+    item.tripExpense += Number(trip.expense || trip.tripExpense || 0);
   });
 
   reviewCosts.forEach((entry) => {
@@ -299,7 +299,7 @@ const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
 
 function renderStats(filteredTrips, filteredCosts) {
   const revenue = filteredTrips.reduce((acc, trip) => acc + trip.revenue, 0);
-  const tripExpense = filteredTrips.reduce((acc, trip) => acc + trip.expense, 0);
+  const tripExpense = filteredTrips.reduce((acc, trip) => acc + Number(trip.expense || trip.tripExpense || 0), 0);
   const fixedCosts = filteredCosts.reduce((acc, entry) => acc + costTotal(entry), 0);
   const operationalMargin = revenue - tripExpense;
   const realNet = operationalMargin - fixedCosts;
@@ -335,19 +335,22 @@ function renderTripTable(filteredTrips) {
   tableBody.innerHTML = filteredTrips
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((trip) => {
-      const margin = trip.revenue - trip.expense;
-      return `
-        <tr>
-          <td>${formatDate(trip.date)}</td>
-          <td>${trip.truck}</td>
-          <td>${trip.zone}</td>
-          <td>${money(trip.revenue)} FCFA</td>
-          <td>${money(trip.expense)} FCFA</td>
-          <td class="${margin < 0 ? 'bad' : 'good'}">${money(margin)} FCFA</td>
-          <td><button type="button" class="delete-btn" data-trip-id="${trip.id}">Supprimer</button></td>
-        </tr>
-      `;
-    })
+  const expenseAmount = Number(trip.expense || trip.tripExpense || 0);
+  const margin = Number(trip.revenue || 0) - expenseAmount;
+  const zoneLabel = `${trip.loadingZone || '-'} → ${trip.unloadingZone || '-'}`;
+
+  return `
+    <tr>
+      <td>${formatDate(trip.date)}</td>
+      <td>${trip.truck}</td>
+      <td>${zoneLabel}</td>
+      <td>${money(trip.revenue)} FCFA</td>
+      <td>${money(expenseAmount)} FCFA</td>
+      <td class="${margin < 0 ? 'bad' : 'good'}">${money(margin)} FCFA</td>
+      <td><button type="button" class="delete-btn" data-trip-id="${trip.id}">Supprimer</button></td>
+    </tr>
+  `;
+})
     .join('');
 }
 
@@ -400,7 +403,7 @@ function renderReviewTable(truckSummary) {
 
 function renderFinanceChart(filteredTrips, filteredCosts) {
   const totalRevenue = filteredTrips.reduce((acc, trip) => acc + trip.revenue, 0);
-  const tripExpense = filteredTrips.reduce((acc, trip) => acc + trip.expense, 0);
+  const tripExpense = filteredTrips.reduce((acc, trip) => acc + Number(trip.expense || trip.tripExpense || 0), 0);
   const fixedCosts = filteredCosts.reduce((acc, item) => acc + costTotal(item), 0);
 
   drawBarChart(financeChartCanvas, [
@@ -531,7 +534,7 @@ function exportFilteredTripsAsCsv() {
       'course',
       trip.date,
       safeCsv(trip.truck),
-      safeCsv(trip.zone),
+     safeCsv(`${trip.loadingZone || '-'} -> ${trip.unloadingZone || '-'}`),
       trip.revenue,
       trip.expense,
       '', '', '', '', '', '',
@@ -667,7 +670,7 @@ async function loadTripExpensesFromSupabase() {
 }
 function getTripExpenseTotal(tripId) {
   return tripExpenses
-    .filter((expense) => expense.trip_id === tripId)
+    .filter((expense) => String(expense.trip_id) === String(tripId))
     .reduce((sum, expense) => {
       return sum
         + (Number(expense.fuel) || 0)
