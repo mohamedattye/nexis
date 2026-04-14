@@ -55,16 +55,22 @@ tripExpenseForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const selectedTripId = expenseTripSelect.value;
-  const selectedTrip = trips.find((trip) => trip.id === selectedTripId);
+  const selectedTrip = trips.find((trip) => String(trip.id) === String(selectedTripId));
 
   if (!selectedTrip) {
-    console.error("Aucune course sélectionnée");
+    console.error("Aucune course sélectionnée ou course introuvable");
     return;
   }
 
   const expense = {
     id: crypto.randomUUID(),
     trip_id: selectedTrip.id,
+    truck: selectedTrip.truck,
+    date: selectedTrip.date,
+    loadingZone: selectedTrip.loadingZone || null,
+    unloadingZone: selectedTrip.unloadingZone || null,
+    km: Number(document.getElementById('km').value) || 0,
+    consumption: Number(document.getElementById('consumption-per-100').value) || 0,
     fuel: Number(document.getElementById('fuel-cost').value) || 0,
     ration: Number(document.getElementById('ration-cost').value) || 0,
     rapido: Number(document.getElementById('rapido-cost').value) || 0,
@@ -72,9 +78,10 @@ tripExpenseForm.addEventListener('submit', async (event) => {
     misc: Number(document.getElementById('misc-cost').value) || 0
   };
 
+  console.log("EXPENSE A ENVOYER =", expense);
+
   await saveExpenseToSupabase(expense);
   await loadTripExpensesFromSupabase();
-
   tripExpenseForm.reset();
 });
 
@@ -652,29 +659,34 @@ async function loadTripExpensesFromSupabase() {
   render();
 }
 function getTripExpenseTotal(tripId) {
-  return tripExpenses
-    .filter(expense => String(expense.trip_id).trim() === String(tripId).trim())
-    .reduce((sum, expense) => {
-      return sum
-        + (Number(expense.fuel) || 0)
-        + (Number(expense.ration) || 0)
-        + (Number(expense.rapido) || 0)
-        + (Number(expense.manoeuvre) || 0)
-        + (Number(expense.misc) || 0);
-    }, 0);
+  const matchedExpenses = tripExpenses.filter(
+    (expense) => String(expense.trip_id || "").trim() === String(tripId || "").trim()
+  );
+
+  console.log("TRIP ID =", tripId, "MATCHED =", matchedExpenses);
+
+  return matchedExpenses.reduce((sum, expense) => {
+    return sum
+      + (Number(expense.fuel) || 0)
+      + (Number(expense.ration) || 0)
+      + (Number(expense.rapido) || 0)
+      + (Number(expense.manoeuvre) || 0)
+      + (Number(expense.misc) || 0);
+  }, 0);
 }
 
 async function saveExpenseToSupabase(expense) {
-  const { error } = await supabaseClient
-    .from('trip_expenses')
-    .insert([expense]);
+  const { data, error } = await supabaseClient
+    .from("trip_expenses")
+    .insert([expense])
+    .select();
 
   if (error) {
     console.error("Erreur Supabase dépense :", error);
     return;
   }
 
-  console.log("DEPENSE SAUVEE DANS SUPABASE :", expense);
+  console.log("DEPENSE SAUVEE =", data);
 }
 
 
