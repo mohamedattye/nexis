@@ -141,29 +141,11 @@ function initializeFilters() {
 }
 
 function loadTrips() {
-  const raw = localStorage.getItem(TRIPS_STORAGE_KEY);
-  if (!raw) {
-    return sampleTrips();
-  }
-
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return sampleTrips();
-  }
+  return [];
 }
 
 function loadCosts() {
-  const raw = localStorage.getItem(COSTS_STORAGE_KEY);
-  if (!raw) {
-    return sampleCosts();
-  }
-
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return sampleCosts();
-  }
+  return [];
 }
 
 function persistTrips() {
@@ -229,7 +211,7 @@ function summarizeByTruck(reviewTrips, reviewCosts) {
     const item = byTruck.get(trip.truck);
     item.tripCount += 1;
     item.zones.add(`${trip.loadingZone || '-'} → ${trip.unloadingZone || '-'}`);
-    item.revenue += trip.revenue;
+    item.revenue += Number(trip.revenue || 0);
     item.tripExpense += Number(trip.expense || trip.tripExpense || 0);
   });
 
@@ -263,29 +245,29 @@ function ensureTruck(map, truck) {
 
 function render() {
   const filteredTrips = getFilteredTrips();
-const filteredCosts = getFilteredCosts();
-const reviewTrips = getReviewTrips();
-const reviewCosts = getReviewCosts();
+  const filteredCosts = getFilteredCosts();
+  const reviewTrips = getReviewTrips();
+  const reviewCosts = getReviewCosts();
 
-const enrichedTrips = filteredTrips.map((trip) => {
-  const totalExpense = getTripExpenseTotal(trip.id);
-  return {
-    ...trip,
-    expense: totalExpense,
-    tripExpense: totalExpense
-  };
-});
+  const enrichedTrips = filteredTrips.map((trip) => {
+    const totalExpense = getTripExpenseTotal(trip.id);
+    return {
+      ...trip,
+      expense: totalExpense,
+      tripExpense: totalExpense
+    };
+  });
 
-const enrichedReviewTrips = reviewTrips.map((trip) => {
-  const totalExpense = getTripExpenseTotal(trip.id);
-  return {
-    ...trip,
-    expense: totalExpense,
-    tripExpense: totalExpense
-  };
-});
+  const enrichedReviewTrips = reviewTrips.map((trip) => {
+    const totalExpense = getTripExpenseTotal(trip.id);
+    return {
+      ...trip,
+      expense: totalExpense,
+      tripExpense: totalExpense
+    };
+  });
 
-const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
+  const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
 
   renderStats(enrichedTrips, filteredCosts);
   renderTripTable(enrichedTrips);
@@ -298,7 +280,9 @@ const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
 
 function renderStats(filteredTrips, filteredCosts) {
   const revenue = filteredTrips.reduce((acc, trip) => acc + trip.revenue, 0);
-  const tripExpense = filteredTrips.reduce((acc, trip) => acc + Number(trip.expense || trip.tripExpense || 0), 0);
+  const tripExpense = filteredTrips.reduce((acc, trip) => {
+  return acc + Number(trip.expense || trip.tripExpense || 0);
+}, 0);
   const fixedCosts = filteredCosts.reduce((acc, entry) => acc + costTotal(entry), 0);
   const operationalMargin = revenue - tripExpense;
   const realNet = operationalMargin - fixedCosts;
@@ -334,22 +318,22 @@ function renderTripTable(filteredTrips) {
   tableBody.innerHTML = filteredTrips
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((trip) => {
-  const expenseAmount = Number(trip.expense || trip.tripExpense || 0);
-  const margin = Number(trip.revenue || 0) - expenseAmount;
-  const zoneLabel = `${trip.loadingZone || '-'} → ${trip.unloadingZone || '-'}`;
+      const expenseAmount = Number(trip.expense || trip.tripExpense || 0);
+      const margin = Number(trip.revenue || 0) - expenseAmount;
+      const zoneLabel = `${trip.loadingZone || '-'} → ${trip.unloadingZone || '-'}`;
 
-  return `
-    <tr>
-      <td>${formatDate(trip.date)}</td>
-      <td>${trip.truck}</td>
-      <td>${zoneLabel}</td>
-      <td>${money(trip.revenue)} FCFA</td>
-      <td>${money(expenseAmount)} FCFA</td>
-      <td class="${margin < 0 ? 'bad' : 'good'}">${money(margin)} FCFA</td>
-      <td><button type="button" class="delete-btn" data-trip-id="${trip.id}">Supprimer</button></td>
-    </tr>
-  `;
-})
+      return `
+        <tr>
+          <td>${formatDate(trip.date)}</td>
+          <td>${trip.truck}</td>
+          <td>${zoneLabel}</td>
+          <td>${money(trip.revenue)} FCFA</td>
+          <td>${money(expenseAmount)} FCFA</td>
+          <td class="${margin < 0 ? 'bad' : 'good'}">${money(margin)} FCFA</td>
+          <td><button type="button" class="delete-btn" data-trip-id="${trip.id}">Supprimer</button></td>
+        </tr>
+      `;
+    })
     .join('');
 }
 
@@ -402,7 +386,9 @@ function renderReviewTable(truckSummary) {
 
 function renderFinanceChart(filteredTrips, filteredCosts) {
   const totalRevenue = filteredTrips.reduce((acc, trip) => acc + trip.revenue, 0);
-  const tripExpense = filteredTrips.reduce((acc, trip) => acc + Number(trip.expense || trip.tripExpense || 0), 0);
+const tripExpense = filteredTrips.reduce((acc, trip) => {
+  return acc + Number(trip.expense || trip.tripExpense || 0);
+}, 0);
   const fixedCosts = filteredCosts.reduce((acc, item) => acc + costTotal(item), 0);
 
   drawBarChart(financeChartCanvas, [
@@ -529,17 +515,20 @@ function exportFilteredTripsAsCsv() {
   ];
 
   filteredTrips.forEach((trip) => {
-    rows.push([
-      'course',
-      trip.date,
-      safeCsv(trip.truck),
-     safeCsv(`${trip.loadingZone || '-'} -> ${trip.unloadingZone || '-'}`),
-      trip.revenue,
-      trip.expense,
-      '', '', '', '', '', '',
-      trip.revenue - trip.expense
-    ].join(','));
-  });
+  const expenseAmount = Number(trip.expense || trip.tripExpense || 0);
+  const zoneLabel = `${trip.loadingZone || '-'} -> ${trip.unloadingZone || '-'}`;
+
+  rows.push([
+    'course',
+    trip.date,
+    safeCsv(trip.truck),
+    safeCsv(zoneLabel),
+    trip.revenue,
+    expenseAmount,
+    '', '', '', '', '', '',
+    trip.revenue - expenseAmount
+  ].join(','));
+});
 
   filteredCosts.forEach((item) => {
     rows.push([
@@ -622,7 +611,6 @@ function sampleCosts() {
   ];
 }
 async function saveTripToSupabase(trip) {
-
   const { error } = await supabaseClient
     .from("trips")
     .insert([trip]);
@@ -632,17 +620,14 @@ async function saveTripToSupabase(trip) {
     return;
   }
 
-  trips.push(trip);
-  render();
-
+  await loadTripsFromSupabase();
 }
 
 async function loadTripsFromSupabase() {
-
   const { data, error } = await supabaseClient
-    .from('trips')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .from("trips")
+    .select("*")
+    .order("date", { ascending: false });
 
   if (error) {
     console.error("Erreur chargement Supabase :", error);
@@ -656,8 +641,7 @@ async function loadTripsFromSupabase() {
 async function loadTripExpensesFromSupabase() {
   const { data, error } = await supabaseClient
     .from("trip_expenses")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*");
 
   if (error) {
     console.error("Erreur chargement dépenses :", error);
