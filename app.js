@@ -63,20 +63,20 @@ tripExpenseForm.addEventListener('submit', async (event) => {
   }
 
   const expense = {
-    id: crypto.randomUUID(),
-    trip_id: selectedTrip.id,
-    truck: selectedTrip.truck,
-    date: selectedTrip.date,
-    loadingZone: selectedTrip.loadingZone || null,
-    unloadingZone: selectedTrip.unloadingZone || null,
-    km: Number(document.getElementById('km').value) || 0,
-    consumption: Number(document.getElementById('consumption-per-100').value) || 0,
-    fuel: Number(document.getElementById('fuel-cost').value) || 0,
-    ration: Number(document.getElementById('ration-cost').value) || 0,
-    rapido: Number(document.getElementById('rapido-cost').value) || 0,
-    manoeuvre: Number(document.getElementById('manoeuvre-cost').value) || 0,
-    misc: Number(document.getElementById('misc-cost').value) || 0
-  };
+  id: crypto.randomUUID(),
+  trip_id: selectedTrip.id,
+  truck: selectedTrip.truck,
+  date: selectedTrip.date,
+  loadingZone: selectedTrip.loadingZone || null,
+  unloadingZone: selectedTrip.unloadingZone || null,
+  km: Number(document.getElementById('km').value) || 0,
+  consumption: Number(document.getElementById('consumption-per-100').value) || 0,
+  fuel: Number(document.getElementById('fuel-cost').value) || 0,
+  ration: Number(document.getElementById('ration-cost').value) || 0,
+  rapido: Number(document.getElementById('rapido-cost').value) || 0,
+  manoeuvre: Number(document.getElementById('manoeuvre-cost').value) || 0,
+  misc: Number(document.getElementById('misc-cost').value) || 0
+};
 
   console.log("DEPENSE A ENVOYER =", expense);
 
@@ -682,7 +682,7 @@ async function saveExpenseToSupabase(expense) {
     .select();
 
   if (error) {
-    console.error("Erreur Supabase dépense :", error);
+   console.error("Erreur Supabase dépense :", JSON.stringify(error, null, 2));
     return;
   }
 
