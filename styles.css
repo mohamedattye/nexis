@@ -446,8 +446,8 @@ canvas {
 }
 
 .hero-brand__logo-wrap {
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   border-radius: 18px;
   background: rgba(255,255,255,0.1);
   display: flex;
@@ -456,7 +456,9 @@ canvas {
 }
 
 .hero-brand__logo {
-  width: 50px;
+  height: 80px;
+  object-fit: contain;
+  padding: 5px;
 }
 
 .hero-brand__eyebrow {
