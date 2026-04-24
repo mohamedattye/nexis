@@ -142,6 +142,7 @@ render();
 
 function initializeFilters() {
   const currentMonth = new Date().toISOString().slice(0, 7);
+
   monthFilter.value = currentMonth;
   reviewMonthFilter.value = currentMonth;
   document.getElementById('cost-month').value = currentMonth;
@@ -346,7 +347,7 @@ function renderTripTable(filteredTrips) {
 
 function renderCostTable(reviewCosts) {
   if (reviewCosts.length === 0) {
-    costTableBody.innerHTML = '<tr><td colspan="10" class="empty">Aucune charge sur ce mois.</td></tr>';
+    costTableBody.innerHTML = '<tr><td colspan="10" class="empty">Aucune charge pour le mois sélectionné.</td></tr>';
     return;
   }
 
@@ -371,7 +372,7 @@ function renderCostTable(reviewCosts) {
 
 function renderReviewTable(truckSummary) {
   if (truckSummary.length === 0) {
-    reviewTableBody.innerHTML = '<tr><td colspan="8" class="empty">Aucune donnée pour ce mois.</td></tr>';
+    reviewTableBody.innerHTML = '<tr><td colspan="8" class="empty">Aucune donnée pour le mois sélectionné.</td></tr>';
     return;
   }
 
