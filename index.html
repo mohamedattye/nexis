@@ -175,22 +175,35 @@
       </div>
 
       <section class="card filters">
-        <div class="section-title-row">
-          <div class="card-head">
-  <div class="card-head__icon">⚙️</div>
-  <div>
-    <p class="card-head__kicker">CONTROLS</p>
-    <h2>Filtres & actions</h2>
+  <div class="section-title-row">
+    <div class="card-head">
+      <div class="card-head__icon">⚙️</div>
+      <div>
+        <p class="card-head__kicker">CONTROLS</p>
+        <h2>Filtres & actions</h2>
+      </div>
+    </div>
+
+    <div class="filters-actions">
+      <button id="export-csv" type="button" class="secondary-btn">Exporter CSV</button>
+      <button id="export-pdf" type="button" class="secondary-btn">Exporter PDF</button>
+    </div>
   </div>
-</div>
-          <button id="export-csv" type="button" class="secondary-btn">Exporter CSV</button>
-        </div>
-        <div class="form-grid">
-          <label>Mois<input type="month" id="month-filter" /></label>
-          <label>Camion<input type="text" id="truck-filter" placeholder="Tous les camions" /></label>
-          <label>Mois de revue<input type="month" id="review-month-filter" /></label>
-        </div>
-      </section>
+
+  <div class="form-grid filters-grid">
+    <label>Mois
+      <input type="month" id="month-filter" />
+    </label>
+
+    <label>Camion
+      <input type="text" id="truck-filter" placeholder="Tous les camions" />
+    </label>
+
+    <label>Mois de revue
+      <input type="month" id="review-month-filter" />
+    </label>
+  </div>
+</section>
 
       <section class="stats" id="stats"></section>
       <section class="card executive-summary">

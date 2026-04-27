@@ -706,3 +706,14 @@ canvas {
   font-size: 20px;
   font-weight: 700;
 }
+
+.filters-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filters-grid {
+  margin-top: 18px;
+}
