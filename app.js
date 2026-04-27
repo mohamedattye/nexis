@@ -712,9 +712,9 @@ document.getElementById("export-pdf").addEventListener("click", () => {
   const doc = new jsPDF();
 
   // récupération données
-  const revenue = document.getElementById("summary-revenue")?.innerText || "0 FCFA";
-  const expenses = document.getElementById("summary-expenses")?.innerText || "0 FCFA";
-  const result = document.getElementById("summary-result")?.innerText || "0 FCFA";
+  const revenue = document.getElementById("kpi-revenue")?.innerText || "0 FCFA";
+const expenses = document.getElementById("kpi-trip-expense")?.innerText || "0 FCFA";
+const result = document.getElementById("kpi-real-net")?.innerText || "0 FCFA";
 
   const today = new Date().toLocaleDateString();
 
