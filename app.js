@@ -750,3 +750,28 @@ doc.text(`Resultat net reel : ${pdfMoney(realNet)}`, 20, 105);
 
   doc.save("rapport-nexis.pdf");
 });
+const generalExpenseForm = document.getElementById("general-expense-form");
+
+generalExpenseForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const expense = {
+    date: document.getElementById("general-expense-date").value,
+    category: document.getElementById("general-expense-category").value,
+    description: document.getElementById("general-expense-description").value,
+    amount: parseFloat(document.getElementById("general-expense-amount").value),
+    payment_method: document.getElementById("general-expense-payment").value
+  };
+
+  const { error } = await supabase
+    .from("general_expenses")
+    .insert([expense]);
+
+  if (error) {
+    console.error(error);
+    alert("Erreur lors de l'ajout");
+  } else {
+    alert("Charge ajoutée ✅");
+    generalExpenseForm.reset();
+  }
+});
