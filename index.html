@@ -174,7 +174,46 @@
         </form>
       </section>
       </div>
+<section class="card">
+  <div class="card-head">
+    <div class="card-head__icon">🧾</div>
+    <div>
+      <p class="card-head__kicker">GENERAL COSTS</p>
+      <h2>Charges générales</h2>
+    </div>
+  </div>
 
+  <form id="general-expense-form" class="form-grid">
+    <label>Date
+      <input type="date" id="general-expense-date" required />
+    </label>
+
+    <label>Catégorie
+      <input type="text" id="general-expense-category" placeholder="Ex: Nourriture employés" required />
+    </label>
+
+    <label>Description
+      <input type="text" id="general-expense-description" placeholder="Ex: Déjeuner chauffeurs" />
+    </label>
+
+    <label>Montant (FCFA)
+      <input type="number" id="general-expense-amount" min="0" step="100" value="0" required />
+    </label>
+
+    <label>Moyen de paiement
+      <select id="general-expense-payment">
+        <option value="Cash">Cash</option>
+        <option value="Wave">Wave</option>
+        <option value="Orange Money">Orange Money</option>
+        <option value="Virement">Virement</option>
+        <option value="Carte">Carte</option>
+        <option value="Autre">Autre</option>
+      </select>
+    </label>
+
+    <button type="submit">Ajouter charge générale</button>
+  </form>
+</section>
       <section class="card filters">
   <div class="section-title-row">
     <div class="card-head">
