@@ -781,6 +781,5 @@ generalExpenseForm.addEventListener("submit", async (e) => {
   }
 
   console.log("Charge générale ajoutée :", data);
-  alert("Charge générale ajoutée ✅");
   generalExpenseForm.reset();
 });
