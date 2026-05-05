@@ -756,22 +756,31 @@ generalExpenseForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const expense = {
+    id: crypto.randomUUID(),
     date: document.getElementById("general-expense-date").value,
-    category: document.getElementById("general-expense-category").value,
-    description: document.getElementById("general-expense-description").value,
-    amount: parseFloat(document.getElementById("general-expense-amount").value),
+    category: document.getElementById("general-expense-category").value.trim(),
+    description: document.getElementById("general-expense-description").value.trim(),
+    amount: Number(document.getElementById("general-expense-amount").value) || 0,
     payment_method: document.getElementById("general-expense-payment").value
   };
 
-  const { error } = await supabase
+  if (!expense.date || !expense.category || expense.amount <= 0) {
+    alert("Remplis la date, la catégorie et un montant supérieur à 0.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient
     .from("general_expenses")
-    .insert([expense]);
+    .insert([expense])
+    .select();
 
   if (error) {
-    console.error(error);
-    alert("Erreur lors de l'ajout");
-  } else {
-    alert("Charge ajoutée ✅");
-    generalExpenseForm.reset();
+    console.error("Erreur charge générale :", error);
+    alert("Erreur lors de l'ajout de la charge générale.");
+    return;
   }
+
+  console.log("Charge générale ajoutée :", data);
+  alert("Charge générale ajoutée ✅");
+  generalExpenseForm.reset();
 });
