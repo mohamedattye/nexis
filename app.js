@@ -792,12 +792,18 @@ function renderEcoIntelligence(enrichedTrips = []) {
 
   if (!ecoScoreEl || !ecoFuelEl || !ecoCo2El || !ecoTipEl) return;
 
+  const tripIds = enrichedTrips.map((trip) => String(trip.id));
+
+  const relatedExpenses = tripExpenses.filter((expense) =>
+    tripIds.includes(String(expense.trip_id))
+  );
+
   let totalKm = 0;
   let totalLiters = 0;
 
-  enrichedTrips.forEach((trip) => {
-    const km = Number(trip.km) || 0;
-    const consumption = Number(trip.consumption) || 0;
+  relatedExpenses.forEach((expense) => {
+    const km = Number(expense.km) || 0;
+    const consumption = Number(expense.consumption) || 0;
 
     totalKm += km;
 
@@ -809,24 +815,20 @@ function renderEcoIntelligence(enrichedTrips = []) {
   const co2Kg = totalLiters * 2.68;
 
   let ecoScore = "—";
-  let ecoTip =
-    "Ajoute les kilomètres et la consommation pour activer l’analyse environnementale.";
+  let ecoTip = "Ajoute les kilomètres et la consommation pour activer l’analyse environnementale.";
 
   if (totalKm > 0 && totalLiters > 0) {
     const avgConsumption = (totalLiters / totalKm) * 100;
 
     if (avgConsumption <= 30) {
       ecoScore = "88/100";
-      ecoTip =
-        "Bonne efficacité carburant : flotte bien optimisée.";
+      ecoTip = "Bonne efficacité carburant : flotte bien optimisée.";
     } else if (avgConsumption <= 40) {
       ecoScore = "72/100";
-      ecoTip =
-        "Optimisation possible : surveiller les trajets et la consommation.";
+      ecoTip = "Optimisation possible : surveiller les trajets et la consommation.";
     } else {
       ecoScore = "58/100";
-      ecoTip =
-        "Consommation élevée : optimisation recommandée.";
+      ecoTip = "Consommation élevée : optimisation recommandée.";
     }
   }
 
