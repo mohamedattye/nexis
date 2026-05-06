@@ -280,7 +280,7 @@ function render() {
   renderStats(enrichedTrips, filteredCosts);
   renderTripTable(enrichedTrips);
   renderCostTable(reviewCosts);
-  renderEcoIntelligence();
+  renderEcoIntelligence(enrichedTrips);
   renderReviewTable(truckSummary);
   renderFinanceChart(enrichedTrips, filteredCosts);
   renderTruckChart(truckSummary);
@@ -784,3 +784,54 @@ generalExpenseForm.addEventListener("submit", async (e) => {
   console.log("Charge générale ajoutée :", data);
   generalExpenseForm.reset();
 });
+function renderEcoIntelligence(enrichedTrips = []) {
+  const ecoScoreEl = document.getElementById("eco-score");
+  const ecoFuelEl = document.getElementById("eco-fuel");
+  const ecoCo2El = document.getElementById("eco-co2");
+  const ecoTipEl = document.getElementById("eco-tip");
+
+  if (!ecoScoreEl || !ecoFuelEl || !ecoCo2El || !ecoTipEl) return;
+
+  let totalKm = 0;
+  let totalLiters = 0;
+
+  enrichedTrips.forEach((trip) => {
+    const km = Number(trip.km) || 0;
+    const consumption = Number(trip.consumption) || 0;
+
+    totalKm += km;
+
+    if (km > 0 && consumption > 0) {
+      totalLiters += (km * consumption) / 100;
+    }
+  });
+
+  const co2Kg = totalLiters * 2.68;
+
+  let ecoScore = "—";
+  let ecoTip =
+    "Ajoute les kilomètres et la consommation pour activer l’analyse environnementale.";
+
+  if (totalKm > 0 && totalLiters > 0) {
+    const avgConsumption = (totalLiters / totalKm) * 100;
+
+    if (avgConsumption <= 30) {
+      ecoScore = "88/100";
+      ecoTip =
+        "Bonne efficacité carburant : flotte bien optimisée.";
+    } else if (avgConsumption <= 40) {
+      ecoScore = "72/100";
+      ecoTip =
+        "Optimisation possible : surveiller les trajets et la consommation.";
+    } else {
+      ecoScore = "58/100";
+      ecoTip =
+        "Consommation élevée : optimisation recommandée.";
+    }
+  }
+
+  ecoScoreEl.textContent = ecoScore;
+  ecoFuelEl.textContent = `${Math.round(totalLiters)} L`;
+  ecoCo2El.textContent = `${Math.round(co2Kg)} kg`;
+  ecoTipEl.textContent = ecoTip;
+}
