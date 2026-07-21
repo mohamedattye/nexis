@@ -42,9 +42,10 @@ tripForm.addEventListener('submit', async (event) => {
   }
 
   const submitButton = tripForm.querySelector('button[type="submit"]');
-
+const submissionToken = crypto.randomUUID();
   const trip = {
-    id: crypto.randomUUID(),
+    id: submissionToken,
+submission_token: submissionToken,
     truck: document.getElementById('truck').value.trim(),
     date: document.getElementById('date').value,
     loadingZone: document.getElementById('loading-zone').value.trim(),
@@ -715,10 +716,17 @@ async function saveTripToSupabase(trip) {
     .from("trips")
     .insert([trip]);
 
-  if (error) {
+ if (error) {
     console.error("Erreur Supabase :", error);
+
+    if (error.code === "23505") {
+        alert("Cette course a déjà été enregistrée.");
+    } else {
+        alert("Erreur lors de l'enregistrement de la course.");
+    }
+
     return;
-  }
+}
 
   await loadTripsFromSupabase();
 }
