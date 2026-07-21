@@ -116,14 +116,57 @@ truckFilter.addEventListener('input', render);
 reviewMonthFilter.addEventListener('input', render);
 exportCsvButton.addEventListener('click', exportFilteredTripsAsCsv);
 
-tableBody.addEventListener('click', (event) => {
+tableBody.addEventListener('click', async (event) => {
   const button = event.target.closest('button[data-trip-id]');
+
   if (!button) {
     return;
   }
 
-  trips = trips.filter((trip) => trip.id !== button.dataset.tripId);
-  persistTrips();
+  const tripId = button.dataset.tripId;
+
+  const confirmation = confirm(
+    'Voulez-vous supprimer définitivement cette course et ses dépenses ?'
+  );
+
+  if (!confirmation) {
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Suppression...';
+
+  const { error: expenseError } = await supabaseClient
+    .from('trip_expenses')
+    .delete()
+    .eq('trip_id', tripId);
+
+  if (expenseError) {
+    console.error('Erreur suppression dépenses :', expenseError);
+    alert("Impossible de supprimer les dépenses liées à cette course.");
+    button.disabled = false;
+    button.textContent = 'Supprimer';
+    return;
+  }
+
+  const { error: tripError } = await supabaseClient
+    .from('trips')
+    .delete()
+    .eq('id', tripId);
+
+  if (tripError) {
+    console.error('Erreur suppression course :', tripError);
+    alert("Impossible de supprimer cette course dans Supabase.");
+    button.disabled = false;
+    button.textContent = 'Supprimer';
+    return;
+  }
+
+  trips = trips.filter((trip) => String(trip.id) !== String(tripId));
+  tripExpenses = tripExpenses.filter(
+    (expense) => String(expense.trip_id) !== String(tripId)
+  );
+
   render();
 });
 
