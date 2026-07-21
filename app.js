@@ -32,8 +32,16 @@ let tripExpenses = []
 initializeFilters();
 loadTripsFromSupabase();
 loadTripExpensesFromSupabase();
+let isSavingTrip = false;
+
 tripForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+
+  if (isSavingTrip) {
+    return;
+  }
+
+  const submitButton = tripForm.querySelector('button[type="submit"]');
 
   const trip = {
     id: crypto.randomUUID(),
@@ -44,12 +52,52 @@ tripForm.addEventListener('submit', async (event) => {
     revenue: Number(document.getElementById('revenue').value)
   };
 
-  if (!trip.truck || !trip.date || !trip.loadingZone || !trip.unloadingZone || Number.isNaN(trip.revenue)) {
+  if (
+    !trip.truck ||
+    !trip.date ||
+    !trip.loadingZone ||
+    !trip.unloadingZone ||
+    Number.isNaN(trip.revenue)
+  ) {
     return;
   }
 
-  await saveTripToSupabase(trip);
-  tripForm.reset();
+  const duplicateExists = trips.some((existingTrip) =>
+    String(existingTrip.truck || '').trim().toUpperCase() ===
+      trip.truck.toUpperCase() &&
+    String(existingTrip.date || '') === trip.date &&
+    String(existingTrip.loadingZone || '').trim().toUpperCase() ===
+      trip.loadingZone.toUpperCase() &&
+    String(existingTrip.unloadingZone || '').trim().toUpperCase() ===
+      trip.unloadingZone.toUpperCase() &&
+    Number(existingTrip.revenue || 0) === trip.revenue
+  );
+
+  if (duplicateExists) {
+    alert(
+      'Cette course existe déjà : même camion, même date, même trajet et même montant.'
+    );
+    return;
+  }
+
+  isSavingTrip = true;
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Enregistrement...';
+  }
+
+  try {
+    await saveTripToSupabase(trip);
+    tripForm.reset();
+  } finally {
+    isSavingTrip = false;
+
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Ajouter';
+    }
+  }
 });
 tripExpenseForm.addEventListener('submit', async (event) => {
   event.preventDefault();
