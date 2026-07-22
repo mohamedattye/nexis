@@ -108,3 +108,13 @@
   script.dataset.nexisFastTripSave = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-quick-navigation]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'quick-navigation.js';
+  script.defer = true;
+  script.dataset.nexisQuickNavigation = 'true';
+  document.body.appendChild(script);
+})();
