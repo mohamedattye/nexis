@@ -201,3 +201,13 @@
   script.dataset.nexisSearchableTrucks = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-banner-v2]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'banner-v2.js';
+  script.defer = true;
+  script.dataset.nexisBannerV2 = 'true';
+  document.body.appendChild(script);
+})();
