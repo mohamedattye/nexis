@@ -7,190 +7,202 @@
     <link rel="icon" type="image/png" href="assets/logo-nexis.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <body>
     <main class="container">
       <header class="hero-v2">
-  <div class="hero-v2__content">
-    <div class="hero-v2__top">
-      <div class="hero-brand">
-        <div class="hero-brand__logo-wrap">
-          <img src="assets/logo-nexis.png" alt="Nexis Logistics" class="hero-brand__logo" />
+        <div class="hero-v2__content">
+          <div class="hero-v2__top">
+            <div class="hero-brand">
+              <div class="hero-brand__logo-wrap">
+                <img src="assets/logo-nexis.png" alt="Nexis Logistics" class="hero-brand__logo" />
+              </div>
+              <div>
+                <p class="hero-brand__eyebrow">NEXIS LOGISTICS</p>
+                <h1 class="hero-v2__title">Pilotage logistique intelligent pour flottes B2B</h1>
+                <p class="hero-v2__subtitle">
+                  Centralisez les courses, reliez les dépenses réelles à chaque mission,
+                  et pilotez la rentabilité opérationnelle de vos camions en temps réel.
+                </p>
+              </div>
+            </div>
+
+            <div class="hero-v2__badges">
+              <span class="hero-badge">Flotte connectée</span>
+              <span class="hero-badge">Rentabilité temps réel</span>
+              <span class="hero-badge">Pilotage multi-camions</span>
+            </div>
+          </div>
         </div>
-        <div>
-          <p class="hero-brand__eyebrow">NEXIS LOGISTICS</p>
-          <h1 class="hero-v2__title">Pilotage logistique intelligent pour flottes B2B</h1>
-          <p class="hero-v2__subtitle">
-            Centralisez les courses, reliez les dépenses réelles à chaque mission,
-            et pilotez la rentabilité opérationnelle de vos camions en temps réel.
-          </p>
+      </header>
+
+      <section class="kpi-strip">
+        <article class="kpi-box">
+          <div class="kpi-box__icon">💰</div>
+          <div>
+            <p>Chiffre d’affaires</p>
+            <h3 id="kpi-revenue">0 FCFA</h3>
+          </div>
+        </article>
+
+        <article class="kpi-box">
+          <div class="kpi-box__icon">🧾</div>
+          <div>
+            <p>Dépenses variables</p>
+            <h3 id="kpi-expenses">0 FCFA</h3>
+          </div>
+        </article>
+
+        <article class="kpi-box">
+          <div class="kpi-box__icon">🏢</div>
+          <div>
+            <p>Charges fixes</p>
+            <h3 id="kpi-fixed">0 FCFA</h3>
+          </div>
+        </article>
+
+        <article class="kpi-box">
+          <div class="kpi-box__icon">📈</div>
+          <div>
+            <p>Résultat net</p>
+            <h3 id="kpi-profit">0 FCFA</h3>
+          </div>
+        </article>
+      </section>
+
+      <section class="eco-strip">
+        <div class="eco-item">
+          <span>🌱</span>
+          <div>
+            <p>Eco Score</p>
+            <strong id="eco-score">—</strong>
+          </div>
         </div>
-      </div>
 
-      <div class="hero-v2__badges">
-        <span class="hero-badge">Flotte connectée</span>
-        <span class="hero-badge">Rentabilité temps réel</span>
-        <span class="hero-badge">Pilotage multi-camions</span>
-      </div>
-    </div>
-  </div>
-</header>
-<section class="kpi-strip">
-  <article class="kpi-box">
-    <div class="kpi-box__icon">💰</div>
-    <div>
-      <p>Chiffre d’affaires</p>
-      <h3 id="kpi-revenue">0 FCFA</h3>
-    </div>
-  </article>
+        <div class="eco-item">
+          <span>⛽</span>
+          <div>
+            <p>Carburant estimé</p>
+            <strong id="eco-fuel">—</strong>
+          </div>
+        </div>
 
-  <article class="kpi-box">
-    <div class="kpi-box__icon">🧾</div>
-    <div>
-      <p>Dépenses variables</p>
-      <h3 id="kpi-expenses">0 FCFA</h3>
-    </div>
-  </article>
+        <div class="eco-item">
+          <span>🌍</span>
+          <div>
+            <p>CO₂ estimé</p>
+            <strong id="eco-co2">—</strong>
+          </div>
+        </div>
 
-  <article class="kpi-box">
-    <div class="kpi-box__icon">🏢</div>
-    <div>
-      <p>Charges fixes</p>
-      <h3 id="kpi-fixed">0 FCFA</h3>
-    </div>
-  </article>
-
-  <article class="kpi-box">
-    <div class="kpi-box__icon">📈</div>
-    <div>
-      <p>Résultat net</p>
-      <h3 id="kpi-profit">0 FCFA</h3>
-    </div>
-  </article>
-</section>
-
-<section class="eco-strip">
-  <div class="eco-item">
-    <span>🌱</span>
-    <div>
-      <p>Eco Score</p>
-      <strong id="eco-score">—</strong>
-    </div>
-  </div>
-
-  <div class="eco-item">
-    <span>⛽</span>
-    <div>
-      <p>Carburant estimé</p>
-      <strong id="eco-fuel">—</strong>
-    </div>
-  </div>
-
-  <div class="eco-item">
-    <span>🌍</span>
-    <div>
-      <p>CO₂ estimé</p>
-      <strong id="eco-co2">—</strong>
-    </div>
-  </div>
-
-  <div class="eco-tip" id="eco-tip">
-    Optimisation environnementale basée sur les trajets et la consommation.
-  </div>
-</section>
+        <div class="eco-tip" id="eco-tip">
+          Optimisation environnementale basée sur les trajets et la consommation.
+        </div>
+      </section>
 
       <section class="card">
-  
         <div class="card-head">
-  <div class="card-head__icon">🚛</div>
-  <div>
-    <p class="card-head__kicker">OPERATIONS</p>
-    <h2>Nouvelle course</h2>
-  </div>
-</div>
+          <div class="card-head__icon">🚛</div>
+          <div>
+            <p class="card-head__kicker">OPERATIONS</p>
+            <h2>Nouvelle course</h2>
+          </div>
+        </div>
+
         <form id="trip-form" class="form-grid">
+          <label>
+            Camion
+            <input type="text" id="truck" required />
+          </label>
 
-  <label>Camion
-    <input type="text" id="truck" required />
-  </label>
+          <label>
+            Date
+            <input type="date" id="date" required />
+          </label>
 
-  <label>Date
-    <input type="date" id="date" required />
-  </label>
+          <label>
+            Zone de chargement
+            <input type="text" id="loading-zone" required />
+          </label>
 
-  <label>Zone de chargement
-    <input type="text" id="loading-zone" required />
-  </label>
+          <label>
+            Zone de déchargement
+            <input type="text" id="unloading-zone" required />
+          </label>
 
-  <label>Zone de déchargement
-    <input type="text" id="unloading-zone" required />
-  </label>
+          <label>
+            Chiffre d'Affaire (FCFA)
+            <input type="number" id="revenue" required />
+          </label>
 
-  <label>Chiffre d'Affaire (FCFA)
-    <input type="number" id="revenue" required />
-  </label>
+          <button type="submit">Ajouter</button>
+        </form>
+      </section>
 
-  <button type="submit">Ajouter</button>
-
-</form>
-</section>
       <section class="card">
-
         <div class="card-head">
-  <div class="card-head__icon">📊</div>
-  <div>
-    <p class="card-head__kicker">VARIABLE COSTS</p>
-    <h2>Dépenses liées à la course</h2>
-  </div>
-</div>
+          <div class="card-head__icon">📊</div>
+          <div>
+            <p class="card-head__kicker">VARIABLE COSTS</p>
+            <h2>Dépenses liées à la course</h2>
+          </div>
+        </div>
 
-  <form id="trip-expense-form" class="form-grid">
-   <label>Course
-  <select id="expense-trip-id" required>
-    <option value="">Sélectionner une course</option>
-  </select>
-</label>
+        <form id="trip-expense-form" class="form-grid">
+          <label>
+            Course
+            <select id="expense-trip-id" required>
+              <option value="">Sélectionner une course</option>
+            </select>
+          </label>
 
-    <label>KM
-      <input type="number" id="km" min="0" step="1" placeholder="Ex: 260" required />
-    </label>
+          <label>
+            KM
+            <input type="number" id="km" min="0" step="1" placeholder="Ex: 260" required />
+          </label>
 
-    <label>Consommation aux 100 Km
-      <input type="number" id="consumption-per-100" min="0" step="0.1" placeholder="Ex: 32" required />
-    </label>
+          <label>
+            Consommation aux 100 Km
+            <input type="number" id="consumption-per-100" min="0" step="0.1" placeholder="Ex: 32" required />
+          </label>
 
-    <label>Gasoil (FCFA)
-      <input type="number" id="fuel-cost" min="0" step="100" value="0" required />
-    </label>
+          <label>
+            Gasoil (FCFA)
+            <input type="number" id="fuel-cost" min="0" step="100" value="0" required />
+          </label>
 
-    <label>Ration (FCFA)
-      <input type="number" id="ration-cost" min="0" step="100" value="0" required />
-    </label>
+          <label>
+            Ration (FCFA)
+            <input type="number" id="ration-cost" min="0" step="100" value="0" required />
+          </label>
 
-    <label>Rapido (FCFA)
-      <input type="number" id="rapido-cost" min="0" step="100" value="0" required />
-    </label>
+          <label>
+            Rapido (FCFA)
+            <input type="number" id="rapido-cost" min="0" step="100" value="0" required />
+          </label>
 
-    <label>Manœuvre (FCFA)
-      <input type="number" id="manoeuvre-cost" min="0" step="100" value="0" required />
-    </label>
+          <label>
+            Manœuvre (FCFA)
+            <input type="number" id="manoeuvre-cost" min="0" step="100" value="0" required />
+          </label>
 
-    <label>Frais annexes (FCFA)
-      <input type="number" id="misc-cost" min="0" step="100" value="0" required />
-    </label>
+          <label>
+            Frais annexes (FCFA)
+            <input type="number" id="misc-cost" min="0" step="100" value="0" required />
+          </label>
 
-    <button type="submit">Ajouter dépense</button>
-  </form>
-</section>
+          <button type="submit">Ajouter dépense</button>
+        </form>
+      </section>
 
-<section class="card">
+      <section class="card">
         <div class="card-head">
-  <div class="card-head__icon">🏢</div>
-  <div>
-    <p class="card-head__kicker">FIXED COSTS</p>
-    <h2>Charges mensuelles véhicule</h2>
-  </div>
-</div>
+          <div class="card-head__icon">🏢</div>
+          <div>
+            <p class="card-head__kicker">FIXED COSTS</p>
+            <h2>Charges mensuelles véhicule</h2>
+          </div>
+        </div>
+
         <form id="cost-form" class="form-grid">
           <label>Camion<input type="text" id="cost-truck" placeholder="Ex: Camion A" required /></label>
           <label>Mois<input type="month" id="cost-month" required /></label>
@@ -203,126 +215,127 @@
           <button type="submit">Ajouter charges</button>
         </form>
       </section>
-      </div>
-<section class="card">
-  <div class="card-head">
-    <div class="card-head__icon">🧾</div>
-    <div>
-      <p class="card-head__kicker">GENERAL COSTS</p>
-      <h2>Charges générales</h2>
-    </div>
-  </div>
 
-  <form id="general-expense-form" class="form-grid">
-    <label>Date
-      <input type="date" id="general-expense-date" required />
-    </label>
+      <section class="card">
+        <div class="card-head">
+          <div class="card-head__icon">🧾</div>
+          <div>
+            <p class="card-head__kicker">GENERAL COSTS</p>
+            <h2>Charges générales</h2>
+          </div>
+        </div>
 
-    <label>Catégorie
-      <input type="text" id="general-expense-category" placeholder="Ex: Nourriture employés" required />
-    </label>
+        <form id="general-expense-form" class="form-grid">
+          <label>
+            Date
+            <input type="date" id="general-expense-date" required />
+          </label>
 
-    <label>Description
-      <input type="text" id="general-expense-description" placeholder="Ex: Déjeuner chauffeurs" />
-    </label>
+          <label>
+            Catégorie
+            <input type="text" id="general-expense-category" placeholder="Ex: Nourriture employés" required />
+          </label>
 
-    <label>Montant (FCFA)
-      <input type="number" id="general-expense-amount" min="0" step="100" value="0" required />
-    </label>
+          <label>
+            Description
+            <input type="text" id="general-expense-description" placeholder="Ex: Déjeuner chauffeurs" />
+          </label>
 
-    <label>Moyen de paiement
-      <select id="general-expense-payment">
-        <option value="Cash">Cash</option>
-        <option value="Wave">Wave</option>
-        <option value="Orange Money">Orange Money</option>
-        <option value="Virement">Virement</option>
-        <option value="Carte">Carte</option>
-        <option value="Autre">Autre</option>
-      </select>
-    </label>
+          <label>
+            Montant (FCFA)
+            <input type="number" id="general-expense-amount" min="0" step="100" value="0" required />
+          </label>
 
-    <button type="submit">Ajouter charge générale</button>
-  </form>
-</section>
+          <label>
+            Moyen de paiement
+            <select id="general-expense-payment">
+              <option value="Cash">Cash</option>
+              <option value="Wave">Wave</option>
+              <option value="Orange Money">Orange Money</option>
+              <option value="Virement">Virement</option>
+              <option value="Carte">Carte</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </label>
+
+          <button type="submit">Ajouter charge générale</button>
+        </form>
+      </section>
+
       <section class="card filters">
-  <div class="section-title-row">
-    <div class="card-head">
-      <div class="card-head__icon">⚙️</div>
-      <div>
-        <p class="card-head__kicker">CONTROLS</p>
-        <h2>Filtres & actions</h2>
-      </div>
-    </div>
+        <div class="section-title-row">
+          <div class="card-head">
+            <div class="card-head__icon">⚙️</div>
+            <div>
+              <p class="card-head__kicker">CONTROLS</p>
+              <h2>Filtres & actions</h2>
+            </div>
+          </div>
 
-    <div class="filters-actions">
-      <button id="export-csv" type="button" class="secondary-btn">Exporter CSV</button>
-      <button id="export-pdf" type="button" class="secondary-btn">Exporter PDF</button>
-    </div>
-  </div>
+          <div class="filters-actions">
+            <button id="export-csv" type="button" class="secondary-btn">Exporter CSV</button>
+            <button id="export-pdf" type="button" class="secondary-btn">Exporter PDF</button>
+          </div>
+        </div>
 
-  <div class="form-grid filters-grid">
-    <label>Mois
-      <input type="month" id="month-filter" />
-    </label>
+        <div class="form-grid filters-grid">
+          <label>
+            Mois
+            <input type="month" id="month-filter" />
+          </label>
 
-    <label>Camion
-      <input type="text" id="truck-filter" placeholder="Tous les camions" />
-    </label>
+          <label>
+            Camion
+            <input type="text" id="truck-filter" placeholder="Tous les camions" />
+          </label>
 
-    <label>Mois de revue
-      <input type="month" id="review-month-filter" />
-    </label>
-  </div>
-</section>
+          <label>
+            Mois de revue
+            <input type="month" id="review-month-filter" />
+          </label>
+        </div>
+      </section>
 
       <section class="stats" id="stats"></section>
+
       <section class="card executive-summary">
-  <div class="card-head">
-    <div class="card-head__icon">📈</div>
-    <div>
-      <p class="card-head__kicker">EXECUTIVE SUMMARY</p>
-      <h2>Résumé exécutif</h2>
-    </div>
-  </div>
+        <div class="card-head">
+          <div class="card-head__icon">📈</div>
+          <div>
+            <p class="card-head__kicker">EXECUTIVE SUMMARY</p>
+            <h2>Résumé exécutif</h2>
+          </div>
+        </div>
 
-  <div class="summary-grid">
+        <div class="summary-grid">
+          <div class="summary-card">
+            <p>Revenu total</p>
+            <h3 id="summary-revenue">0 FCFA</h3>
+          </div>
 
-    <div class="summary-card">
-      <p>Revenu total</p>
-      <h3 id="summary-revenue">0 FCFA</h3>
-    </div>
+          <div class="summary-card">
+            <p>Dépenses totales</p>
+            <h3 id="summary-expenses">0 FCFA</h3>
+          </div>
 
-    <div class="summary-card">
-      <p>Dépenses totales</p>
-      <h3 id="summary-expenses">0 FCFA</h3>
-    </div>
+          <div class="summary-card">
+            <p>Résultat net</p>
+            <h3 id="summary-profit">0 FCFA</h3>
+          </div>
 
-    <div class="summary-card">
-      <p>Résultat net</p>
-      <h3 id="summary-profit">0 FCFA</h3>
-    </div>
-
-    <div class="summary-card">
-      <p>Ratio rentabilité</p>
-      <h3 id="summary-ratio">0%</h3>
-    </div>
-
-  </div>
-</section>
-  <div class="card-head">
-    <div class="card-head__icon">📈</div>
-    <div>
-      <p class="card-head__kicker">EXECUTIVE SUMMARY</p>
-      <h2>Résumé exécutif</h2>
-    </div>
-  </div>
-</section>
+          <div class="summary-card">
+            <p>Ratio rentabilité</p>
+            <h3 id="summary-ratio">0%</h3>
+          </div>
+        </div>
+      </section>
 
       <section class="charts-grid">
         <article class="card">
           <h2>Revenus vs Dépenses réelles (mois filtré)</h2>
           <canvas id="finance-chart" width="600" height="260"></canvas>
         </article>
+
         <article class="card">
           <h2>Résultat net réel par camion (revue mensuelle)</h2>
           <canvas id="truck-chart" width="600" height="260"></canvas>
@@ -334,7 +347,15 @@
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr><th>Date</th><th>Camion</th><th>Zone</th><th>Revenu</th><th>Dépenses course</th><th>Marge opérationnelle</th><th>Action</th></tr>
+              <tr>
+                <th>Date</th>
+                <th>Camion</th>
+                <th>Zone</th>
+                <th>Revenu</th>
+                <th>Dépenses course</th>
+                <th>Marge opérationnelle</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody id="trip-table-body"></tbody>
           </table>
@@ -346,7 +367,18 @@
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr><th>Mois</th><th>Camion</th><th>Entretien</th><th>Mécanique</th><th>Assurance</th><th>Salaire</th><th>Charges sociales</th><th>Autres</th><th>Total charges</th><th>Action</th></tr>
+              <tr>
+                <th>Mois</th>
+                <th>Camion</th>
+                <th>Entretien</th>
+                <th>Mécanique</th>
+                <th>Assurance</th>
+                <th>Salaire</th>
+                <th>Charges sociales</th>
+                <th>Autres</th>
+                <th>Total charges</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody id="cost-table-body"></tbody>
           </table>
@@ -358,7 +390,16 @@
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr><th>Camion</th><th>Courses</th><th>Zones</th><th>CA</th><th>Dépenses course</th><th>Marge opérationnelle</th><th>Charges fixes & mécaniques</th><th>Résultat net réel</th></tr>
+              <tr>
+                <th>Camion</th>
+                <th>Courses</th>
+                <th>Zones</th>
+                <th>CA</th>
+                <th>Dépenses course</th>
+                <th>Marge opérationnelle</th>
+                <th>Charges fixes & mécaniques</th>
+                <th>Résultat net réel</th>
+              </tr>
             </thead>
             <tbody id="review-table-body"></tbody>
           </table>
@@ -370,8 +411,9 @@
       <article class="card stat-card"><h3></h3><p></p></article>
     </template>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+    <script src="app.js"></script>
+    <script src="dashboard-fix.js"></script>
   </body>
 </html>
-
