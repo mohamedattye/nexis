@@ -118,3 +118,13 @@
   script.dataset.nexisQuickNavigation = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-move-eco-results]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'move-eco-results.js';
+  script.defer = true;
+  script.dataset.nexisMoveEcoResults = 'true';
+  document.body.appendChild(script);
+})();
