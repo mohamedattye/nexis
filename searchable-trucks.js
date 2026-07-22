@@ -98,3 +98,13 @@
     window.setTimeout(readPlatesFromCurrentTrips, delay);
   });
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-fast-trip-save]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'fast-trip-save.js';
+  script.defer = true;
+  script.dataset.nexisFastTripSave = 'true';
+  document.body.appendChild(script);
+})();
