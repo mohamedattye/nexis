@@ -138,3 +138,13 @@
   script.dataset.nexisInstitutionalPolish = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-unified-summary]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'unified-monthly-summary.js';
+  script.defer = true;
+  script.dataset.nexisUnifiedSummary = 'true';
+  document.body.appendChild(script);
+})();
