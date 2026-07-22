@@ -41,7 +41,7 @@
     .hero-v2 {
       position: relative;
       overflow: hidden;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       padding: 0;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 26px;
@@ -69,111 +69,124 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 32px;
-      min-height: 190px;
-      padding: 30px 34px;
+      gap: 24px;
+      min-height: 160px;
+      padding: 22px 30px;
     }
 
     .nexis-banner__brand {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
       min-width: 0;
+      flex: 1 1 auto;
     }
 
     .nexis-banner__logo-wrap {
-      width: 112px;
-      height: 112px;
-      flex: 0 0 112px;
+      width: 104px;
+      height: 104px;
+      flex: 0 0 104px;
       display: grid;
       place-items: center;
       overflow: hidden;
-      border-radius: 24px;
+      border-radius: 22px;
       background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.12);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 12px 28px rgba(0,0,0,.22);
     }
 
     .nexis-banner__logo {
-      width: 100%;
-      height: 100%;
+      width: 130%;
+      height: 130%;
+      max-width: none;
       object-fit: contain;
-      padding: 7px;
+      padding: 0;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,.24));
     }
 
     .nexis-banner__copy {
-      max-width: 760px;
+      min-width: 0;
+      max-width: 660px;
     }
 
     .nexis-banner__eyebrow {
-      margin: 0 0 7px;
-      color: #8fb7ff;
-      font-size: 12px;
+      margin: 0 0 6px;
+      color: #9fc1ff;
+      font-size: 12.5px;
       font-weight: 800;
       letter-spacing: .18em;
     }
 
     .nexis-banner h1 {
       margin: 0;
-      max-width: 760px;
+      max-width: 660px;
       color: #fff;
-      font-size: clamp(28px, 3vw, 45px);
+      font-size: clamp(27px, 2vw, 32px);
       line-height: 1.08;
-      letter-spacing: -.035em;
+      letter-spacing: -.03em;
     }
 
     .nexis-banner__subtitle {
-      max-width: 680px;
-      margin: 12px 0 0;
-      color: #cbd8ec;
-      font-size: 16px;
-      line-height: 1.55;
+      max-width: 640px;
+      margin: 9px 0 0;
+      color: #e1e9f5;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.45;
     }
 
     .nexis-banner__badges {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: flex-end;
-      gap: 10px;
-      max-width: 390px;
+      align-items: center;
+      gap: 8px;
+      max-width: none;
+      flex: 0 0 auto;
     }
 
     .nexis-banner__badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 13px;
-      border: 1px solid rgba(151,184,235,.20);
-      border-radius: 14px;
-      background: rgba(255,255,255,.055);
-      color: #edf4ff;
-      font-size: 13px;
-      font-weight: 700;
+      gap: 7px;
+      padding: 9px 11px;
+      border: 1px solid rgba(151,184,235,.24);
+      border-radius: 13px;
+      background: rgba(255,255,255,.065);
+      color: #f4f7fc;
+      font-size: 12.5px;
+      font-weight: 750;
       white-space: nowrap;
       backdrop-filter: blur(6px);
     }
 
     .nexis-banner__badge svg {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
       fill: none;
-      stroke: #67a0ff;
+      stroke: #76a9ff;
       stroke-width: 1.8;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
-    @media (max-width: 1050px) {
+    @media (min-width: 1180px) {
+      .nexis-banner h1 {
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 1179px) {
       .nexis-banner {
         align-items: flex-start;
         flex-direction: column;
       }
 
       .nexis-banner__badges {
+        flex-wrap: wrap;
         justify-content: flex-start;
         max-width: none;
-        padding-left: 136px;
+        padding-left: 124px;
       }
     }
 
@@ -184,7 +197,7 @@
 
       .nexis-banner {
         min-height: auto;
-        padding: 24px 20px;
+        padding: 22px 20px;
       }
 
       .nexis-banner__brand {
