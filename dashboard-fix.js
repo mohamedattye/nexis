@@ -191,3 +191,13 @@
   actionObserver.observe(table, { childList: true, subtree: true });
   compactActions();
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-searchable-trucks]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'searchable-trucks.js';
+  script.defer = true;
+  script.dataset.nexisSearchableTrucks = 'true';
+  document.body.appendChild(script);
+})();
