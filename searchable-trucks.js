@@ -128,3 +128,13 @@
   script.dataset.nexisMoveEcoResults = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-institutional-polish]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'institutional-polish.js';
+  script.defer = true;
+  script.dataset.nexisInstitutionalPolish = 'true';
+  document.body.appendChild(script);
+})();

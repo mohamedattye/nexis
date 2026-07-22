@@ -1,0 +1,306 @@
+/* Finition institutionnelle Nexis — uniquement visuelle */
+:root {
+  --nexis-page: #f4f7fb;
+  --nexis-border: rgba(15, 23, 42, 0.09);
+  --nexis-shadow: 0 10px 28px rgba(15, 23, 42, 0.055);
+  --nexis-shadow-soft: 0 5px 16px rgba(15, 23, 42, 0.045);
+}
+
+html {
+  scroll-padding-top: 84px;
+}
+
+html,
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37, 99, 235, 0.055), transparent 25%),
+    var(--nexis-page);
+}
+
+.container {
+  padding-top: 22px;
+}
+
+/* En-tête plus compact et plus institutionnel */
+.hero-v2 {
+  border-radius: 20px !important;
+  padding: 22px 24px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.hero-v2__top {
+  align-items: center !important;
+  gap: 18px !important;
+}
+
+.hero-brand {
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.hero-brand__logo-wrap {
+  width: 68px !important;
+  height: 68px !important;
+  min-width: 68px;
+  border-radius: 15px !important;
+}
+
+.hero-brand__eyebrow {
+  margin: 0 0 4px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.16em !important;
+}
+
+.hero-v2__title {
+  max-width: 660px;
+  margin-bottom: 7px !important;
+  font-size: clamp(1.35rem, 2vw, 1.65rem) !important;
+  line-height: 1.08;
+}
+
+.hero-v2__subtitle {
+  margin: 0;
+  max-width: 650px !important;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.hero-v2__badges {
+  max-width: 310px;
+  gap: 7px !important;
+}
+
+.hero-badge {
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  font-size: 10px !important;
+  font-weight: 700;
+}
+
+/* Navigation : barre opaque, fine et sans effet de pastille flottante */
+.nexis-quick-nav {
+  top: 0 !important;
+  z-index: 100 !important;
+  width: 100% !important;
+  max-width: none !important;
+  justify-content: center;
+  margin: 0 0 16px !important;
+  padding: 7px 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--nexis-border) !important;
+  border-radius: 0 0 14px 14px !important;
+  background: rgba(244, 247, 251, 0.98) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055) !important;
+  backdrop-filter: blur(12px);
+}
+
+.nexis-quick-nav button {
+  height: 36px !important;
+  min-width: 86px;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.nexis-quick-nav button:hover,
+.nexis-quick-nav button.is-active {
+  background: #e7effc !important;
+  color: #1d5fc5 !important;
+}
+
+.nexis-nav-target {
+  scroll-margin-top: 84px !important;
+}
+
+/* Cartes et indicateurs plus sobres */
+.card {
+  border-radius: 18px !important;
+  border-color: var(--nexis-border) !important;
+  box-shadow: var(--nexis-shadow) !important;
+  padding: 22px !important;
+  margin-bottom: 16px !important;
+  backdrop-filter: none !important;
+}
+
+.kpi-strip {
+  gap: 12px !important;
+  margin: 14px 0 16px !important;
+}
+
+.kpi-box {
+  min-height: 76px;
+  gap: 11px !important;
+  padding: 13px 14px !important;
+  border-radius: 16px !important;
+  box-shadow: var(--nexis-shadow-soft) !important;
+}
+
+.kpi-box__icon {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  border-radius: 12px !important;
+  font-size: 18px !important;
+}
+
+.kpi-box p {
+  margin-bottom: 3px !important;
+  font-size: 12px !important;
+}
+
+.kpi-box h3 {
+  font-size: 1.03rem !important;
+}
+
+.card-head {
+  gap: 11px !important;
+  margin-bottom: 14px !important;
+}
+
+.card-head__icon {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 13px !important;
+  font-size: 20px !important;
+}
+
+.card-head__kicker {
+  margin-bottom: 2px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.1em !important;
+}
+
+.card-head h2,
+.card > h2 {
+  font-size: 1.08rem !important;
+}
+
+/* Formulaires plus calmes */
+label {
+  gap: 6px !important;
+  font-size: 0.82rem !important;
+}
+
+input,
+select {
+  height: 43px !important;
+  border-radius: 10px !important;
+  border-color: rgba(15, 23, 42, 0.11) !important;
+}
+
+button {
+  border-radius: 10px !important;
+}
+
+button[type="submit"],
+.primary-btn {
+  box-shadow: 0 7px 16px rgba(37, 99, 235, 0.18) !important;
+}
+
+.secondary-btn {
+  box-shadow: none !important;
+}
+
+/* Tableaux plus lisibles et moins massifs */
+.table-wrapper {
+  border-radius: 14px !important;
+}
+
+thead th {
+  padding: 12px 14px !important;
+  background: #f4f7fb !important;
+  color: #52627a !important;
+  font-size: 0.78rem !important;
+}
+
+tbody td {
+  padding: 14px !important;
+  font-size: 0.88rem !important;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.012);
+}
+
+tbody tr:hover {
+  background: rgba(37, 99, 235, 0.045) !important;
+}
+
+/* Synthèse et graphiques */
+.stat-card,
+.summary-card {
+  border-radius: 15px !important;
+  box-shadow: none !important;
+}
+
+.stat-card {
+  min-height: 100px !important;
+  padding: 16px !important;
+}
+
+.stat-card p {
+  font-size: 1.65rem !important;
+}
+
+.summary-grid {
+  gap: 14px !important;
+  margin-top: 15px !important;
+}
+
+.summary-card {
+  border: 1px solid rgba(15, 23, 42, 0.055);
+  padding: 16px !important;
+}
+
+canvas {
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 900px) {
+  .hero-v2__badges {
+    display: none !important;
+  }
+
+  .hero-v2__top,
+  .hero-brand {
+    align-items: flex-start !important;
+  }
+
+  .nexis-quick-nav {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 14px 10px 42px !important;
+  }
+
+  .hero-v2 {
+    padding: 18px !important;
+    border-radius: 16px !important;
+  }
+
+  .hero-brand__logo-wrap {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+  }
+
+  .nexis-quick-nav button {
+    min-width: 76px;
+    padding: 0 10px !important;
+  }
+
+  .card {
+    padding: 17px !important;
+    border-radius: 15px !important;
+  }
+}
