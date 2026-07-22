@@ -74,3 +74,120 @@
 
   syncDashboard();
 })();
+
+(() => {
+  const table = document.getElementById('trip-table-body');
+  if (!table) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    #trip-table-body td.trip-actions {
+      display: table-cell;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    #trip-table-body td.trip-actions .trip-action-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #trip-table-body .edit-btn,
+    #trip-table-body .delete-btn {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      padding: 0;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      font-size: 0;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    #trip-table-body .edit-btn {
+      border: 1px solid #d6e3f6;
+      background: #f7faff;
+      color: #2563b9;
+    }
+
+    #trip-table-body .delete-btn {
+      border: 1px solid #efd7d7;
+      background: #fff9f9;
+      color: #c93b3b;
+    }
+
+    #trip-table-body .edit-btn:hover {
+      background: #edf4ff;
+      border-color: #b9cff0;
+    }
+
+    #trip-table-body .delete-btn:hover {
+      background: #fff0f0;
+      border-color: #e8bcbc;
+    }
+
+    #trip-table-body .edit-btn svg,
+    #trip-table-body .delete-btn svg {
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const editIcon = `
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 20h4.2L19 9.2a2.1 2.1 0 0 0 0-3L17.8 5a2.1 2.1 0 0 0-3 0L4 15.8V20Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="m13.7 6.1 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+
+  const deleteIcon = `
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 7h14M9 7V4h6v3m-8 0 1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 11v5M14 11v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+
+  const compactActions = () => {
+    table.querySelectorAll('button.delete-btn[data-trip-id]').forEach((deleteButton) => {
+      if (deleteButton.dataset.compactReady === 'true') return;
+
+      const cell = deleteButton.closest('td');
+      if (!cell) return;
+
+      deleteButton.dataset.compactReady = 'true';
+      cell.classList.add('trip-actions');
+
+      let wrapper = cell.querySelector('.trip-action-wrap');
+      if (!wrapper) {
+        wrapper = document.createElement('div');
+        wrapper.className = 'trip-action-wrap';
+        while (cell.firstChild) wrapper.appendChild(cell.firstChild);
+        cell.appendChild(wrapper);
+      }
+
+      const editButton = wrapper.querySelector('button[data-edit-trip-id]');
+      if (editButton && editButton.dataset.compactReady !== 'true') {
+        editButton.dataset.compactReady = 'true';
+        editButton.innerHTML = editIcon;
+        editButton.title = 'Modifier la course';
+        editButton.setAttribute('aria-label', 'Modifier la course');
+      }
+
+      deleteButton.innerHTML = deleteIcon;
+      deleteButton.title = 'Supprimer la course';
+      deleteButton.setAttribute('aria-label', 'Supprimer la course');
+    });
+  };
+
+  const actionObserver = new MutationObserver(() => {
+    window.requestAnimationFrame(compactActions);
+  });
+
+  actionObserver.observe(table, { childList: true, subtree: true });
+  compactActions();
+})();
