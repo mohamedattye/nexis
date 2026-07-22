@@ -14,17 +14,60 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .trip-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .edit-btn {
-      border: 1px solid #b9d1ff;
-      background: #eef5ff;
-      color: #1761c9;
-      border-radius: 10px;
-      padding: 9px 13px;
-      font-weight: 700;
-      cursor: pointer;
+    .trip-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
     }
-    .edit-btn:hover { background: #deebff; }
+
+    .trip-actions .edit-btn,
+    .trip-actions .delete-btn {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      padding: 0;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .trip-actions .edit-btn {
+      border: 1px solid #d5e2f5;
+      background: #f7faff;
+      color: #2563b9;
+    }
+
+    .trip-actions .delete-btn {
+      border: 1px solid #f0d5d5;
+      background: #fff9f9;
+      color: #c93b3b;
+    }
+
+    .trip-actions .edit-btn:hover {
+      background: #edf4ff;
+      border-color: #b9cff0;
+      transform: translateY(-1px);
+    }
+
+    .trip-actions .delete-btn:hover {
+      background: #fff0f0;
+      border-color: #e8bcbc;
+      transform: translateY(-1px);
+    }
+
+    .trip-actions button svg {
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+
     .cancel-edit-btn {
       border: 1px solid #d8dee9;
       background: #fff;
@@ -34,6 +77,7 @@
       font-weight: 700;
       cursor: pointer;
     }
+
     .editing-notice {
       grid-column: 1 / -1;
       background: #eef5ff;
@@ -45,6 +89,18 @@
     }
   `;
   document.head.appendChild(style);
+
+  const editIcon = `
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 20h4.2L19 9.2a2.1 2.1 0 0 0 0-3L17.8 5a2.1 2.1 0 0 0-3 0L4 15.8V20Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="m13.7 6.1 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+
+  const deleteIcon = `
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 7h14M9 7V4h6v3m-8 0 1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 11v5M14 11v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
 
   const cancelButton = document.createElement('button');
   cancelButton.type = 'button';
@@ -97,14 +153,22 @@
   function addEditButtons() {
     table.querySelectorAll('button.delete-btn[data-trip-id]').forEach((deleteButton) => {
       const cell = deleteButton.closest('td');
-      if (!cell || cell.querySelector('[data-edit-trip-id]')) return;
+      if (!cell) return;
 
       cell.classList.add('trip-actions');
+      deleteButton.innerHTML = deleteIcon;
+      deleteButton.title = 'Supprimer la course';
+      deleteButton.setAttribute('aria-label', 'Supprimer la course');
+
+      if (cell.querySelector('[data-edit-trip-id]')) return;
+
       const editButton = document.createElement('button');
       editButton.type = 'button';
       editButton.className = 'edit-btn';
       editButton.dataset.editTripId = deleteButton.dataset.tripId;
-      editButton.textContent = 'Modifier';
+      editButton.innerHTML = editIcon;
+      editButton.title = 'Modifier la course';
+      editButton.setAttribute('aria-label', 'Modifier la course');
       cell.insertBefore(editButton, deleteButton);
     });
   }
