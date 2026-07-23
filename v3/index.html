@@ -23,40 +23,45 @@
   <main class="workspace">
     <header class="topbar">
       <div><small id="eyebrow">Vue synthétique</small><h1 id="page-title">Tableau de bord</h1></div>
-      <button class="primary" data-view="new-trip">Nouvelle course</button>
+      <div class="topbar-actions"><button class="ghost">Aujourd’hui</button><button class="primary" data-view="new-trip">Nouvelle course</button></div>
     </header>
 
     <section class="view active" id="dashboard">
+      <div class="welcome-line"><div><span class="welcome-kicker">Bonjour Mohamed</span><h2>Voici l’essentiel de votre activité.</h2></div><span class="period-pill">Juillet 2026</span></div>
+
       <div class="kpi-grid">
-        <article><span>Chiffre d'affaires du mois</span><strong>13 241 200 FCFA</strong></article>
-        <article><span>Dépenses du mois</span><strong>5 035 000 FCFA</strong></article>
-        <article><span>Résultat net</span><strong>8 206 200 FCFA</strong></article>
-        <article><span>Courses réalisées</span><strong>56</strong></article>
+        <article class="kpi-card blue"><div class="kpi-top"><span>Chiffre d'affaires du mois</span><span class="trend positive-bg">+12,4%</span></div><strong>13 241 200 FCFA</strong><small>vs mois précédent</small></article>
+        <article class="kpi-card amber"><div class="kpi-top"><span>Dépenses du mois</span><span class="trend neutral-bg">38%</span></div><strong>5 035 000 FCFA</strong><small>du chiffre d'affaires</small></article>
+        <article class="kpi-card green"><div class="kpi-top"><span>Résultat net</span><span class="trend positive-bg">+8,1%</span></div><strong>8 206 200 FCFA</strong><small>Marge nette : 62%</small></article>
+        <article class="kpi-card violet"><div class="kpi-top"><span>Courses réalisées</span><span class="trend neutral-bg">3 aujourd’hui</span></div><strong>56</strong><small>sur la période</small></article>
       </div>
 
       <div class="dashboard-grid">
         <section class="panel">
           <div class="panel-head"><div><small>Activité récente</small><h2>Dernières courses</h2></div><button class="link-btn" data-view="trips">Voir tout</button></div>
           <table>
-            <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Marge</th></tr></thead>
+            <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Statut</th><th>Marge</th></tr></thead>
             <tbody>
-              <tr><td>23/07/2026</td><td>AB-324-ES</td><td>BATIPLUS → SANDIARA</td><td class="positive">137 000 FCFA</td></tr>
-              <tr><td>22/07/2026</td><td>AB-990-ER</td><td>IBS → TOUBA</td><td class="positive">148 800 FCFA</td></tr>
-              <tr><td>22/07/2026</td><td>AB-326-ES</td><td>IBS → TOUBA</td><td class="positive">150 000 FCFA</td></tr>
+              <tr><td>23/07/2026</td><td><span class="truck-badge">AB-324-ES</span></td><td>BATIPLUS → SANDIARA</td><td><span class="status done">Terminée</span></td><td class="positive">137 000 FCFA</td></tr>
+              <tr><td>22/07/2026</td><td><span class="truck-badge">AB-990-ER</span></td><td>IBS → TOUBA</td><td><span class="status done">Terminée</span></td><td class="positive">148 800 FCFA</td></tr>
+              <tr><td>22/07/2026</td><td><span class="truck-badge">AB-326-ES</span></td><td>IBS → TOUBA</td><td><span class="status done">Terminée</span></td><td class="positive">150 000 FCFA</td></tr>
             </tbody>
           </table>
         </section>
 
-        <section class="panel compact">
-          <div class="panel-head"><div><small>À surveiller</small><h2>Alertes</h2></div></div>
-          <div class="empty-state"><strong>Aucune alerte critique</strong><span>Les alertes flotte et dépenses apparaîtront ici.</span></div>
+        <section class="panel compact alert-panel">
+          <div class="panel-head"><div><small>À surveiller</small><h2>Alertes</h2></div><span class="alert-count">2</span></div>
+          <div class="alert-list">
+            <article><span class="alert-dot warning"></span><div><strong>Assurance à vérifier</strong><small>AB-990-ER · échéance proche</small></div></article>
+            <article><span class="alert-dot info"></span><div><strong>Vidange recommandée</strong><small>AB-324-ES · dans 1 200 km</small></div></article>
+          </div>
         </section>
       </div>
     </section>
 
     <section class="view" id="new-trip">
       <section class="panel form-panel">
-        <div class="panel-head"><div><small>Saisie opérationnelle</small><h2>Nouvelle course</h2></div></div>
+        <div class="panel-head"><div><small>Saisie opérationnelle</small><h2>Nouvelle course</h2></div><span class="step-label">Étape unique</span></div>
         <form class="form-grid">
           <label>Camion<select><option>Sélectionner un camion</option></select></label>
           <label>Date<input type="date" /></label>
@@ -76,8 +81,8 @@
         <table>
           <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Revenu</th><th>Dépenses</th><th>Marge</th><th></th></tr></thead>
           <tbody>
-            <tr><td>23/07/2026</td><td>AB-324-ES</td><td>BATIPLUS → SANDIARA</td><td>160 000</td><td>23 000</td><td class="positive">137 000</td><td><button class="text-action">Ouvrir</button></td></tr>
-            <tr><td>22/07/2026</td><td>AB-990-ER</td><td>IBS → TOUBA</td><td>275 000</td><td>126 200</td><td class="positive">148 800</td><td><button class="text-action">Ouvrir</button></td></tr>
+            <tr><td>23/07/2026</td><td><span class="truck-badge">AB-324-ES</span></td><td>BATIPLUS → SANDIARA</td><td>160 000</td><td>23 000</td><td class="positive">137 000</td><td><button class="text-action">Ouvrir</button></td></tr>
+            <tr><td>22/07/2026</td><td><span class="truck-badge">AB-990-ER</span></td><td>IBS → TOUBA</td><td>275 000</td><td>126 200</td><td class="positive">148 800</td><td><button class="text-action">Ouvrir</button></td></tr>
           </tbody>
         </table>
       </section>
