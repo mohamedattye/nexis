@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nexis V3</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">NX</span><div><strong>NEXIS</strong><small>Logistics ERP</small></div></div>
+    <nav>
+      <button class="nav-item active" data-view="dashboard">Tableau de bord</button>
+      <button class="nav-item" data-view="new-trip">Nouvelle course</button>
+      <button class="nav-item" data-view="trips">Courses</button>
+      <button class="nav-item" data-view="fleet">Flotte</button>
+      <button class="nav-item" data-view="expenses">Dépenses</button>
+      <button class="nav-item" data-view="reports">Rapports</button>
+    </nav>
+    <div class="sidebar-status"><span></span><div><strong>Preview V3</strong><small>Version isolée</small></div></div>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div><small id="eyebrow">Vue synthétique</small><h1 id="page-title">Tableau de bord</h1></div>
+      <button class="primary" data-view="new-trip">Nouvelle course</button>
+    </header>
+
+    <section class="view active" id="dashboard">
+      <div class="kpi-grid">
+        <article><span>Chiffre d'affaires du mois</span><strong>13 241 200 FCFA</strong></article>
+        <article><span>Dépenses du mois</span><strong>5 035 000 FCFA</strong></article>
+        <article><span>Résultat net</span><strong>8 206 200 FCFA</strong></article>
+        <article><span>Courses réalisées</span><strong>56</strong></article>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="panel">
+          <div class="panel-head"><div><small>Activité récente</small><h2>Dernières courses</h2></div><button class="link-btn" data-view="trips">Voir tout</button></div>
+          <table>
+            <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Marge</th></tr></thead>
+            <tbody>
+              <tr><td>23/07/2026</td><td>AB-324-ES</td><td>BATIPLUS → SANDIARA</td><td class="positive">137 000 FCFA</td></tr>
+              <tr><td>22/07/2026</td><td>AB-990-ER</td><td>IBS → TOUBA</td><td class="positive">148 800 FCFA</td></tr>
+              <tr><td>22/07/2026</td><td>AB-326-ES</td><td>IBS → TOUBA</td><td class="positive">150 000 FCFA</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel compact">
+          <div class="panel-head"><div><small>À surveiller</small><h2>Alertes</h2></div></div>
+          <div class="empty-state"><strong>Aucune alerte critique</strong><span>Les alertes flotte et dépenses apparaîtront ici.</span></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="new-trip">
+      <section class="panel form-panel">
+        <div class="panel-head"><div><small>Saisie opérationnelle</small><h2>Nouvelle course</h2></div></div>
+        <form class="form-grid">
+          <label>Camion<select><option>Sélectionner un camion</option></select></label>
+          <label>Date<input type="date" /></label>
+          <label>Zone de chargement<input type="text" placeholder="Ex. Dakar" /></label>
+          <label>Zone de déchargement<input type="text" placeholder="Ex. Thiès" /></label>
+          <label>Client<input type="text" placeholder="Nom du client" /></label>
+          <label>Montant (FCFA)<input type="number" placeholder="0" /></label>
+          <div class="form-actions"><button type="button" class="secondary">Annuler</button><button type="submit" class="primary">Enregistrer la course</button></div>
+        </form>
+      </section>
+    </section>
+
+    <section class="view" id="trips">
+      <section class="panel">
+        <div class="panel-head"><div><small>Suivi opérationnel</small><h2>Courses</h2></div><button class="primary" data-view="new-trip">Nouvelle course</button></div>
+        <div class="filters"><input type="search" placeholder="Rechercher une course" /><input type="date" /><select><option>Tous les camions</option></select></div>
+        <table>
+          <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Revenu</th><th>Dépenses</th><th>Marge</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>23/07/2026</td><td>AB-324-ES</td><td>BATIPLUS → SANDIARA</td><td>160 000</td><td>23 000</td><td class="positive">137 000</td><td><button class="text-action">Ouvrir</button></td></tr>
+            <tr><td>22/07/2026</td><td>AB-990-ER</td><td>IBS → TOUBA</td><td>275 000</td><td>126 200</td><td class="positive">148 800</td><td><button class="text-action">Ouvrir</button></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section class="view" id="fleet"><section class="panel placeholder"><h2>Flotte</h2><p>Ce module sera construit après validation du style V3.</p></section></section>
+    <section class="view" id="expenses"><section class="panel placeholder"><h2>Dépenses</h2><p>Ce module sera construit après validation du style V3.</p></section></section>
+    <section class="view" id="reports"><section class="panel placeholder"><h2>Rapports</h2><p>Ce module sera construit après validation du style V3.</p></section></section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
