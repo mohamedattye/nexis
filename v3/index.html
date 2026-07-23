@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="light" />
   <title>Nexis V3</title>
   <link rel="stylesheet" href="styles.css?v=20260723-production-2" />
+  <link rel="stylesheet" href="mission.css?v=20260723-production-2" />
 </head>
 <body>
   <aside class="sidebar">
@@ -29,25 +30,17 @@
 
     <section class="view active" id="dashboard">
       <div class="welcome-line"><div><span class="welcome-kicker">Bonjour Mohamed</span><h2>Voici l’essentiel de votre activité.</h2></div><span class="period-pill" id="period-label">Période en cours</span></div>
-
       <div class="kpi-grid">
         <article class="kpi-card blue"><div class="kpi-top"><span>Chiffre d'affaires du mois</span></div><strong id="kpi-revenue">—</strong><small id="kpi-revenue-note">Chargement des données</small></article>
         <article class="kpi-card amber"><div class="kpi-top"><span>Dépenses missions</span></div><strong id="kpi-expenses">—</strong><small id="kpi-expenses-note">Chargement des données</small></article>
         <article class="kpi-card green"><div class="kpi-top"><span>Marge opérationnelle</span></div><strong id="kpi-profit">—</strong><small id="kpi-profit-note">Chargement des données</small></article>
         <article class="kpi-card violet"><div class="kpi-top"><span>Missions réalisées</span></div><strong id="kpi-count">—</strong><small id="kpi-count-note">Chargement des données</small></article>
       </div>
-
       <div class="dashboard-grid">
         <section class="panel">
           <div class="panel-head"><div><small>Activité récente</small><h2>Dernières missions</h2></div><button class="link-btn" data-view="trips">Voir tout</button></div>
-          <div class="table-scroll">
-            <table>
-              <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Statut</th><th>Marge</th></tr></thead>
-              <tbody id="recent-missions-body"><tr><td colspan="5" class="table-message">Chargement…</td></tr></tbody>
-            </table>
-          </div>
+          <div class="table-scroll"><table><thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Statut</th><th>Marge</th></tr></thead><tbody id="recent-missions-body"><tr><td colspan="5" class="table-message">Chargement…</td></tr></tbody></table></div>
         </section>
-
         <section class="panel compact alert-panel">
           <div class="panel-head"><div><small>À surveiller</small><h2>Alertes</h2></div><span class="alert-count" id="alert-count">0</span></div>
           <div class="empty-state" id="alerts-container"><strong>Aucune alerte critique</strong><span>Les anomalies de marge et les informations flotte apparaîtront ici.</span></div>
@@ -60,39 +53,28 @@
         <div><span class="welcome-kicker">Saisie opérationnelle</span><h2>Créer une nouvelle mission</h2><p>Une saisie claire, guidée et enregistrée directement dans Nexis.</p></div>
         <span class="step-label">Moins de 30 secondes</span>
       </div>
-
       <div class="mission-workspace">
         <section class="panel mission-form-panel">
           <div class="section-title"><span class="section-number">1</span><div><h3>Informations de la mission</h3><p>Renseignez uniquement les éléments nécessaires au départ.</p></div></div>
-
           <form class="form-grid" id="mission-form" novalidate>
             <label>Camion<select id="mission-truck" required><option value="">Chargement des camions…</option></select></label>
             <label>Date de la mission<input id="mission-date" type="date" required /></label>
-
             <div class="route-fields field-wide">
               <label>Zone de chargement<input id="mission-loading-zone" list="mission-zone-options" type="text" placeholder="Ex. Dakar" autocomplete="off" required /></label>
               <span class="route-arrow" aria-hidden="true">→</span>
               <label>Zone de déchargement<input id="mission-unloading-zone" list="mission-zone-options" type="text" placeholder="Ex. Thiès" autocomplete="off" required /></label>
             </div>
             <datalist id="mission-zone-options"></datalist>
-
             <label class="field-wide amount-field">Montant facturé (FCFA)<input id="mission-revenue" type="number" min="0" step="100" placeholder="0" required /><small>Le montant convenu avec le client, hors dépenses de mission.</small></label>
-
-            <div class="frequent-routes field-wide">
-              <div class="mini-head"><div><strong>Trajets fréquents</strong><span>Un clic pour préremplir le trajet et le dernier tarif utilisé.</span></div></div>
-              <div class="route-suggestions" id="frequent-routes"><span class="helper-loading">Analyse de vos trajets…</span></div>
-            </div>
-
+            <div class="frequent-routes field-wide"><div class="mini-head"><div><strong>Trajets fréquents</strong><span>Un clic pour préremplir le trajet et le dernier tarif utilisé.</span></div></div><div class="route-suggestions" id="frequent-routes"><span class="helper-loading">Analyse de vos trajets…</span></div></div>
             <p class="form-error field-wide" id="mission-form-error" role="alert" hidden></p>
             <div class="form-actions"><button type="reset" class="secondary">Effacer</button><button type="submit" class="primary primary-large" id="mission-submit">Enregistrer la mission</button></div>
           </form>
         </section>
-
         <aside class="mission-side">
           <section class="panel mission-review">
             <div class="review-head"><div><small>Aperçu en direct</small><h3>Résumé de la mission</h3></div><span id="mission-progress-label">1/4</span></div>
             <div class="progress-track"><span id="mission-progress-bar"></span></div>
-
             <div class="review-list">
               <div><span>Camion</span><strong id="mission-truck-preview">À sélectionner</strong></div>
               <div><span>Date</span><strong id="mission-date-preview">Aujourd’hui</strong></div>
@@ -101,7 +83,6 @@
             </div>
             <p class="review-note">La mission apparaîtra immédiatement dans le tableau de bord et le Centre des missions.</p>
           </section>
-
           <section class="panel reuse-panel">
             <div class="panel-head"><div><small>Gain de temps</small><h3>Dernière mission</h3></div></div>
             <div id="last-mission-helper" class="helper-loading">Recherche de la dernière mission…</div>
@@ -114,12 +95,7 @@
       <section class="panel">
         <div class="panel-head"><div><small>Suivi opérationnel</small><h2>Centre des missions</h2><p class="panel-description" id="missions-result-count">Chargement…</p></div><button class="primary" data-view="new-trip">Créer une mission</button></div>
         <div class="filters"><input id="mission-search" type="search" placeholder="Rechercher un camion ou un trajet" /><input id="mission-month" type="month" /><select id="mission-truck-filter"><option value="">Tous les camions</option></select></div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Revenu</th><th>Dépenses</th><th>Marge</th><th></th></tr></thead>
-            <tbody id="missions-body"><tr><td colspan="7" class="table-message">Chargement…</td></tr></tbody>
-          </table>
-        </div>
+        <div class="table-scroll"><table><thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Revenu</th><th>Dépenses</th><th>Marge</th><th></th></tr></thead><tbody id="missions-body"><tr><td colspan="7" class="table-message">Chargement…</td></tr></tbody></table></div>
       </section>
     </section>
 
@@ -131,5 +107,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js?v=20260723-production-2"></script>
+  <script src="mission-enhancements.js?v=20260723-production-2"></script>
 </body>
 </html>
