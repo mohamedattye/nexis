@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <title>Nexis V3</title>
-  <link rel="stylesheet" href="styles.css?v=20260723-production-1" />
+  <link rel="stylesheet" href="styles.css?v=20260723-production-2" />
 </head>
 <body>
   <aside class="sidebar">
@@ -56,22 +56,58 @@
     </section>
 
     <section class="view" id="new-trip">
-      <section class="panel form-panel">
-        <div class="panel-head"><div><small>Saisie opérationnelle</small><h2>Créer une mission</h2><p class="panel-description">Les champs essentiels uniquement. Les dépenses pourront être ajoutées ensuite depuis la mission.</p></div><span class="step-label">Saisie rapide</span></div>
-        <form class="form-grid" id="mission-form" novalidate>
-          <label>Camion<select id="mission-truck" required><option value="">Chargement des camions…</option></select></label>
-          <label>Date<input id="mission-date" type="date" required /></label>
-          <label>Zone de chargement<input id="mission-loading-zone" type="text" placeholder="Ex. Dakar" autocomplete="off" required /></label>
-          <label>Zone de déchargement<input id="mission-unloading-zone" type="text" placeholder="Ex. Thiès" autocomplete="off" required /></label>
-          <label class="field-wide">Montant facturé (FCFA)<input id="mission-revenue" type="number" min="0" step="100" placeholder="0" required /></label>
-          <div class="mission-summary field-wide">
-            <div><span>Mission</span><strong id="mission-route-preview">Trajet à définir</strong></div>
-            <div><span>Montant</span><strong id="mission-revenue-preview">0 FCFA</strong></div>
-          </div>
-          <p class="form-error field-wide" id="mission-form-error" role="alert" hidden></p>
-          <div class="form-actions"><button type="reset" class="secondary">Effacer</button><button type="submit" class="primary" id="mission-submit">Enregistrer la mission</button></div>
-        </form>
-      </section>
+      <div class="mission-page-head">
+        <div><span class="welcome-kicker">Saisie opérationnelle</span><h2>Créer une nouvelle mission</h2><p>Une saisie claire, guidée et enregistrée directement dans Nexis.</p></div>
+        <span class="step-label">Moins de 30 secondes</span>
+      </div>
+
+      <div class="mission-workspace">
+        <section class="panel mission-form-panel">
+          <div class="section-title"><span class="section-number">1</span><div><h3>Informations de la mission</h3><p>Renseignez uniquement les éléments nécessaires au départ.</p></div></div>
+
+          <form class="form-grid" id="mission-form" novalidate>
+            <label>Camion<select id="mission-truck" required><option value="">Chargement des camions…</option></select></label>
+            <label>Date de la mission<input id="mission-date" type="date" required /></label>
+
+            <div class="route-fields field-wide">
+              <label>Zone de chargement<input id="mission-loading-zone" list="mission-zone-options" type="text" placeholder="Ex. Dakar" autocomplete="off" required /></label>
+              <span class="route-arrow" aria-hidden="true">→</span>
+              <label>Zone de déchargement<input id="mission-unloading-zone" list="mission-zone-options" type="text" placeholder="Ex. Thiès" autocomplete="off" required /></label>
+            </div>
+            <datalist id="mission-zone-options"></datalist>
+
+            <label class="field-wide amount-field">Montant facturé (FCFA)<input id="mission-revenue" type="number" min="0" step="100" placeholder="0" required /><small>Le montant convenu avec le client, hors dépenses de mission.</small></label>
+
+            <div class="frequent-routes field-wide">
+              <div class="mini-head"><div><strong>Trajets fréquents</strong><span>Un clic pour préremplir le trajet et le dernier tarif utilisé.</span></div></div>
+              <div class="route-suggestions" id="frequent-routes"><span class="helper-loading">Analyse de vos trajets…</span></div>
+            </div>
+
+            <p class="form-error field-wide" id="mission-form-error" role="alert" hidden></p>
+            <div class="form-actions"><button type="reset" class="secondary">Effacer</button><button type="submit" class="primary primary-large" id="mission-submit">Enregistrer la mission</button></div>
+          </form>
+        </section>
+
+        <aside class="mission-side">
+          <section class="panel mission-review">
+            <div class="review-head"><div><small>Aperçu en direct</small><h3>Résumé de la mission</h3></div><span id="mission-progress-label">1/4</span></div>
+            <div class="progress-track"><span id="mission-progress-bar"></span></div>
+
+            <div class="review-list">
+              <div><span>Camion</span><strong id="mission-truck-preview">À sélectionner</strong></div>
+              <div><span>Date</span><strong id="mission-date-preview">Aujourd’hui</strong></div>
+              <div><span>Trajet</span><strong id="mission-route-preview">Trajet à définir</strong></div>
+              <div class="review-total"><span>Montant facturé</span><strong id="mission-revenue-preview">0 FCFA</strong></div>
+            </div>
+            <p class="review-note">La mission apparaîtra immédiatement dans le tableau de bord et le Centre des missions.</p>
+          </section>
+
+          <section class="panel reuse-panel">
+            <div class="panel-head"><div><small>Gain de temps</small><h3>Dernière mission</h3></div></div>
+            <div id="last-mission-helper" class="helper-loading">Recherche de la dernière mission…</div>
+          </section>
+        </aside>
+      </div>
     </section>
 
     <section class="view" id="trips">
@@ -94,6 +130,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=20260723-production-1"></script>
+  <script src="app.js?v=20260723-production-2"></script>
 </body>
 </html>
