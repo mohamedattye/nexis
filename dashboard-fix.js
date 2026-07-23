@@ -221,3 +221,21 @@
   script.dataset.nexisModernDashboardV3 = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (!document.querySelector('link[data-nexis-v2-style]')) {
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = 'nexis-v2.css';
+    style.dataset.nexisV2Style = 'true';
+    document.head.appendChild(style);
+  }
+
+  if (!document.querySelector('script[data-nexis-v2-shell-loader]')) {
+    const script = document.createElement('script');
+    script.src = 'nexis-v2-shell.js';
+    script.defer = true;
+    script.dataset.nexisV2ShellLoader = 'true';
+    document.body.appendChild(script);
+  }
+})();
