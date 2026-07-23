@@ -1,241 +1,114 @@
 (() => {
-  const statsContainer = document.getElementById('stats');
-
-  if (!statsContainer) {
-    return;
-  }
-
-  const normalizeLabel = (value) =>
-    String(value || '')
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-
-  const readStats = () => {
-    const values = new Map();
-
-    statsContainer.querySelectorAll('.stat-card').forEach((card) => {
-      const label = normalizeLabel(card.querySelector('h3')?.textContent);
-      const value = card.querySelector('p')?.textContent?.trim();
-
-      if (label && value) {
-        values.set(label, value);
-      }
-    });
-
-    return values;
+  const loadStyle = (href, key) => {
+    if (document.querySelector(`link[data-${key}]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `${href}?v=20260723-2`;
+    link.setAttribute(`data-${key}`, 'true');
+    document.head.appendChild(link);
   };
 
-  const setText = (id, value) => {
-    const element = document.getElementById(id);
-
-    if (element && value) {
-      element.textContent = value;
-    }
-  };
-
-  const parseAmount = (value) => {
-    const digits = String(value || '').replace(/[^0-9-]/g, '');
-    const amount = Number(digits);
-    return Number.isFinite(amount) ? amount : 0;
-  };
-
-  const syncDashboard = () => {
-    const stats = readStats();
-    const revenue = stats.get("chiffre d'affaires") || '0 FCFA';
-    const variableExpenses = stats.get('depenses course') || '0 FCFA';
-    const fixedExpenses = stats.get('charges fixes/mecaniques') || '0 FCFA';
-    const netProfit = stats.get('resultat net reel') || '0 FCFA';
-
-    setText('kpi-revenue', revenue);
-    setText('kpi-expenses', variableExpenses);
-    setText('kpi-fixed', fixedExpenses);
-    setText('kpi-profit', netProfit);
-
-    const totalExpensesAmount =
-      parseAmount(variableExpenses) + parseAmount(fixedExpenses);
-    const revenueAmount = parseAmount(revenue);
-    const ratio = revenueAmount > 0
-      ? Math.round((parseAmount(netProfit) / revenueAmount) * 100)
-      : 0;
-
-    setText('summary-revenue', revenue);
-    setText(
-      'summary-expenses',
-      `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(totalExpensesAmount)} FCFA`
-    );
-    setText('summary-profit', netProfit);
-    setText('summary-ratio', `${ratio}%`);
-  };
-
-  const observer = new MutationObserver(syncDashboard);
-  observer.observe(statsContainer, { childList: true, subtree: true });
-
-  syncDashboard();
-})();
-
-(() => {
-  const table = document.getElementById('trip-table-body');
-  if (!table) return;
-
-  const style = document.createElement('style');
-  style.textContent = `
-    #trip-table-body td.trip-actions {
-      display: table-cell;
-      white-space: nowrap;
-      vertical-align: middle;
-    }
-
-    #trip-table-body td.trip-actions .trip-action-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #trip-table-body .edit-btn,
-    #trip-table-body .delete-btn {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      padding: 0;
-      border-radius: 9px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: none;
-      font-size: 0;
-      line-height: 1;
-      cursor: pointer;
-    }
-
-    #trip-table-body .edit-btn {
-      border: 1px solid #d6e3f6;
-      background: #f7faff;
-      color: #2563b9;
-    }
-
-    #trip-table-body .delete-btn {
-      border: 1px solid #efd7d7;
-      background: #fff9f9;
-      color: #c93b3b;
-    }
-
-    #trip-table-body .edit-btn:hover {
-      background: #edf4ff;
-      border-color: #b9cff0;
-    }
-
-    #trip-table-body .delete-btn:hover {
-      background: #fff0f0;
-      border-color: #e8bcbc;
-    }
-
-    #trip-table-body .edit-btn svg,
-    #trip-table-body .delete-btn svg {
-      width: 16px;
-      height: 16px;
-      pointer-events: none;
-    }
-  `;
-  document.head.appendChild(style);
-
-  const editIcon = `
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 20h4.2L19 9.2a2.1 2.1 0 0 0 0-3L17.8 5a2.1 2.1 0 0 0-3 0L4 15.8V20Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="m13.7 6.1 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>`;
-
-  const deleteIcon = `
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 7h14M9 7V4h6v3m-8 0 1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M10 11v5M14 11v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>`;
-
-  const compactActions = () => {
-    table.querySelectorAll('button.delete-btn[data-trip-id]').forEach((deleteButton) => {
-      if (deleteButton.dataset.compactReady === 'true') return;
-
-      const cell = deleteButton.closest('td');
-      if (!cell) return;
-
-      deleteButton.dataset.compactReady = 'true';
-      cell.classList.add('trip-actions');
-
-      let wrapper = cell.querySelector('.trip-action-wrap');
-      if (!wrapper) {
-        wrapper = document.createElement('div');
-        wrapper.className = 'trip-action-wrap';
-        while (cell.firstChild) wrapper.appendChild(cell.firstChild);
-        cell.appendChild(wrapper);
-      }
-
-      const editButton = wrapper.querySelector('button[data-edit-trip-id]');
-      if (editButton && editButton.dataset.compactReady !== 'true') {
-        editButton.dataset.compactReady = 'true';
-        editButton.innerHTML = editIcon;
-        editButton.title = 'Modifier la course';
-        editButton.setAttribute('aria-label', 'Modifier la course');
-      }
-
-      deleteButton.innerHTML = deleteIcon;
-      deleteButton.title = 'Supprimer la course';
-      deleteButton.setAttribute('aria-label', 'Supprimer la course');
-    });
-  };
-
-  const actionObserver = new MutationObserver(() => {
-    window.requestAnimationFrame(compactActions);
-  });
-
-  actionObserver.observe(table, { childList: true, subtree: true });
-  compactActions();
-})();
-
-(() => {
-  if (document.querySelector('script[data-nexis-searchable-trucks]')) return;
-
-  const script = document.createElement('script');
-  script.src = 'searchable-trucks.js';
-  script.defer = true;
-  script.dataset.nexisSearchableTrucks = 'true';
-  document.body.appendChild(script);
-})();
-
-(() => {
-  if (document.querySelector('script[data-nexis-banner-v2]')) return;
-
-  const script = document.createElement('script');
-  script.src = 'banner-v2.js';
-  script.defer = true;
-  script.dataset.nexisBannerV2 = 'true';
-  document.body.appendChild(script);
-})();
-
-(() => {
-  if (document.querySelector('script[data-nexis-modern-dashboard-v3]')) return;
-
-  const script = document.createElement('script');
-  script.src = 'modern-dashboard-v3.js';
-  script.defer = true;
-  script.dataset.nexisModernDashboardV3 = 'true';
-  document.body.appendChild(script);
-})();
-
-(() => {
-  if (!document.querySelector('link[data-nexis-v2-style]')) {
-    const style = document.createElement('link');
-    style.rel = 'stylesheet';
-    style.href = 'nexis-v2.css';
-    style.dataset.nexisV2Style = 'true';
-    document.head.appendChild(style);
-  }
-
-  if (!document.querySelector('script[data-nexis-v2-shell-loader]')) {
+  const loadScript = (src, key) => {
+    if (document.querySelector(`script[data-${key}]`)) return;
     const script = document.createElement('script');
-    script.src = 'nexis-v2-shell.js';
-    script.defer = true;
-    script.dataset.nexisV2ShellLoader = 'true';
+    script.src = `${src}?v=20260723-2`;
+    script.async = false;
+    script.setAttribute(`data-${key}`, 'true');
     document.body.appendChild(script);
-  }
+  };
+
+  const replaceBrokenLogos = () => {
+    document.querySelectorAll('img[src*="logo-nexis"]').forEach((img) => {
+      const fallback = document.createElement('div');
+      fallback.className = 'nexis-logo-fallback';
+      fallback.textContent = 'NX';
+      img.addEventListener('error', () => img.replaceWith(fallback), { once: true });
+      if (img.complete && img.naturalWidth === 0) img.replaceWith(fallback);
+    });
+  };
+
+  const buildShell = () => {
+    if (document.querySelector('[data-nexis-v2-shell]')) return;
+    const main = document.querySelector('main.container');
+    if (!main || !main.parentNode) return;
+
+    document.body.dataset.nexisV2Shell = 'true';
+
+    const shell = document.createElement('div');
+    shell.className = 'nexis-v2-shell';
+    shell.dataset.nexisV2Shell = 'true';
+
+    const sidebar = document.createElement('aside');
+    sidebar.className = 'nexis-v2-sidebar';
+    sidebar.innerHTML = `
+      <div class="nexis-v2-brand">
+        <div class="nexis-logo-fallback">NX</div>
+        <div><strong>NEXIS</strong><span>Pilotage logistique</span></div>
+      </div>
+      <nav class="nexis-v2-nav" aria-label="Navigation principale">
+        <button type="button" class="is-active" data-target="top"><span>⌂</span>Tableau de bord</button>
+        <button type="button" data-target="trip-form"><span>↗</span>Nouvelle course</button>
+        <button type="button" data-target="trip-table-body"><span>▤</span>Courses</button>
+        <button type="button" data-target="cost-form"><span>▣</span>Flotte & charges</button>
+        <button type="button" data-target="general-expense-form"><span>₣</span>Dépenses</button>
+        <button type="button" data-target="finance-chart"><span>⌁</span>Rapports</button>
+      </nav>
+      <div class="nexis-v2-sidebar-note">
+        <span class="nexis-v2-status-dot"></span>
+        <div><strong>Preview sécurisée</strong><small>Données Supabase connectées</small></div>
+      </div>`;
+
+    const workspace = document.createElement('div');
+    workspace.className = 'nexis-v2-workspace';
+
+    const topbar = document.createElement('header');
+    topbar.className = 'nexis-v2-topbar';
+    topbar.innerHTML = `
+      <button type="button" class="nexis-v2-menu" aria-label="Ouvrir le menu">☰</button>
+      <div><p>Centre de contrôle</p><h2>Vue d'ensemble de l'activité</h2></div>
+      <div class="nexis-v2-topbar-actions">
+        <button type="button" class="nexis-v2-search">⌕ <span>Rechercher</span></button>
+        <button type="button" class="nexis-v2-primary" data-target="trip-form">+ Nouvelle course</button>
+      </div>`;
+
+    main.parentNode.insertBefore(shell, main);
+    shell.append(sidebar, workspace);
+    workspace.append(topbar, main);
+
+    shell.querySelectorAll('[data-target]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.target;
+        if (target === 'top') window.scrollTo({ top: 0, behavior: 'smooth' });
+        else {
+          const el = document.getElementById(target);
+          (el?.closest('section') || el)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (button.closest('.nexis-v2-nav')) {
+          shell.querySelectorAll('.nexis-v2-nav button').forEach((item) => item.classList.remove('is-active'));
+          button.classList.add('is-active');
+        }
+        document.body.classList.remove('nexis-v2-menu-open');
+      });
+    });
+
+    shell.querySelector('.nexis-v2-menu')?.addEventListener('click', () => {
+      document.body.classList.toggle('nexis-v2-menu-open');
+    });
+  };
+
+  const boot = () => {
+    loadStyle('nexis-v2.css', 'nexis-v2-style');
+    replaceBrokenLogos();
+    buildShell();
+    loadScript('searchable-trucks.js', 'nexis-searchable-trucks');
+    loadScript('banner-v2.js', 'nexis-banner-v2');
+    loadScript('modern-dashboard-v3.js', 'nexis-modern-dashboard-v3');
+    window.setTimeout(() => {
+      replaceBrokenLogos();
+      buildShell();
+    }, 500);
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
 })();
