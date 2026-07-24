@@ -62,6 +62,11 @@
       'reports-module.js?v=20260724-reports-net-1',
       'Impossible de charger le module Rapports.'
     );
+    loadScriptOnce(
+      '__NEXIS_REPORTS_NET_EXTENSION_LOADING__',
+      'reports-net-extension.js?v=20260724-reports-net-1',
+      'Impossible de charger le résultat net dans Rapports.'
+    );
   }
 
   function loadDashboardNetModule() {
