@@ -7,10 +7,46 @@
     trips: 'Centre des missions',
     fleet: 'Flotte',
     expenses: 'Dépenses',
+    'vehicle-charges': 'Charges véhicules',
     reports: 'Rapports'
   };
 
   const topCreateButton = document.querySelector('.topbar-actions > .primary[data-view="new-trip"]');
+
+  function ensureVehicleChargesView() {
+    const nav = document.querySelector('.sidebar nav');
+    if (nav && !nav.querySelector('[data-view="vehicle-charges"]')) {
+      const button = document.createElement('button');
+      button.className = 'nav-item';
+      button.dataset.view = 'vehicle-charges';
+      button.textContent = 'Charges véhicules';
+      const reportsButton = nav.querySelector('[data-view="reports"]');
+      nav.insertBefore(button, reportsButton || null);
+    }
+
+    const workspace = document.querySelector('.workspace');
+    if (workspace && !document.getElementById('vehicle-charges')) {
+      const section = document.createElement('section');
+      section.className = 'view';
+      section.id = 'vehicle-charges';
+      section.innerHTML = '<section class="panel placeholder"><h2>Charges véhicules</h2><p>Chargement du module…</p></section>';
+      const reportsView = document.getElementById('reports');
+      workspace.insertBefore(section, reportsView || null);
+    }
+  }
+
+  function loadVehicleChargesModule() {
+    if (window.__NEXIS_VEHICLE_CHARGES_LOADING__) return;
+    window.__NEXIS_VEHICLE_CHARGES_LOADING__ = true;
+    const script = document.createElement('script');
+    script.src = 'vehicle-charges-module.js?v=20260724-charges-1';
+    script.defer = true;
+    script.onerror = () => {
+      window.__NEXIS_VEHICLE_CHARGES_LOADING__ = false;
+      console.error('Impossible de charger le module Charges véhicules.');
+    };
+    document.body.appendChild(script);
+  }
 
   function setView(viewId, updateHash = true) {
     const target = document.getElementById(viewId);
@@ -28,6 +64,8 @@
     if (pageTitle) pageTitle.textContent = titles[viewId] || 'Nexis';
 
     if (topCreateButton) topCreateButton.hidden = viewId === 'new-trip';
+
+    if (viewId === 'vehicle-charges') loadVehicleChargesModule();
 
     if (updateHash && location.hash !== `#${viewId}`) {
       history.replaceState(null, '', `#${viewId}`);
@@ -64,15 +102,7 @@
     if (entries) list.innerHTML = `<div class="expense-list">${entries}</div>`;
   }
 
-  function loadReportsModule() {
-    if (window.__NEXIS_REPORTS_LOADING__) return;
-    window.__NEXIS_REPORTS_LOADING__ = true;
-    const script = document.createElement('script');
-    script.src = 'reports-module.js?v=20260724-reports-1';
-    script.defer = true;
-    script.onerror = () => console.error('Impossible de charger le module Rapports.');
-    document.body.appendChild(script);
-  }
+  ensureVehicleChargesView();
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-view]');
@@ -102,5 +132,4 @@
   const initialView = location.hash.replace('#', '');
   setView(document.getElementById(initialView)?.classList.contains('view') ? initialView : 'dashboard', false);
   compactExpenseTable();
-  loadReportsModule();
 })();
