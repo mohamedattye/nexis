@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <title>Nexis V3</title>
-  <link rel="icon" href="nexis-logo.svg?v=20260723-fix-1" type="image/svg+xml" />
+  <link rel="icon" href="nexis-logo.svg?v=20260724-fix-2" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css?v=20260723-production-3" />
   <link rel="stylesheet" href="dashboard-clean.css?v=20260723-production-1" />
   <style>
@@ -15,6 +15,11 @@
     .primary:hover{box-shadow:0 8px 18px rgba(255,133,0,.32)}
     .nav-item.active{box-shadow:inset 3px 0 0 #ff940f}
     .welcome-kicker,.link-btn,.text-action{color:#df7400}
+    .topbar #eyebrow{display:none}
+    .dashboard-heading h2{font-size:24px}
+    .dashboard-heading p{display:none}
+    .mission-count{font-size:11px;color:var(--muted)}
+    .mission-count strong{font-size:12px}
     .simple-mission{max-width:980px}
     .simple-mission-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px}
     .simple-mission-head h2{font-size:23px;letter-spacing:-.025em;margin:0}
@@ -39,7 +44,7 @@
 </head>
 <body>
   <aside class="sidebar">
-    <div class="brand"><img src="nexis-logo.svg?v=20260723-fix-1" alt="Logo Nexis" class="brand-logo" /><div><strong>NEXIS</strong><small>Logistics ERP</small></div></div>
+    <div class="brand"><img src="nexis-logo.svg?v=20260724-fix-2" alt="Logo Nexis" class="brand-logo" /><div><strong>NEXIS</strong><small>Logistics ERP</small></div></div>
     <nav>
       <button class="nav-item active" data-view="dashboard">Tableau de bord</button>
       <button class="nav-item" data-view="new-trip">Créer une mission</button>
@@ -58,14 +63,14 @@
     </header>
 
     <section class="view active dashboard-clean" id="dashboard">
-      <div class="dashboard-heading"><div><h2>Vue d’ensemble</h2><p>Les chiffres utiles et les dernières opérations.</p></div><span class="period-pill" id="period-label">Période en cours</span></div>
+      <div class="dashboard-heading"><h2>Vue d’ensemble</h2><span class="period-pill" id="period-label">Période en cours</span></div>
       <div class="kpi-grid">
         <article class="kpi-card"><div class="kpi-top"><span>Chiffre d'affaires</span></div><strong id="kpi-revenue">—</strong><small id="kpi-revenue-note">Chargement des données</small></article>
         <article class="kpi-card"><div class="kpi-top"><span>Dépenses missions</span></div><strong id="kpi-expenses">—</strong><small id="kpi-expenses-note">Chargement des données</small></article>
         <article class="kpi-card"><div class="kpi-top"><span>Marge opérationnelle</span></div><strong id="kpi-profit">—</strong><small id="kpi-profit-note">Chargement des données</small></article>
       </div>
-      <div class="dashboard-alert"><span class="alert-symbol">!</span><div class="empty-state" id="alerts-container"><strong>Aucune alerte critique</strong><span>Aucune mission à marge négative sur la période en cours.</span></div><span class="alert-count" id="alert-count">0</span></div>
-      <div class="dashboard-main"><section class="panel"><div class="panel-head"><div><small>Activité récente</small><h2>Dernières missions</h2></div><div class="panel-actions"><span class="mission-count"><strong id="kpi-count">—</strong><span id="kpi-count-note">missions</span></span><button class="link-btn" data-view="trips">Voir tout</button></div></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Statut</th><th>Marge</th></tr></thead><tbody id="recent-missions-body"><tr><td colspan="5" class="table-message">Chargement…</td></tr></tbody></table></div></section></div>
+      <div class="dashboard-alert" hidden><span class="alert-symbol">!</span><div class="empty-state" id="alerts-container"><strong>Aucune alerte critique</strong><span>Aucune mission à marge négative sur la période en cours.</span></div><span class="alert-count" id="alert-count">0</span></div>
+      <div class="dashboard-main"><section class="panel"><div class="panel-head"><div><small>Activité récente</small><h2>Dernières missions</h2></div><div class="panel-actions"><span class="mission-count"><strong id="kpi-count">—</strong> missions</span><span id="kpi-count-note" class="compat-hidden"></span><button class="link-btn" data-view="trips">Voir tout</button></div></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Statut</th><th>Marge</th></tr></thead><tbody id="recent-missions-body"><tr><td colspan="5" class="table-message">Chargement…</td></tr></tbody></table></div></section></div>
     </section>
 
     <section class="view simple-mission" id="new-trip">
@@ -95,5 +100,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js?v=20260723-fix-1"></script>
+  <script src="dashboard-fixes.js?v=20260724-fix-1"></script>
 </body>
 </html>
