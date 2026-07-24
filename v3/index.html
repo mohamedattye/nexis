@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="dashboard-clean.css?v=20260723-production-1" />
   <link rel="stylesheet" href="mission-detail.css?v=20260724-detail-1" />
   <link rel="stylesheet" href="mission-detail-v2.css?v=20260724-detail-2" />
+  <link rel="stylesheet" href="fleet-module.css?v=20260724-fleet-1" />
   <style>
     .brand{gap:12px;padding-left:4px;padding-right:5px}
     .brand-logo{width:50px;height:50px;border-radius:14px;object-fit:contain;flex:0 0 auto;box-shadow:none}
@@ -96,7 +97,7 @@
 
     <section class="view" id="trips"><section class="panel"><div class="panel-head"><div><small>Suivi opérationnel</small><h2>Centre des missions</h2><p class="panel-description" id="missions-result-count">Chargement…</p></div><button class="primary" data-view="new-trip">Créer une mission</button></div><div class="filters"><input id="mission-search" type="search" placeholder="Rechercher un camion ou un trajet" /><input id="mission-month" type="month" /><select id="mission-truck-filter"><option value="">Tous les camions</option></select></div><div class="table-scroll"><table><thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Revenu</th><th>Dépenses</th><th>Marge</th><th></th></tr></thead><tbody id="missions-body"><tr><td colspan="7" class="table-message">Chargement…</td></tr></tbody></table></div></section></section>
 
-    <section class="view" id="fleet"><section class="panel placeholder"><h2>Flotte</h2><p>Le module Flotte sera le prochain chantier après validation du flux Missions.</p></section></section>
+    <section class="view" id="fleet"><section class="panel placeholder"><h2>Flotte</h2><p>Chargement du module Flotte…</p></section></section>
     <section class="view" id="expenses"><section class="panel placeholder"><h2>Dépenses</h2><p>Le module Dépenses sera connecté après le Centre des missions.</p></section></section>
     <section class="view" id="reports"><section class="panel placeholder"><h2>Rapports</h2><p>Les rapports utiliseront les mêmes données réelles et les mêmes filtres.</p></section></section>
   </main>
@@ -116,10 +117,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-test-config.js?v=20260724-test-1"></script>
   <script src="app.js?v=20260724-test-1"></script>
-  <script src="mission-create-expenses.js?v=20260724-test-1"></script>
+  <script src="mission-create-expenses.js?v=20260724-test-2"></script>
   <script src="dashboard-fixes.js?v=20260724-fix-1"></script>
   <script src="mission-detail.js?v=20260724-test-1"></script>
   <script src="mission-detail-sync.js?v=20260724-test-1"></script>
+  <script src="fleet-module.js?v=20260724-fleet-1"></script>
   <script src="ui-polish.js?v=20260724-detail-2"></script>
 </body>
 </html>
