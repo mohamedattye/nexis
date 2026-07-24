@@ -8,6 +8,7 @@
   <link rel="icon" href="nexis-logo.svg?v=20260724-fix-2" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css?v=20260723-production-3" />
   <link rel="stylesheet" href="dashboard-clean.css?v=20260723-production-1" />
+  <link rel="stylesheet" href="mission-detail.css?v=20260724-detail-1" />
   <style>
     .brand{gap:12px;padding-left:4px;padding-right:5px}
     .brand-logo{width:50px;height:50px;border-radius:14px;object-fit:contain;flex:0 0 auto;box-shadow:none}
@@ -97,9 +98,21 @@
     <section class="view" id="reports"><section class="panel placeholder"><h2>Rapports</h2><p>Les rapports utiliseront les mêmes données réelles et les mêmes filtres.</p></section></section>
   </main>
 
+  <section class="mission-drawer-shell" id="mission-detail-shell" hidden aria-label="Fiche détaillée de mission">
+    <button class="mission-drawer-overlay" type="button" data-close-mission-detail aria-label="Fermer la fiche"></button>
+    <aside class="mission-drawer" role="dialog" aria-modal="true" aria-labelledby="mission-detail-title">
+      <header class="mission-drawer-header">
+        <div class="mission-drawer-header-text"><small>Fiche mission</small><h2 id="mission-detail-title">Mission</h2></div>
+        <button class="mission-drawer-close" type="button" data-close-mission-detail aria-label="Fermer">×</button>
+      </header>
+      <div class="mission-drawer-body" id="mission-detail-body"></div>
+    </aside>
+  </section>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js?v=20260723-fix-1"></script>
   <script src="dashboard-fixes.js?v=20260724-fix-1"></script>
+  <script src="mission-detail.js?v=20260724-detail-1"></script>
 </body>
 </html>
