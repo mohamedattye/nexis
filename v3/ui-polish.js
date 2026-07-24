@@ -64,6 +64,16 @@
     if (entries) list.innerHTML = `<div class="expense-list">${entries}</div>`;
   }
 
+  function loadReportsModule() {
+    if (window.__NEXIS_REPORTS_LOADING__) return;
+    window.__NEXIS_REPORTS_LOADING__ = true;
+    const script = document.createElement('script');
+    script.src = 'reports-module.js?v=20260724-reports-1';
+    script.defer = true;
+    script.onerror = () => console.error('Impossible de charger le module Rapports.');
+    document.body.appendChild(script);
+  }
+
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-view]');
     if (!button) return;
@@ -92,4 +102,5 @@
   const initialView = location.hash.replace('#', '');
   setView(document.getElementById(initialView)?.classList.contains('view') ? initialView : 'dashboard', false);
   compactExpenseTable();
+  loadReportsModule();
 })();
