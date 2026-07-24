@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light" />
-  <title>Nexis V3</title>
+  <title>Nexis V3 — Test</title>
   <link rel="icon" href="nexis-logo.svg?v=20260724-fix-2" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css?v=20260723-production-3" />
   <link rel="stylesheet" href="dashboard-clean.css?v=20260723-production-1" />
@@ -41,7 +41,9 @@
     .simple-form .form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:9px;padding-top:4px}
     .simple-form .form-error{grid-column:1/-1}
     .compat-hidden{display:none!important}
-    @media(max-width:740px){.simple-form{grid-template-columns:1fr}.simple-form .full,.simple-form .route-row,.simple-form .form-actions{grid-column:auto}.simple-form .route-row{grid-template-columns:1fr}.simple-form .route-arrow{height:auto;transform:rotate(90deg)}.simple-form .form-actions{flex-direction:column-reverse}.simple-form .form-actions button{width:100%}}
+    .environment-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#fff7e8;border:1px solid #ffd69a;color:#9b5a00;font-size:10px;font-weight:800}
+    .environment-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#ff8a00}
+    @media(max-width:740px){.simple-form{grid-template-columns:1fr}.simple-form .full,.simple-form .route-row,.simple-form .form-actions{grid-column:auto}.simple-form .route-row{grid-template-columns:1fr}.simple-form .route-arrow{height:auto;transform:rotate(90deg)}.simple-form .form-actions{flex-direction:column-reverse}.simple-form .form-actions button{width:100%}.environment-badge{display:none}}
   </style>
 </head>
 <body>
@@ -55,13 +57,13 @@
       <button class="nav-item" data-view="expenses">Dépenses</button>
       <button class="nav-item" data-view="reports">Rapports</button>
     </nav>
-    <div class="sidebar-status"><span></span><div><strong>V3 connectée</strong><small>Supabase actif</small></div></div>
+    <div class="sidebar-status"><span></span><div><strong>V3 Test</strong><small>Base isolée active</small></div></div>
   </aside>
 
   <main class="workspace">
     <header class="topbar">
       <div><small id="eyebrow">Vue synthétique</small><h1 id="page-title">Tableau de bord</h1></div>
-      <div class="topbar-actions"><span class="sync-state" id="sync-state">Synchronisation…</span><button class="primary" data-view="new-trip">Créer une mission</button></div>
+      <div class="topbar-actions"><span class="environment-badge">Environnement test</span><span class="sync-state" id="sync-state">Synchronisation…</span><button class="primary" data-view="new-trip">Créer une mission</button></div>
     </header>
 
     <section class="view active dashboard-clean" id="dashboard">
@@ -112,9 +114,10 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=20260723-fix-1"></script>
+  <script src="supabase-test-config.js?v=20260724-test-1"></script>
+  <script src="app.js?v=20260724-test-1"></script>
   <script src="dashboard-fixes.js?v=20260724-fix-1"></script>
-  <script src="mission-detail.js?v=20260724-detail-1"></script>
+  <script src="mission-detail.js?v=20260724-test-1"></script>
   <script src="ui-polish.js?v=20260724-detail-2"></script>
 </body>
 </html>
