@@ -1,12 +1,39 @@
 (() => {
   'use strict';
 
+  const titles = {
+    dashboard: 'Tableau de bord',
+    'new-trip': 'Créer une mission',
+    trips: 'Centre des missions',
+    fleet: 'Flotte',
+    expenses: 'Dépenses',
+    reports: 'Rapports'
+  };
+
   const topCreateButton = document.querySelector('.topbar-actions > .primary[data-view="new-trip"]');
 
-  function syncTopAction() {
-    if (!topCreateButton) return;
-    const activeView = document.querySelector('.view.active')?.id || location.hash.replace('#', '');
-    topCreateButton.hidden = activeView === 'new-trip';
+  function setView(viewId, updateHash = true) {
+    const target = document.getElementById(viewId);
+    if (!target || !target.classList.contains('view')) return;
+
+    document.querySelectorAll('.view').forEach((view) => {
+      view.classList.toggle('active', view.id === viewId);
+    });
+
+    document.querySelectorAll('.nav-item[data-view]').forEach((button) => {
+      button.classList.toggle('active', button.dataset.view === viewId);
+    });
+
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle) pageTitle.textContent = titles[viewId] || 'Nexis';
+
+    if (topCreateButton) topCreateButton.hidden = viewId === 'new-trip';
+
+    if (updateHash && location.hash !== `#${viewId}`) {
+      history.replaceState(null, '', `#${viewId}`);
+    }
+
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }
 
   function compactExpenseTable() {
@@ -37,15 +64,32 @@
     if (entries) list.innerHTML = `<div class="expense-list">${entries}</div>`;
   }
 
-  document.addEventListener('click', () => window.setTimeout(syncTopAction, 0), true);
-  window.addEventListener('hashchange', syncTopAction);
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-view]');
+    if (!button) return;
 
-  const observer = new MutationObserver(() => {
-    syncTopAction();
-    compactExpenseTable();
+    const viewId = button.dataset.view;
+    if (!document.getElementById(viewId)?.classList.contains('view')) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setView(viewId);
+  }, true);
+
+  window.addEventListener('hashchange', () => {
+    const viewId = location.hash.replace('#', '');
+    setView(document.getElementById(viewId)?.classList.contains('view') ? viewId : 'dashboard', false);
   });
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden'] });
 
-  syncTopAction();
+  const detailBody = document.getElementById('mission-detail-body');
+  if (detailBody) {
+    new MutationObserver(compactExpenseTable).observe(detailBody, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  const initialView = location.hash.replace('#', '');
+  setView(document.getElementById(initialView)?.classList.contains('view') ? initialView : 'dashboard', false);
   compactExpenseTable();
 })();
