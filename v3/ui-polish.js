@@ -35,17 +35,41 @@
     }
   }
 
-  function loadVehicleChargesModule() {
-    if (window.__NEXIS_VEHICLE_CHARGES_LOADING__) return;
-    window.__NEXIS_VEHICLE_CHARGES_LOADING__ = true;
+  function loadScriptOnce(flag, source, errorMessage) {
+    if (window[flag]) return;
+    window[flag] = true;
     const script = document.createElement('script');
-    script.src = 'vehicle-charges-module.js?v=20260724-charges-1';
+    script.src = source;
     script.defer = true;
     script.onerror = () => {
-      window.__NEXIS_VEHICLE_CHARGES_LOADING__ = false;
-      console.error('Impossible de charger le module Charges véhicules.');
+      window[flag] = false;
+      console.error(errorMessage);
     };
     document.body.appendChild(script);
+  }
+
+  function loadVehicleChargesModule() {
+    loadScriptOnce(
+      '__NEXIS_VEHICLE_CHARGES_LOADING__',
+      'vehicle-charges-module.js?v=20260724-charges-2',
+      'Impossible de charger le module Charges véhicules.'
+    );
+  }
+
+  function loadReportsModule() {
+    loadScriptOnce(
+      '__NEXIS_REPORTS_LOADING__',
+      'reports-module.js?v=20260724-reports-net-1',
+      'Impossible de charger le module Rapports.'
+    );
+  }
+
+  function loadDashboardNetModule() {
+    loadScriptOnce(
+      '__NEXIS_DASHBOARD_NET_LOADING__',
+      'dashboard-net-result.js?v=20260724-net-1',
+      'Impossible de charger le résultat net du Dashboard.'
+    );
   }
 
   function setView(viewId, updateHash = true) {
@@ -66,6 +90,8 @@
     if (topCreateButton) topCreateButton.hidden = viewId === 'new-trip';
 
     if (viewId === 'vehicle-charges') loadVehicleChargesModule();
+    if (viewId === 'reports') loadReportsModule();
+    if (viewId === 'dashboard') loadDashboardNetModule();
 
     if (updateHash && location.hash !== `#${viewId}`) {
       history.replaceState(null, '', `#${viewId}`);
