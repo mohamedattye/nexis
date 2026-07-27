@@ -77,6 +77,14 @@
     );
   }
 
+  function loadAuthPreviewModule() {
+    loadScriptOnce(
+      '__NEXIS_AUTH_PREVIEW_LOADING__',
+      'auth-preview.js?v=20260727-auth-preview-1',
+      'Impossible de charger la connexion administrateur.'
+    );
+  }
+
   function setView(viewId, updateHash = true) {
     const target = document.getElementById(viewId);
     if (!target || !target.classList.contains('view')) return;
@@ -134,6 +142,7 @@
   }
 
   ensureVehicleChargesView();
+  loadAuthPreviewModule();
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-view]');
