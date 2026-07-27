@@ -1,6 +1,16 @@
 (() => {
   'use strict';
 
+  const style = document.createElement('style');
+  style.textContent = `
+    #auth-login-view[hidden],
+    #auth-account-view[hidden],
+    .auth-overlay[hidden] {
+      display: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+
   const alertRow = document.querySelector('.dashboard-alert');
   const alertCount = document.getElementById('alert-count');
 
