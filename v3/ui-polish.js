@@ -8,9 +8,11 @@
     fleet: 'Flotte',
     expenses: 'Dépenses',
     'vehicle-charges': 'Charges véhicules',
-    reports: 'Rapports'
+    reports: 'Rapports',
+    users: 'Utilisateurs'
   };
 
+  let currentIsAdmin = window.NEXIS_AUTH?.isAdmin === true;
   const topCreateButton = document.querySelector('.topbar-actions > .primary[data-view="new-trip"]');
 
   function ensureVehicleChargesView() {
@@ -35,6 +37,37 @@
     }
   }
 
+  function ensureUsersView() {
+    const nav = document.querySelector('.sidebar nav');
+    if (nav && !nav.querySelector('[data-view="users"]')) {
+      const button = document.createElement('button');
+      button.className = 'nav-item';
+      button.dataset.view = 'users';
+      button.dataset.adminNavigation = 'true';
+      button.textContent = 'Utilisateurs';
+      button.hidden = !currentIsAdmin;
+      nav.appendChild(button);
+    }
+
+    const workspace = document.querySelector('.workspace');
+    if (workspace && !document.getElementById('users')) {
+      const section = document.createElement('section');
+      section.className = 'view';
+      section.id = 'users';
+      section.innerHTML = '<section class="panel placeholder"><h2>Utilisateurs</h2><p>Chargement du module…</p></section>';
+      workspace.appendChild(section);
+    }
+  }
+
+  function syncAdminNavigation() {
+    const usersButton = document.querySelector('[data-view="users"]');
+    if (usersButton) usersButton.hidden = !currentIsAdmin;
+
+    if (!currentIsAdmin && document.getElementById('users')?.classList.contains('active')) {
+      setView('dashboard');
+    }
+  }
+
   function loadScriptOnce(flag, source, errorMessage) {
     if (window[flag]) return;
     window[flag] = true;
@@ -49,27 +82,34 @@
   }
 
   function loadVehicleChargesModule() {
-    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_LOADING__','vehicle-charges-module.js?v=20260724-charges-2','Impossible de charger le module Charges véhicules.');
+    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_LOADING__', 'vehicle-charges-module.js?v=20260724-charges-2', 'Impossible de charger le module Charges véhicules.');
   }
 
   function loadReportsModule() {
-    loadScriptOnce('__NEXIS_REPORTS_LOADING__','reports-module.js?v=20260724-reports-net-1','Impossible de charger le module Rapports.');
-    loadScriptOnce('__NEXIS_REPORTS_NET_EXTENSION_LOADING__','reports-net-extension.js?v=20260724-reports-net-1','Impossible de charger le résultat net dans Rapports.');
+    loadScriptOnce('__NEXIS_REPORTS_LOADING__', 'reports-module.js?v=20260724-reports-net-1', 'Impossible de charger le module Rapports.');
+    loadScriptOnce('__NEXIS_REPORTS_NET_EXTENSION_LOADING__', 'reports-net-extension.js?v=20260724-reports-net-1', 'Impossible de charger le résultat net dans Rapports.');
   }
 
   function loadDashboardNetModule() {
-    loadScriptOnce('__NEXIS_DASHBOARD_NET_LOADING__','dashboard-net-result.js?v=20260724-net-1','Impossible de charger le résultat net du Dashboard.');
+    loadScriptOnce('__NEXIS_DASHBOARD_NET_LOADING__', 'dashboard-net-result.js?v=20260724-net-1', 'Impossible de charger le résultat net du Dashboard.');
   }
 
   function loadAuthPreviewModule() {
-    loadScriptOnce('__NEXIS_AUTH_PREVIEW_LOADING__','auth-preview.js?v=20260728-auth-lock-2','Impossible de charger la connexion administrateur.');
+    loadScriptOnce('__NEXIS_AUTH_PREVIEW_LOADING__', 'auth-preview.js?v=20260728-auth-lock-2', 'Impossible de charger la connexion administrateur.');
   }
 
   function loadRoleUiModule() {
-    loadScriptOnce('__NEXIS_ROLE_UI_LOADING__','role-ui.js?v=20260728-role-ui-2','Impossible de charger les permissions visuelles.');
+    loadScriptOnce('__NEXIS_ROLE_UI_LOADING__', 'role-ui.js?v=20260728-role-ui-2', 'Impossible de charger les permissions visuelles.');
+  }
+
+  function loadUsersModule() {
+    if (!currentIsAdmin) return;
+    loadScriptOnce('__NEXIS_USERS_MODULE_LOADING__', 'users-module.js?v=20260728-users-2', 'Impossible de charger le module Utilisateurs.');
   }
 
   function setView(viewId, updateHash = true) {
+    if (viewId === 'users' && !currentIsAdmin) viewId = 'dashboard';
+
     const target = document.getElementById(viewId);
     if (!target || !target.classList.contains('view')) return;
 
@@ -83,6 +123,7 @@
     if (viewId === 'vehicle-charges') loadVehicleChargesModule();
     if (viewId === 'reports') loadReportsModule();
     if (viewId === 'dashboard') loadDashboardNetModule();
+    if (viewId === 'users') loadUsersModule();
 
     if (updateHash && location.hash !== `#${viewId}`) history.replaceState(null, '', `#${viewId}`);
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -104,13 +145,21 @@
   }
 
   ensureVehicleChargesView();
+  ensureUsersView();
   loadAuthPreviewModule();
   loadRoleUiModule();
+  syncAdminNavigation();
+
+  document.addEventListener('nexis:auth-changed', (event) => {
+    currentIsAdmin = event.detail?.isAdmin === true;
+    syncAdminNavigation();
+  });
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-view]');
     if (!button) return;
     const viewId = button.dataset.view;
+    if (viewId === 'users' && !currentIsAdmin) return;
     if (!document.getElementById(viewId)?.classList.contains('view')) return;
     event.preventDefault();
     event.stopImmediatePropagation();
