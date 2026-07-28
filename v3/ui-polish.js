@@ -15,6 +15,15 @@
   let currentIsAdmin = window.NEXIS_AUTH?.isAdmin === true;
   const topCreateButton = document.querySelector('.topbar-actions > .primary[data-view="new-trip"]');
 
+  function ensureStylesheetOnce(id, href) {
+    if (document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  }
+
   function ensureVehicleChargesView() {
     const nav = document.querySelector('.sidebar nav');
     if (nav && !nav.querySelector('[data-view="vehicle-charges"]')) {
@@ -107,6 +116,11 @@
     loadScriptOnce('__NEXIS_USERS_MODULE_LOADING__', 'users-module.js?v=20260728-users-2', 'Impossible de charger le module Utilisateurs.');
   }
 
+  function loadSidebarNavigation() {
+    ensureStylesheetOnce('nexis-sidebar-navigation-style', 'sidebar-navigation.css?v=20260728-sidebar-1');
+    loadScriptOnce('__NEXIS_SIDEBAR_NAVIGATION_LOADING__', 'sidebar-navigation.js?v=20260728-sidebar-1', 'Impossible de charger la nouvelle navigation latérale.');
+  }
+
   function setView(viewId, updateHash = true) {
     if (viewId === 'users' && !currentIsAdmin) viewId = 'dashboard';
 
@@ -146,6 +160,7 @@
 
   ensureVehicleChargesView();
   ensureUsersView();
+  loadSidebarNavigation();
   loadAuthPreviewModule();
   loadRoleUiModule();
   syncAdminNavigation();
