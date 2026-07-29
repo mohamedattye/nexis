@@ -125,6 +125,10 @@
     loadScriptOnce('__NEXIS_MISSION_CENTER_PREMIUM_LOADING__', 'mission-center-premium.js?v=20260729-premium-1', 'Impossible de charger la finition du Centre des missions.');
   }
 
+  function loadFleetPremium() {
+    loadScriptOnce('__NEXIS_FLEET_PREMIUM_LOADING__', 'fleet-premium.js?v=20260729-fleet-premium-1', 'Impossible de charger la finition premium du module Flotte.');
+  }
+
   function setView(viewId, updateHash = true) {
     if (viewId === 'users' && !currentIsAdmin) viewId = 'dashboard';
 
@@ -143,6 +147,7 @@
     if (viewId === 'dashboard') loadDashboardNetModule();
     if (viewId === 'users') loadUsersModule();
     if (viewId === 'trips') loadMissionCenterPremium();
+    if (viewId === 'fleet') loadFleetPremium();
 
     if (updateHash && location.hash !== `#${viewId}`) history.replaceState(null, '', `#${viewId}`);
     window.scrollTo({ top: 0, behavior: 'auto' });
