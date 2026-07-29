@@ -121,6 +121,10 @@
     loadScriptOnce('__NEXIS_SIDEBAR_NAVIGATION_LOADING__', 'sidebar-navigation.js?v=20260728-sidebar-1', 'Impossible de charger la nouvelle navigation latérale.');
   }
 
+  function loadMissionCenterPremium() {
+    loadScriptOnce('__NEXIS_MISSION_CENTER_PREMIUM_LOADING__', 'mission-center-premium.js?v=20260729-premium-1', 'Impossible de charger la finition du Centre des missions.');
+  }
+
   function setView(viewId, updateHash = true) {
     if (viewId === 'users' && !currentIsAdmin) viewId = 'dashboard';
 
@@ -138,6 +142,7 @@
     if (viewId === 'reports') loadReportsModule();
     if (viewId === 'dashboard') loadDashboardNetModule();
     if (viewId === 'users') loadUsersModule();
+    if (viewId === 'trips') loadMissionCenterPremium();
 
     if (updateHash && location.hash !== `#${viewId}`) history.replaceState(null, '', `#${viewId}`);
     window.scrollTo({ top: 0, behavior: 'auto' });
