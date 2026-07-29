@@ -129,6 +129,10 @@
     loadScriptOnce('__NEXIS_FLEET_PREMIUM_LOADING__', 'fleet-premium.js?v=20260729-fleet-premium-1', 'Impossible de charger la finition premium du module Flotte.');
   }
 
+  function loadExpensesPremium() {
+    loadScriptOnce('__NEXIS_EXPENSES_PREMIUM_LOADING__', 'expenses-premium.js?v=20260729-expenses-premium-1', 'Impossible de charger la finition premium du module Dépenses.');
+  }
+
   function setView(viewId, updateHash = true) {
     if (viewId === 'users' && !currentIsAdmin) viewId = 'dashboard';
 
@@ -148,6 +152,7 @@
     if (viewId === 'users') loadUsersModule();
     if (viewId === 'trips') loadMissionCenterPremium();
     if (viewId === 'fleet') loadFleetPremium();
+    if (viewId === 'expenses') loadExpensesPremium();
 
     if (updateHash && location.hash !== `#${viewId}`) history.replaceState(null, '', `#${viewId}`);
     window.scrollTo({ top: 0, behavior: 'auto' });
