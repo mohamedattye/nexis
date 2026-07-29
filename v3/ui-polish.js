@@ -92,6 +92,7 @@
 
   function loadVehicleChargesModule() {
     loadScriptOnce('__NEXIS_VEHICLE_CHARGES_LOADING__', 'vehicle-charges-module.js?v=20260724-charges-2', 'Impossible de charger le module Charges véhicules.');
+    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_PREMIUM_LOADING__', 'vehicle-charges-premium.js?v=20260729-vehicle-charges-premium-1', 'Impossible de charger la finition premium des Charges véhicules.');
   }
 
   function loadReportsModule() {
