@@ -98,6 +98,7 @@
   function loadReportsModule() {
     loadScriptOnce('__NEXIS_REPORTS_LOADING__', 'reports-module.js?v=20260724-reports-net-1', 'Impossible de charger le module Rapports.');
     loadScriptOnce('__NEXIS_REPORTS_NET_EXTENSION_LOADING__', 'reports-net-extension.js?v=20260724-reports-net-1', 'Impossible de charger le résultat net dans Rapports.');
+    loadScriptOnce('__NEXIS_REPORTS_PREMIUM_LOADING__', 'reports-premium.js?v=20260729-reports-premium-1', 'Impossible de charger la finition premium du module Rapports.');
   }
 
   function loadDashboardNetModule() {
