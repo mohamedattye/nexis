@@ -116,6 +116,7 @@
   function loadUsersModule() {
     if (!currentIsAdmin) return;
     loadScriptOnce('__NEXIS_USERS_MODULE_LOADING__', 'users-module.js?v=20260728-users-2', 'Impossible de charger le module Utilisateurs.');
+    loadScriptOnce('__NEXIS_USERS_PREMIUM_LOADING__', 'users-premium.js?v=20260730-users-premium-1', 'Impossible de charger la finition premium du module Utilisateurs.');
   }
 
   function loadSidebarNavigation() {
