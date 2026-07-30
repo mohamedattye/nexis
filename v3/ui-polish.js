@@ -107,6 +107,7 @@
 
   function loadAuthPreviewModule() {
     loadScriptOnce('__NEXIS_AUTH_PREVIEW_LOADING__', 'auth-preview.js?v=20260728-auth-lock-2', 'Impossible de charger la connexion administrateur.');
+    loadScriptOnce('__NEXIS_AUTH_PREMIUM_LOADING__', 'auth-premium.js?v=20260730-auth-premium-2', 'Impossible de charger la finition premium de la connexion.');
   }
 
   function loadRoleUiModule() {
