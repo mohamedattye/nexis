@@ -1,6 +1,9 @@
 (() => {
   'use strict';
 
+  const DYNAMIC_ASSET_VERSION = '20260731-stability-1';
+  const versionAsset = (source) => `${String(source).split('?')[0]}?v=${DYNAMIC_ASSET_VERSION}`;
+
   const titles = {
     dashboard: 'Tableau de bord',
     'new-trip': 'Créer une mission',
@@ -20,7 +23,7 @@
     const link = document.createElement('link');
     link.id = id;
     link.rel = 'stylesheet';
-    link.href = href;
+    link.href = versionAsset(href);
     document.head.appendChild(link);
   }
 
@@ -81,61 +84,63 @@
     if (window[flag]) return;
     window[flag] = true;
     const script = document.createElement('script');
-    script.src = source;
+    script.src = versionAsset(source);
     script.defer = true;
     script.onerror = () => {
       window[flag] = false;
       console.error(errorMessage);
+      const syncState = document.getElementById('sync-state');
+      if (syncState) syncState.textContent = 'Module à recharger';
     };
     document.body.appendChild(script);
   }
 
   function loadVehicleChargesModule() {
-    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_LOADING__', 'vehicle-charges-module.js?v=20260724-charges-2', 'Impossible de charger le module Charges véhicules.');
-    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_PREMIUM_LOADING__', 'vehicle-charges-premium.js?v=20260729-vehicle-charges-premium-1', 'Impossible de charger la finition premium des Charges véhicules.');
+    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_LOADING__', 'vehicle-charges-module.js', 'Impossible de charger le module Charges véhicules.');
+    loadScriptOnce('__NEXIS_VEHICLE_CHARGES_PREMIUM_LOADING__', 'vehicle-charges-premium.js', 'Impossible de charger la finition premium des Charges véhicules.');
   }
 
   function loadReportsModule() {
-    loadScriptOnce('__NEXIS_REPORTS_LOADING__', 'reports-module.js?v=20260724-reports-net-1', 'Impossible de charger le module Rapports.');
-    loadScriptOnce('__NEXIS_REPORTS_NET_EXTENSION_LOADING__', 'reports-net-extension.js?v=20260724-reports-net-1', 'Impossible de charger le résultat net dans Rapports.');
-    loadScriptOnce('__NEXIS_REPORTS_PREMIUM_LOADING__', 'reports-premium.js?v=20260729-reports-premium-1', 'Impossible de charger la finition premium du module Rapports.');
+    loadScriptOnce('__NEXIS_REPORTS_LOADING__', 'reports-module.js', 'Impossible de charger le module Rapports.');
+    loadScriptOnce('__NEXIS_REPORTS_NET_EXTENSION_LOADING__', 'reports-net-extension.js', 'Impossible de charger le résultat net dans Rapports.');
+    loadScriptOnce('__NEXIS_REPORTS_PREMIUM_LOADING__', 'reports-premium.js', 'Impossible de charger la finition premium du module Rapports.');
   }
 
   function loadDashboardNetModule() {
-    loadScriptOnce('__NEXIS_DASHBOARD_NET_LOADING__', 'dashboard-net-result.js?v=20260724-net-1', 'Impossible de charger le résultat net du Dashboard.');
+    loadScriptOnce('__NEXIS_DASHBOARD_NET_LOADING__', 'dashboard-net-result.js', 'Impossible de charger le résultat net du Dashboard.');
   }
 
   function loadAuthPreviewModule() {
-    loadScriptOnce('__NEXIS_AUTH_PREVIEW_LOADING__', 'auth-preview.js?v=20260728-auth-lock-2', 'Impossible de charger la connexion administrateur.');
-    loadScriptOnce('__NEXIS_AUTH_SESSION_WATCHDOG_LOADING__', 'auth-session-watchdog.js?v=20260730-watchdog-1', 'Impossible de charger la protection anti-blocage de session.');
-    loadScriptOnce('__NEXIS_AUTH_PREMIUM_LOADING__', 'auth-premium.js?v=20260730-auth-premium-2', 'Impossible de charger la finition premium de la connexion.');
+    loadScriptOnce('__NEXIS_AUTH_PREVIEW_LOADING__', 'auth-preview.js', 'Impossible de charger la connexion administrateur.');
+    loadScriptOnce('__NEXIS_AUTH_SESSION_WATCHDOG_LOADING__', 'auth-session-watchdog.js', 'Impossible de charger la protection anti-blocage de session.');
+    loadScriptOnce('__NEXIS_AUTH_PREMIUM_LOADING__', 'auth-premium.js', 'Impossible de charger la finition premium de la connexion.');
   }
 
   function loadRoleUiModule() {
-    loadScriptOnce('__NEXIS_ROLE_UI_LOADING__', 'role-ui.js?v=20260728-role-ui-2', 'Impossible de charger les permissions visuelles.');
+    loadScriptOnce('__NEXIS_ROLE_UI_LOADING__', 'role-ui.js', 'Impossible de charger les permissions visuelles.');
   }
 
   function loadUsersModule() {
     if (!currentIsAdmin) return;
-    loadScriptOnce('__NEXIS_USERS_MODULE_LOADING__', 'users-module.js?v=20260728-users-2', 'Impossible de charger le module Utilisateurs.');
-    loadScriptOnce('__NEXIS_USERS_PREMIUM_LOADING__', 'users-premium.js?v=20260730-users-premium-1', 'Impossible de charger la finition premium du module Utilisateurs.');
+    loadScriptOnce('__NEXIS_USERS_MODULE_LOADING__', 'users-module.js', 'Impossible de charger le module Utilisateurs.');
+    loadScriptOnce('__NEXIS_USERS_PREMIUM_LOADING__', 'users-premium.js', 'Impossible de charger la finition premium du module Utilisateurs.');
   }
 
   function loadSidebarNavigation() {
-    ensureStylesheetOnce('nexis-sidebar-navigation-style', 'sidebar-navigation.css?v=20260728-sidebar-1');
-    loadScriptOnce('__NEXIS_SIDEBAR_NAVIGATION_LOADING__', 'sidebar-navigation.js?v=20260728-sidebar-1', 'Impossible de charger la nouvelle navigation latérale.');
+    ensureStylesheetOnce('nexis-sidebar-navigation-style', 'sidebar-navigation.css');
+    loadScriptOnce('__NEXIS_SIDEBAR_NAVIGATION_LOADING__', 'sidebar-navigation.js', 'Impossible de charger la nouvelle navigation latérale.');
   }
 
   function loadMissionCenterPremium() {
-    loadScriptOnce('__NEXIS_MISSION_CENTER_PREMIUM_LOADING__', 'mission-center-premium.js?v=20260729-premium-1', 'Impossible de charger la finition du Centre des missions.');
+    loadScriptOnce('__NEXIS_MISSION_CENTER_PREMIUM_LOADING__', 'mission-center-premium.js', 'Impossible de charger la finition du Centre des missions.');
   }
 
   function loadFleetPremium() {
-    loadScriptOnce('__NEXIS_FLEET_PREMIUM_LOADING__', 'fleet-premium.js?v=20260729-fleet-premium-1', 'Impossible de charger la finition premium du module Flotte.');
+    loadScriptOnce('__NEXIS_FLEET_PREMIUM_LOADING__', 'fleet-premium.js', 'Impossible de charger la finition premium du module Flotte.');
   }
 
   function loadExpensesPremium() {
-    loadScriptOnce('__NEXIS_EXPENSES_PREMIUM_LOADING__', 'expenses-premium.js?v=20260729-expenses-premium-1', 'Impossible de charger la finition premium du module Dépenses.');
+    loadScriptOnce('__NEXIS_EXPENSES_PREMIUM_LOADING__', 'expenses-premium.js', 'Impossible de charger la finition premium du module Dépenses.');
   }
 
   function setView(viewId, updateHash = true) {
