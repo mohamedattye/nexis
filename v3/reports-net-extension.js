@@ -18,6 +18,18 @@
     return Number(String(text || '').replace(/[^0-9-]/g, '')) || 0;
   }
 
+  function normalizeTruck(value) {
+    return String(value || '').trim().replace(/\s+/g, ' ').toUpperCase();
+  }
+
+  function truckFromRow(row) {
+    const plateElement = row.querySelector('.reports-plate');
+    if (!plateElement) return '';
+    const clone = plateElement.cloneNode(true);
+    clone.querySelectorAll('.reports-rank').forEach((rank) => rank.remove());
+    return normalizeTruck(clone.textContent);
+  }
+
   async function enhanceReports() {
     const view = document.getElementById('reports');
     const monthInput = document.getElementById('reports-month');
@@ -68,11 +80,12 @@
       return true;
     }
 
-    const selectedTruck = truckFilter?.value || '';
+    const selectedTruck = normalizeTruck(truckFilter?.value || '');
     const chargeMap = new Map();
     (data || []).forEach((item) => {
-      if (!selectedTruck || item.truck === selectedTruck) {
-        chargeMap.set(item.truck, (chargeMap.get(item.truck) || 0) + chargeTotal(item));
+      const truck = normalizeTruck(item.truck);
+      if (!selectedTruck || truck === selectedTruck) {
+        chargeMap.set(truck, (chargeMap.get(truck) || 0) + chargeTotal(item));
       }
     });
 
@@ -80,7 +93,7 @@
     let totalNet = 0;
 
     [...tbody.querySelectorAll('tr')].forEach((row) => {
-      const plate = row.querySelector('.reports-plate')?.textContent?.trim();
+      const plate = truckFromRow(row);
       const cells = row.querySelectorAll('td');
       if (!plate || cells.length < 5) return;
 
