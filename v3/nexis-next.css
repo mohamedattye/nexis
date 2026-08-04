@@ -1,0 +1,411 @@
+:root{
+  --nx-bg:#eef2f6;
+  --nx-surface:#ffffff;
+  --nx-surface-soft:#f7f9fb;
+  --nx-text:#152235;
+  --nx-muted:#7b8797;
+  --nx-line:#e5eaf0;
+  --nx-navy:#13283d;
+  --nx-navy-2:#203b55;
+  --nx-orange:#ff8a00;
+  --nx-green:#0b956e;
+  --nx-radius-xl:24px;
+  --nx-radius-lg:18px;
+  --nx-radius-md:14px;
+  --nx-shadow:0 18px 48px rgba(32,49,70,.075);
+  --nx-shadow-soft:0 8px 28px rgba(32,49,70,.05);
+}
+
+html{background:var(--nx-bg)}
+body{
+  background:
+    radial-gradient(circle at 82% -8%,rgba(255,138,0,.075),transparent 28%),
+    linear-gradient(180deg,#f5f7f9 0,#edf2f6 100%)!important;
+  color:var(--nx-text);
+}
+
+/* App shell */
+.sidebar{
+  width:224px!important;
+  margin:14px 0 14px 14px;
+  height:calc(100vh - 28px)!important;
+  border-radius:24px!important;
+  background:rgba(255,255,255,.96)!important;
+  border:1px solid rgba(220,226,233,.9)!important;
+  box-shadow:0 18px 50px rgba(22,39,58,.09)!important;
+  padding:15px 12px!important;
+  color:var(--nx-text)!important;
+}
+
+.brand{
+  min-height:70px!important;
+  margin-bottom:7px;
+  padding:5px 9px 17px!important;
+  border-bottom:1px solid #edf0f4!important;
+}
+.brand strong{color:#16263a!important;font-size:17px!important;letter-spacing:.01em}
+.brand small{color:#8994a2!important;font-size:8px!important;letter-spacing:.05em}
+.brand-logo{
+  width:45px!important;
+  height:45px!important;
+  border-radius:13px!important;
+  box-shadow:0 9px 20px rgba(20,42,63,.11)!important;
+}
+
+.sidebar nav{margin-top:12px!important;padding-right:1px}
+.nav-group{margin-top:15px!important}
+.nav-group:first-child{margin-top:3px!important}
+.nav-group-title{
+  color:#a3acb8!important;
+  padding:0 10px 7px!important;
+  font-size:7.5px!important;
+  letter-spacing:.13em!important;
+}
+.nav-group-items{gap:4px!important}
+.nav-item{
+  min-height:39px!important;
+  border-radius:12px!important;
+  padding:8px 10px!important;
+  color:#5f6c7d!important;
+  font-size:10.5px!important;
+  font-weight:720!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.nav-icon{color:#8a98a8!important}
+.nav-item:hover{
+  background:#f3f6f8!important;
+  color:#24364b!important;
+}
+.nav-item:hover .nav-icon{color:#405a73!important}
+.nav-item.active{
+  background:linear-gradient(135deg,#152b42,#203d58)!important;
+  color:#fff!important;
+  box-shadow:0 9px 20px rgba(21,43,66,.16)!important;
+}
+.nav-item.active .nav-icon{color:#fff!important}
+.nav-item.active:before{
+  content:"";
+  position:absolute;
+  left:-5px;
+  top:10px;
+  bottom:10px;
+  width:3px;
+  border-radius:999px;
+  background:var(--nx-orange);
+}
+.nav-item.active:after{
+  right:11px!important;
+  width:5px!important;
+  height:5px!important;
+  background:#ff9a1a!important;
+  box-shadow:0 0 0 4px rgba(255,154,26,.11)!important;
+}
+
+.sidebar-status{
+  margin-top:auto!important;
+  border:1px solid #e7ebf0!important;
+  background:linear-gradient(145deg,#f8fafc,#fff)!important;
+  border-radius:15px!important;
+  color:#26394f!important;
+  box-shadow:none!important;
+}
+.sidebar-status strong{color:#26394f!important}
+.sidebar-status small{color:#8a95a3!important}
+.sidebar-status>span{box-shadow:0 0 0 4px rgba(11,149,110,.1)}
+
+.workspace{
+  margin-left:238px!important;
+  min-height:100vh;
+  background:transparent!important;
+}
+
+.topbar{
+  height:82px!important;
+  margin:14px 14px 0 0;
+  padding:0 27px!important;
+  border:1px solid rgba(221,227,234,.9)!important;
+  border-radius:22px!important;
+  background:rgba(255,255,255,.84)!important;
+  backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:var(--nx-shadow-soft)!important;
+}
+.topbar h1{
+  font-size:18px!important;
+  letter-spacing:-.025em!important;
+  color:#17283d!important;
+}
+.topbar-actions{gap:8px!important}
+.environment-badge,
+.sync-state,
+.auth-user-button{
+  border-radius:999px!important;
+}
+.environment-badge{
+  background:#fff8ee!important;
+  border-color:#ffe0b8!important;
+  color:#a75a00!important;
+}
+.sync-state{color:#7d8897!important}
+
+.view{
+  padding:28px 28px 48px!important;
+  max-width:1500px;
+  margin:0 auto;
+}
+
+/* More fluid headings */
+.dashboard-heading,
+.simple-mission-head,
+.fleet-head,
+.expenses-heading,
+.reports-heading,
+.charges-heading,
+.users-head{
+  margin:0 0 18px!important;
+  align-items:center!important;
+}
+.dashboard-heading h2,
+.simple-mission-head h2,
+.fleet-head h2,
+.expenses-heading h2,
+.reports-heading h2,
+.charges-heading h2,
+.users-head h2{
+  font-size:26px!important;
+  letter-spacing:-.045em!important;
+  font-weight:820!important;
+}
+.period-pill,
+.step-label{
+  padding:7px 11px!important;
+  background:rgba(255,255,255,.82)!important;
+  border:1px solid #e3e8ee!important;
+  color:#647184!important;
+  box-shadow:0 5px 16px rgba(32,49,70,.04)!important;
+}
+
+/* Cards */
+.kpi-card,
+.panel,
+.fleet-kpi,
+.fleet-panel,
+.expenses-kpi,
+.expenses-panel,
+.reports-kpi,
+.reports-panel,
+.charges-kpi,
+.charges-panel,
+.users-kpi,
+.users-panel,
+.simple-form-panel{
+  border:1px solid rgba(224,230,237,.9)!important;
+  border-radius:var(--nx-radius-xl)!important;
+  background:rgba(255,255,255,.95)!important;
+  box-shadow:var(--nx-shadow-soft)!important;
+}
+
+.kpi-grid,
+.fleet-kpis,
+.expenses-summary,
+.reports-kpis,
+.charges-kpis,
+.users-kpis{gap:13px!important}
+
+.kpi-card,
+.fleet-kpi,
+.expenses-kpi,
+.reports-kpi,
+.charges-kpi,
+.users-kpi{
+  min-height:108px!important;
+  padding:18px 18px!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+.kpi-card:hover,
+.fleet-kpi:hover,
+.expenses-kpi:hover,
+.reports-kpi:hover,
+.charges-kpi:hover,
+.users-kpi:hover{
+  transform:translateY(-2px)!important;
+  border-color:#dbe2e9!important;
+  box-shadow:0 18px 42px rgba(32,49,70,.085)!important;
+}
+.kpi-card span,
+.fleet-kpi span,
+.expenses-kpi span,
+.reports-kpi span,
+.charges-kpi span,
+.users-kpi span{
+  color:#7f8b99!important;
+  font-size:8.5px!important;
+  letter-spacing:.055em!important;
+  font-weight:830!important;
+}
+.kpi-card strong,
+.fleet-kpi strong,
+.expenses-kpi strong,
+.reports-kpi strong,
+.charges-kpi strong,
+.users-kpi strong{
+  margin-top:8px!important;
+  font-size:20px!important;
+  letter-spacing:-.045em!important;
+}
+.kpi-card small,
+.fleet-kpi small,
+.expenses-kpi small,
+.reports-kpi small,
+.charges-kpi small,
+.users-kpi small{
+  margin-top:6px!important;
+  color:#929ca8!important;
+}
+
+.panel,
+.fleet-panel,
+.expenses-panel,
+.reports-panel,
+.charges-panel,
+.users-panel,
+.simple-form-panel{padding:20px!important}
+
+/* Dashboard feels like a modern cockpit */
+.dashboard-clean .kpi-grid{gap:13px!important}
+.dashboard-clean .kpi-card{
+  min-height:112px!important;
+  border-radius:21px!important;
+}
+.dashboard-clean .kpi-card:before{display:none!important}
+.dashboard-clean .dashboard-alert{
+  margin-top:14px!important;
+  min-height:48px!important;
+  border-radius:16px!important;
+  background:rgba(255,255,255,.82)!important;
+  border:1px solid #e5e9ee!important;
+  box-shadow:0 7px 20px rgba(32,49,70,.035)!important;
+}
+.dashboard-clean .dashboard-main{margin-top:14px!important}
+.dashboard-clean .dashboard-main>.panel{border-radius:22px!important}
+
+/* Controls */
+.primary{
+  min-height:41px!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,#ff9a20,#ff8400)!important;
+  color:#18293c!important;
+  border:0!important;
+  box-shadow:0 9px 22px rgba(255,132,0,.22)!important;
+}
+.primary:hover{transform:translateY(-1px)!important;box-shadow:0 13px 27px rgba(255,132,0,.29)!important}
+.secondary,
+.save-next{
+  min-height:40px!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  border:1px solid #dfe5ec!important;
+  color:#34465b!important;
+  box-shadow:none!important;
+}
+
+input,select,textarea{
+  border-radius:13px!important;
+  border-color:#dce3ea!important;
+  background:#fbfcfd!important;
+}
+input:focus,select:focus,textarea:focus{
+  background:#fff!important;
+  border-color:#f1aa58!important;
+  box-shadow:0 0 0 4px rgba(255,138,0,.09)!important;
+}
+
+.filters,
+.fleet-toolbar,
+.expenses-toolbar,
+.reports-filter,
+.charges-filter,
+.users-toolbar{
+  border-radius:16px!important;
+  background:#f7f9fb!important;
+  border:1px solid #e6ebf0!important;
+  box-shadow:none!important;
+}
+
+/* Tables less rigid */
+.table-scroll,
+.fleet-table-wrap,
+.expenses-table-wrap,
+.reports-table-wrap,
+.charges-table-wrap,
+.users-table-wrap{
+  border-radius:16px!important;
+  border:1px solid #e7ebf0!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+thead th{
+  background:#f7f9fb!important;
+  color:#84909f!important;
+  border-bottom:1px solid #e8edf2!important;
+}
+tbody td{border-bottom-color:#edf1f4!important}
+tbody tr:hover{background:#fafbfd!important}
+
+.truck-badge,
+.fleet-plate,
+.expenses-plate,
+.reports-plate,
+.charges-plate{
+  border-radius:9px!important;
+  background:#eef4f8!important;
+  color:#345574!important;
+}
+
+/* Drawers and dialogs */
+.mission-drawer{
+  width:min(620px,94vw)!important;
+  border-radius:24px 0 0 24px!important;
+  box-shadow:-24px 0 70px rgba(19,38,57,.2)!important;
+}
+.mission-drawer-header{
+  min-height:76px!important;
+  padding:18px 20px!important;
+  background:rgba(255,255,255,.92)!important;
+  backdrop-filter:blur(18px);
+}
+.detail-card{border-radius:18px!important}
+
+/* Make the layout ready for future modules (billing / GPS / clients) */
+.nav-group-items,.nav-item,.panel,.reports-grid,.dashboard-main{min-width:0}
+
+@media(max-width:1180px){
+  .sidebar{width:205px!important}
+  .workspace{margin-left:219px!important}
+  .view{padding-left:22px!important;padding-right:22px!important}
+}
+
+@media(max-width:740px){
+  .sidebar{
+    width:calc(100% - 20px)!important;
+    height:auto!important;
+    margin:10px!important;
+    border-radius:18px!important;
+  }
+  .workspace{margin-left:0!important}
+  .topbar{
+    margin:0 10px!important;
+    height:68px!important;
+    border-radius:17px!important;
+    padding:0 15px!important;
+  }
+  .view{padding:18px 12px 30px!important}
+  .dashboard-heading h2,
+  .simple-mission-head h2,
+  .fleet-head h2,
+  .expenses-heading h2,
+  .reports-heading h2,
+  .charges-heading h2,
+  .users-head h2{font-size:22px!important}
+  .kpi-card,.panel,.fleet-kpi,.fleet-panel,.expenses-kpi,.expenses-panel,.reports-kpi,.reports-panel,.charges-kpi,.charges-panel,.users-kpi,.users-panel,.simple-form-panel{border-radius:18px!important}
+}
