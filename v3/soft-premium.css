@@ -12,13 +12,38 @@
   --red:#c3444b;
   --shadow:0 12px 34px rgba(31,48,73,.07);
   --shadow-hover:0 18px 42px rgba(31,48,73,.11);
+  --font-ui:"Inter","Segoe UI",Arial,sans-serif;
+  --font-display:"Manrope","Inter","Segoe UI",Arial,sans-serif;
 }
 
 html{background:#eef2f7}
+body,
+button,
+input,
+select,
+textarea,
+table{
+  font-family:var(--font-ui)!important;
+  font-feature-settings:"tnum" 1,"cv11" 1;
+}
 body{
   background:
     radial-gradient(circle at 94% 2%,rgba(255,150,35,.08),transparent 28%),
     linear-gradient(180deg,#f7f9fc 0,#f2f5f9 100%);
+  letter-spacing:-.006em;
+}
+
+h1,h2,h3,h4,
+.brand strong,
+.kpi-card strong,
+.fleet-kpi strong,
+.expenses-kpi strong,
+.reports-kpi strong,
+.charges-kpi strong,
+.users-kpi strong,
+.panel-head h2,
+.simple-form-title h3{
+  font-family:var(--font-display)!important;
 }
 
 .sidebar{
@@ -34,6 +59,7 @@ body{
   padding:2px 8px 17px;
   border-bottom-color:rgba(255,255,255,.09);
 }
+.brand strong{letter-spacing:-.025em}
 
 .brand-logo{
   width:48px!important;
@@ -48,9 +74,9 @@ body{
   border-radius:12px;
   padding:11px 13px;
   color:#cbd7e5;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:-.01em;
+  font-size:11px;
+  font-weight:650;
+  letter-spacing:-.012em;
 }
 .nav-item:hover{
   background:rgba(255,255,255,.075);
@@ -78,7 +104,7 @@ body{
   border-bottom:1px solid rgba(221,227,235,.9);
   box-shadow:0 8px 24px rgba(31,48,73,.035);
 }
-.topbar h1{font-size:19px;letter-spacing:-.025em}
+.topbar h1{font-size:18px;letter-spacing:-.035em;font-weight:750}
 .topbar-actions{gap:10px}
 
 .environment-badge,
@@ -106,8 +132,9 @@ body{
 .expenses-heading h2,
 .reports-heading h2,
 .charges-heading h2{
-  font-size:24px!important;
-  letter-spacing:-.035em!important;
+  font-size:23px!important;
+  font-weight:780!important;
+  letter-spacing:-.045em!important;
   color:#13243a;
 }
 
@@ -156,7 +183,8 @@ body{
 .expenses-kpi strong,
 .reports-kpi strong,
 .charges-kpi strong{
-  letter-spacing:-.035em;
+  letter-spacing:-.045em;
+  font-weight:780!important;
 }
 .kpi-card:before{width:3px;border-radius:0 4px 4px 0}
 
@@ -166,6 +194,17 @@ body{
 .reports-panel,
 .charges-panel,
 .simple-form-panel{padding:19px!important}
+
+.panel-head h2{letter-spacing:-.035em!important;font-weight:750!important}
+.panel-head small,
+th,
+.kpi-card span,
+.fleet-kpi span,
+.expenses-kpi span,
+.reports-kpi span,
+.charges-kpi span{
+  letter-spacing:.035em!important;
+}
 
 .primary,
 .secondary,
@@ -183,7 +222,8 @@ body{
   color:#13243a!important;
   border:1px solid rgba(223,112,0,.16)!important;
   box-shadow:0 8px 18px rgba(255,132,0,.21)!important;
-  font-weight:800!important;
+  font-weight:750!important;
+  letter-spacing:-.015em;
 }
 .primary:hover{
   transform:translateY(-1px);
@@ -245,8 +285,10 @@ th{
   color:#728095!important;
   padding-top:12px!important;
   padding-bottom:12px!important;
+  font-size:8px!important;
+  font-weight:700!important;
 }
-td{padding-top:13px!important;padding-bottom:13px!important}
+td{padding-top:13px!important;padding-bottom:13px!important;font-size:10px}
 tbody tr{transition:background .14s ease}
 tbody tr:hover{background:#f8fafc!important}
 
@@ -310,7 +352,7 @@ tbody tr:hover{background:#f8fafc!important}
 .dashboard-clean .dashboard-alert .empty-state strong,
 .dashboard-clean .dashboard-alert .empty-state span{margin:0!important;max-width:none!important}
 .dashboard-clean .dashboard-main{margin-top:12px!important}
-.topbar-actions .sync-state{font-size:10px}
+.topbar-actions .sync-state{font-size:9px}
 
 @media(max-width:1180px){
   .dashboard-clean .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
