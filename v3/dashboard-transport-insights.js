@@ -18,29 +18,29 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .transport-insights-lite{margin-top:13px}
+    .transport-insights-lite{margin-top:12px;margin-bottom:12px}
     .transport-insight-lite-card{
       min-width:0;
       overflow:hidden;
       border:1px solid rgba(223,229,237,.96);
-      border-radius:17px;
+      border-radius:16px;
       background:rgba(255,255,255,.96);
-      box-shadow:0 12px 34px rgba(31,48,73,.07);
-      padding:15px 18px 12px;
+      box-shadow:0 10px 28px rgba(31,48,73,.055);
+      padding:13px 17px 10px;
     }
     .transport-insight-lite-head{
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap:12px;
-      margin-bottom:5px;
+      margin-bottom:3px;
     }
     .transport-insight-lite-head small{
       display:block;
-      margin-bottom:3px;
-      color:#98a2af;
-      font-size:7px;
-      font-weight:750;
+      margin-bottom:2px;
+      color:#9aa4b1;
+      font-size:6.8px;
+      font-weight:700;
       letter-spacing:.08em;
       text-transform:uppercase;
     }
@@ -48,59 +48,59 @@
       margin:0;
       color:#1a2b40;
       font-family:var(--font-display,"Manrope","Inter",sans-serif);
-      font-size:13px;
+      font-size:12.5px;
       font-weight:750;
       letter-spacing:-.035em;
     }
     .transport-insight-lite-head p{
-      margin:3px 0 0;
-      color:#8a95a3;
-      font-size:8.5px;
+      margin:2px 0 0;
+      color:#929ca8;
+      font-size:8px;
       font-weight:450;
     }
     .transport-period-lite{
       display:inline-flex;
       align-items:center;
-      gap:6px;
+      gap:5px;
       flex:0 0 auto;
-      padding:5px 8px;
-      border:1px solid #e5e9ee;
+      padding:4px 7px;
+      border:1px solid #e8ecf0;
       border-radius:999px;
-      background:#fafbfc;
-      color:#7b8796;
-      font-size:7.5px;
-      font-weight:700;
+      background:#fbfcfd;
+      color:#828d9b;
+      font-size:7px;
+      font-weight:650;
       white-space:nowrap;
     }
     .transport-period-lite:before{
       content:"";
-      width:5px;
-      height:5px;
+      width:4px;
+      height:4px;
       border-radius:50%;
       background:#ff9414;
     }
-    .transport-chart-lite-wrap{position:relative;min-height:132px}
-    .transport-line-lite{display:block;width:100%;height:132px;overflow:visible}
-    .transport-grid-lite{stroke:#f0f3f6;stroke-width:1}
-    .transport-axis-lite{fill:#9aa4b1;font-family:var(--font-ui,"Inter",sans-serif);font-size:8px;font-weight:550}
-    .transport-line-lite-revenue{fill:none;stroke:#f68a16;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
-    .transport-line-lite-margin{fill:none;stroke:#15906d;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
-    .transport-point-lite-revenue{fill:#fff;stroke:#f68a16;stroke-width:1.9}
-    .transport-point-lite-margin{fill:#fff;stroke:#15906d;stroke-width:1.9}
+    .transport-chart-lite-wrap{position:relative;min-height:112px}
+    .transport-line-lite{display:block;width:100%;height:112px;overflow:visible}
+    .transport-grid-lite{stroke:#f2f4f6;stroke-width:1}
+    .transport-axis-lite{fill:#a0a9b5;font-family:var(--font-ui,"Inter",sans-serif);font-size:7.5px;font-weight:500}
+    .transport-line-lite-revenue{fill:none;stroke:#f68a16;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+    .transport-line-lite-margin{fill:none;stroke:#15906d;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+    .transport-point-lite-revenue{fill:#fff;stroke:#f68a16;stroke-width:1.7}
+    .transport-point-lite-margin{fill:#fff;stroke:#15906d;stroke-width:1.7}
     .transport-legend-lite{
       display:flex;
       align-items:center;
-      gap:14px;
+      gap:12px;
       margin-top:0;
-      color:#7f8997;
-      font-size:8px;
-      font-weight:600;
+      color:#87919e;
+      font-size:7.5px;
+      font-weight:550;
     }
-    .transport-legend-lite span{display:inline-flex;align-items:center;gap:6px}
-    .transport-legend-lite i{display:block;width:12px;height:2px;border-radius:999px;background:#f68a16}
+    .transport-legend-lite span{display:inline-flex;align-items:center;gap:5px}
+    .transport-legend-lite i{display:block;width:11px;height:2px;border-radius:999px;background:#f68a16}
     .transport-legend-lite span:last-child i{background:#15906d}
     .transport-lite-empty{
-      min-height:120px;
+      min-height:105px;
       display:grid;
       place-content:center;
       text-align:center;
@@ -109,9 +109,9 @@
     }
     .transport-lite-empty strong{display:block;margin-bottom:4px;color:#31445a;font-size:11px}
     @media(max-width:740px){
-      .transport-insight-lite-card{padding:13px}
-      .transport-line-lite{height:125px}
-      .transport-chart-lite-wrap{min-height:125px}
+      .transport-insight-lite-card{padding:12px}
+      .transport-line-lite{height:105px}
+      .transport-chart-lite-wrap{min-height:105px}
     }
   `;
   document.head.appendChild(style);
@@ -139,8 +139,10 @@
     container = document.createElement('section');
     container.id = 'transport-insights';
     container.className = 'transport-insights-lite';
+    const alert = dashboard.querySelector('.dashboard-alert');
     const dashboardMain = dashboard.querySelector('.dashboard-main');
-    if (dashboardMain) dashboardMain.insertAdjacentElement('afterend', container);
+    if (alert) alert.insertAdjacentElement('afterend', container);
+    else if (dashboardMain) dashboardMain.insertAdjacentElement('beforebegin', container);
     else dashboard.appendChild(container);
     return container;
   }
@@ -159,11 +161,11 @@
 
   function buildChart(months, series) {
     const width = 900;
-    const height = 126;
-    const left = 42;
-    const right = 17;
-    const top = 10;
-    const bottom = 25;
+    const height = 108;
+    const left = 40;
+    const right = 15;
+    const top = 8;
+    const bottom = 23;
     const plotW = width - left - right;
     const plotH = height - top - bottom;
     const maxValue = Math.max(1, ...series.flatMap((item) => [item.revenue, Math.max(0, item.margin)]));
@@ -175,11 +177,11 @@
     const marginPoints = series.map((item, index) => ({ x: x(index), y: y(item.margin), value: item.margin }));
     const grid = [0, 1].map((ratio) => {
       const gy = top + plotH - ratio * plotH;
-      return `<line class="transport-grid-lite" x1="${left}" y1="${gy}" x2="${left + plotW}" y2="${gy}"/><text class="transport-axis-lite" x="${left - 8}" y="${gy + 3}" text-anchor="end">${shortFormatter.format(roundedMax * ratio)}</text>`;
+      return `<line class="transport-grid-lite" x1="${left}" y1="${gy}" x2="${left + plotW}" y2="${gy}"/><text class="transport-axis-lite" x="${left - 7}" y="${gy + 3}" text-anchor="end">${shortFormatter.format(roundedMax * ratio)}</text>`;
     }).join('');
-    const labels = months.map((month, index) => `<text class="transport-axis-lite" x="${x(index)}" y="${height - 6}" text-anchor="middle">${month.label}</text>`).join('');
-    const revenueDots = revenuePoints.map((point, index) => `<circle class="transport-point-lite-revenue" cx="${point.x}" cy="${point.y}" r="2.8"><title>${months[index].label} · CA ${money(point.value)}</title></circle>`).join('');
-    const marginDots = marginPoints.map((point, index) => `<circle class="transport-point-lite-margin" cx="${point.x}" cy="${point.y}" r="2.8"><title>${months[index].label} · Marge ${money(point.value)}</title></circle>`).join('');
+    const labels = months.map((month, index) => `<text class="transport-axis-lite" x="${x(index)}" y="${height - 5}" text-anchor="middle">${month.label}</text>`).join('');
+    const revenueDots = revenuePoints.map((point, index) => `<circle class="transport-point-lite-revenue" cx="${point.x}" cy="${point.y}" r="2.4"><title>${months[index].label} · CA ${money(point.value)}</title></circle>`).join('');
+    const marginDots = marginPoints.map((point, index) => `<circle class="transport-point-lite-margin" cx="${point.x}" cy="${point.y}" r="2.4"><title>${months[index].label} · Marge ${money(point.value)}</title></circle>`).join('');
     return `<svg class="transport-line-lite" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-label="Évolution du chiffre d'affaires et de la marge">${grid}<path class="transport-line-lite-revenue" d="${smoothPath(revenuePoints)}"/><path class="transport-line-lite-margin" d="${smoothPath(marginPoints)}"/>${revenueDots}${marginDots}${labels}</svg>`;
   }
 
