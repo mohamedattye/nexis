@@ -105,6 +105,10 @@
     loadScriptOnce('__NEXIS_DASHBOARD_NET_LOADING__', 'dashboard-net-result.js?v=20260724-net-1', 'Impossible de charger le résultat net du Dashboard.');
   }
 
+  function loadDashboardTransportInsights() {
+    loadScriptOnce('__NEXIS_DASHBOARD_TRANSPORT_INSIGHTS_LOADING__', 'dashboard-transport-insights.js?v=20260804-transport-insights-1', 'Impossible de charger les graphiques transport du Dashboard.');
+  }
+
   function loadAuthPreviewModule() {
     loadScriptOnce('__NEXIS_AUTH_PREVIEW_LOADING__', 'auth-preview.js?v=20260728-auth-lock-2', 'Impossible de charger la connexion administrateur.');
   }
@@ -151,7 +155,10 @@
 
     if (viewId === 'vehicle-charges') loadVehicleChargesModule();
     if (viewId === 'reports') loadReportsModule();
-    if (viewId === 'dashboard') loadDashboardNetModule();
+    if (viewId === 'dashboard') {
+      loadDashboardNetModule();
+      loadDashboardTransportInsights();
+    }
     if (viewId === 'users') loadUsersModule();
     if (viewId === 'trips') loadMissionCenterPremium();
     if (viewId === 'fleet') loadFleetPremium();
