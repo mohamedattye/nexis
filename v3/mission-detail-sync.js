@@ -5,7 +5,12 @@
   const detailBody = document.getElementById('mission-detail-body');
   if (!shell || !detailBody) return;
 
+  const db = window.supabase?.createClient ? window.supabase.createClient() : null;
   let dataChanged = false;
+  let currentTripId = null;
+  let currentClientId = null;
+  let clientsCache = null;
+  let enhancementBusy = false;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -42,9 +47,7 @@
       letter-spacing:.04em;
       text-transform:uppercase;
     }
-    #mission-detail-body.mission-edit-focus .drawer-form{
-      margin-top:14px;
-    }
+    #mission-detail-body.mission-edit-focus .drawer-form{margin-top:14px}
     #mission-detail-body.mission-edit-focus .drawer-form-actions{
       position:sticky;
       bottom:0;
@@ -52,12 +55,37 @@
       padding:12px 1px 1px;
       background:linear-gradient(180deg,rgba(255,255,255,0),#fff 30%);
     }
+    .mission-client-info strong{color:#294c6d!important}
+    .mission-client-edit{grid-column:1/-1!important}
+    .mission-client-edit select{
+      width:100%;
+      height:41px;
+      margin-top:6px;
+      border:1px solid #d8e0e9;
+      border-radius:10px;
+      background:#fff;
+      padding:0 10px;
+      font:inherit;
+      color:#243449;
+      outline:none;
+    }
+    .mission-client-edit select:focus{
+      border-color:#f0a04a;
+      box-shadow:0 0 0 4px rgba(255,139,20,.10);
+    }
     @keyframes mission-edit-enter{
       from{opacity:.45;transform:translateY(5px)}
       to{opacity:1;transform:translateY(0)}
     }
   `;
   document.head.appendChild(style);
+
+  const esc = (value) => String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'",'&#039;');
 
   function editFormIsVisible() {
     const card = document.getElementById('mission-edit-card');
@@ -70,25 +98,133 @@
     if (editing) {
       window.requestAnimationFrame(() => {
         detailBody.scrollTo?.({ top: 0, behavior: 'auto' });
-        document.getElementById('detail-truck')?.focus({ preventScroll: true });
+        document.getElementById('detail-client')?.focus({ preventScroll: true });
       });
     }
   }
 
-  shell.addEventListener('click', (event) => {
-    if (event.target.closest('#edit-mission-button, #cancel-mission-edit')) {
+  async function loadClients() {
+    if (!db) return [];
+    if (clientsCache) return clientsCache;
+    const { data, error } = await db
+      .from('clients')
+      .select('id,company_name,is_active')
+      .order('company_name', { ascending: true });
+    if (error) {
+      console.error('Clients fiche mission :', error);
+      return [];
+    }
+    clientsCache = data || [];
+    return clientsCache;
+  }
+
+  async function loadTripClient() {
+    if (!db || !currentTripId) return null;
+    const { data, error } = await db
+      .from('trips')
+      .select('client_id')
+      .eq('id', currentTripId)
+      .maybeSingle();
+    if (error) {
+      console.error('Client de la mission :', error);
+      return null;
+    }
+    currentClientId = data?.client_id || null;
+    return currentClientId;
+  }
+
+  async function enhanceClientDisplay() {
+    if (enhancementBusy || !currentTripId || shell.hidden) return;
+    const infoGrid = detailBody.querySelector('.detail-info-grid');
+    if (!infoGrid || infoGrid.querySelector('.mission-client-info')) return;
+
+    enhancementBusy = true;
+    try {
+      await loadTripClient();
+      const clients = await loadClients();
+      const linked = clients.find((item) => String(item.id) === String(currentClientId));
+      const block = document.createElement('div');
+      block.className = 'detail-info mission-client-info';
+      block.innerHTML = `<span>Client</span><strong>${esc(linked?.company_name || (currentClientId ? 'Client indisponible' : 'Non renseigné'))}</strong>`;
+      infoGrid.prepend(block);
+    } finally {
+      enhancementBusy = false;
+    }
+  }
+
+  async function enhanceEditForm() {
+    const form = document.getElementById('mission-edit-form');
+    if (!form || form.querySelector('#detail-client')) return;
+
+    await loadTripClient();
+    const clients = await loadClients();
+    const label = document.createElement('label');
+    label.className = 'mission-client-edit';
+    const options = clients
+      .filter((item) => item.is_active !== false || String(item.id) === String(currentClientId))
+      .map((item) => `<option value="${esc(item.id)}" ${String(item.id) === String(currentClientId) ? 'selected' : ''}>${esc(item.company_name)}</option>`)
+      .join('');
+    label.innerHTML = `Client<select id="detail-client"><option value="">Non renseigné</option>${options}</select>`;
+    form.prepend(label);
+  }
+
+  async function saveClientLink() {
+    if (!db || !currentTripId) return;
+    const select = document.getElementById('detail-client');
+    if (!select) return;
+    const nextClientId = select.value || null;
+    if (String(nextClientId || '') === String(currentClientId || '')) return;
+    const { error } = await db
+      .from('trips')
+      .update({ client_id: nextClientId })
+      .eq('id', currentTripId);
+    if (error) {
+      console.error('Modification client mission :', error);
+      return;
+    }
+    currentClientId = nextClientId;
+    dataChanged = true;
+  }
+
+  document.addEventListener('click', (event) => {
+    const opener = event.target.closest('[data-open-mission]');
+    if (opener) {
+      currentTripId = opener.dataset.openMission || null;
+      currentClientId = null;
+      window.setTimeout(enhanceClientDisplay, 100);
+      return;
+    }
+
+    if (event.target.closest('#edit-mission-button')) {
+      window.setTimeout(() => {
+        enhanceEditForm();
+        syncEditFocus();
+      }, 0);
+    }
+
+    if (event.target.closest('#cancel-mission-edit')) {
       window.setTimeout(syncEditFocus, 0);
     }
-  });
+  }, true);
 
   shell.addEventListener('submit', (event) => {
-    if (event.target.matches('#expense-detail-form, #mission-edit-form')) {
+    if (event.target.matches('#mission-edit-form')) {
+      saveClientLink();
+      dataChanged = true;
+      window.setTimeout(syncEditFocus, 0);
+    } else if (event.target.matches('#expense-detail-form')) {
       dataChanged = true;
       window.setTimeout(syncEditFocus, 0);
     }
   }, true);
 
-  new MutationObserver(syncEditFocus).observe(detailBody, {
+  new MutationObserver(() => {
+    syncEditFocus();
+    if (!shell.hidden) {
+      window.setTimeout(enhanceClientDisplay, 0);
+      if (editFormIsVisible()) window.setTimeout(enhanceEditForm, 0);
+    }
+  }).observe(detailBody, {
     childList: true,
     subtree: true,
     attributes: true,
