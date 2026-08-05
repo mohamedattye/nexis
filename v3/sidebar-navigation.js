@@ -9,6 +9,7 @@
     'new-trip': '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/></svg>',
     trips: '<svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
     fleet: '<svg viewBox="0 0 24 24"><path d="M3 15V8h12l3 4h3v3"/><path d="M5 15h14"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>',
+    clients: '<svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></svg>',
     expenses: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h6M9 15h2M14 15h1"/></svg>',
     'vehicle-charges': '<svg viewBox="0 0 24 24"><path d="M4 7h16M7 3h10l2 4H5z"/><path d="M5 7v12h14V7"/><circle cx="9" cy="13" r="2"/><path d="M13 13h3M13 16h3"/></svg>',
     reports: '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20V7"/><path d="M2 20h20"/></svg>',
@@ -16,7 +17,7 @@
   };
 
   const groups = [
-    { title: 'Opérations', views: ['dashboard', 'new-trip', 'trips', 'fleet'] },
+    { title: 'Opérations', views: ['dashboard', 'new-trip', 'trips', 'fleet', 'clients'] },
     { title: 'Pilotage', views: ['expenses', 'vehicle-charges', 'reports'] },
     { title: 'Administration', views: ['users'] }
   ];
@@ -35,6 +36,10 @@
     text.textContent = label;
     button.append(icon, text);
     return button;
+  }
+
+  function grouped(view) {
+    return groups.some((group) => group.views.includes(view));
   }
 
   function rebuild() {
@@ -67,10 +72,6 @@
 
     nav.replaceChildren(fragment);
     nav.dataset.enhanced = 'true';
-  }
-
-  function grouped(view) {
-    return groups.some((group) => group.views.includes(view));
   }
 
   rebuild();
