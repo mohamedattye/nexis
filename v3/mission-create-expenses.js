@@ -10,15 +10,21 @@
   const client = window.supabase.createClient();
   const formatter = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
   let saving = false;
+  let quickContext = null;
+  let truckContextApplied = false;
+  let clientContextApplied = false;
 
   const titleText = document.querySelector('.simple-form-title p');
-  if (titleText) titleText.textContent = 'Mission et dépenses sur un seul écran. Les frais restent facultatifs.';
+  if (titleText) titleText.textContent = 'Mission, client et dépenses sur un seul écran. Les frais restent facultatifs.';
 
   const pageText = document.querySelector('.simple-mission-head p');
   if (pageText) pageText.textContent = 'Saisissez toute l’opération puis enregistrez en un seul clic.';
 
   const style = document.createElement('style');
   style.textContent = `
+    .quick-client-field{grid-column:1/-1!important;position:relative}
+    .quick-client-field select{width:100%}
+    .quick-client-field small{display:block;margin-top:5px;color:#8994a2;font-size:8.5px;font-weight:500}
     .quick-expense-section{grid-column:1/-1;border-top:1px solid #e8edf3;padding-top:16px;margin-top:1px}
     .quick-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:11px}
     .quick-section-head h4{margin:0;font-size:13px;color:#26364a}
@@ -46,6 +52,12 @@
     @media(max-width:740px){.quick-expense-grid,.quick-advanced-grid,.quick-summary{grid-template-columns:1fr}.quick-section-head{align-items:flex-start}.simple-form .form-actions{align-items:stretch}}
   `;
   document.head.appendChild(style);
+
+  const clientField = document.createElement('label');
+  clientField.className = 'quick-client-field';
+  clientField.innerHTML = `Client<select id="mission-client" required><option value="">Chargement des clients…</option></select><small>Le client sera repris automatiquement lors de la facturation.</small>`;
+  const routeRow = form.querySelector('.route-row');
+  form.insertBefore(clientField, routeRow || errorBox || formActions);
 
   const expenseSection = document.createElement('section');
   expenseSection.className = 'quick-expense-section';
@@ -87,6 +99,7 @@
   const submitButtons = [...formActions.querySelectorAll('button[type="submit"]')];
   const revenueInput = document.getElementById('mission-revenue');
   const truckInput = document.getElementById('mission-truck');
+  const clientInput = document.getElementById('mission-client');
   const dateInput = document.getElementById('mission-date');
   const expenseKeys = ['km', 'consumption', 'fuel', 'ration', 'rapido', 'manoeuvre', 'misc'];
   const expenseInputs = Object.fromEntries(expenseKeys.map((key) => [key, document.getElementById(`create-expense-${key}`)]));
@@ -101,6 +114,15 @@
 
   function money(value) {
     return `${formatter.format(Number(value) || 0)} FCFA`;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
   }
 
   function getExpenseValues() {
@@ -141,36 +163,98 @@
     });
   }
 
+  function maybeClearQuickContext() {
+    if (!quickContext) return;
+    if (truckContextApplied && clientContextApplied) {
+      sessionStorage.removeItem('nexisQuickEntryContext');
+      quickContext = null;
+    }
+  }
+
+  function applyTruckContext() {
+    if (!quickContext?.truck || !truckInput) {
+      truckContextApplied = true;
+      maybeClearQuickContext();
+      return true;
+    }
+    const exists = [...truckInput.options].some((option) => option.value === quickContext.truck);
+    if (!exists) return false;
+    truckInput.value = quickContext.truck;
+    truckContextApplied = true;
+    maybeClearQuickContext();
+    return true;
+  }
+
+  function applyClientContext() {
+    if (!quickContext?.client_id || !clientInput) {
+      clientContextApplied = true;
+      maybeClearQuickContext();
+      return true;
+    }
+    const exists = [...clientInput.options].some((option) => option.value === quickContext.client_id);
+    if (!exists) return false;
+    clientInput.value = quickContext.client_id;
+    clientContextApplied = true;
+    maybeClearQuickContext();
+    return true;
+  }
+
   function restoreQuickEntryContext() {
     const saved = sessionStorage.getItem('nexisQuickEntryContext');
-    if (!saved) return;
-
-    let context;
-    try {
-      context = JSON.parse(saved);
-    } catch {
-      sessionStorage.removeItem('nexisQuickEntryContext');
+    if (!saved) {
+      truckContextApplied = true;
+      clientContextApplied = true;
       return;
     }
 
-    if (context.date && dateInput) dateInput.value = context.date;
-
-    const applyTruck = () => {
-      if (!context.truck || !truckInput) return true;
-      const exists = [...truckInput.options].some((option) => option.value === context.truck);
-      if (!exists) return false;
-      truckInput.value = context.truck;
+    try {
+      quickContext = JSON.parse(saved);
+    } catch {
       sessionStorage.removeItem('nexisQuickEntryContext');
-      return true;
-    };
+      quickContext = null;
+      truckContextApplied = true;
+      clientContextApplied = true;
+      return;
+    }
 
-    if (!applyTruck()) {
+    if (quickContext?.date && dateInput) dateInput.value = quickContext.date;
+
+    if (!applyTruckContext()) {
       const observer = new MutationObserver(() => {
-        if (applyTruck()) observer.disconnect();
+        if (applyTruckContext()) observer.disconnect();
       });
       observer.observe(truckInput, { childList: true });
-      window.setTimeout(() => observer.disconnect(), 5000);
+      window.setTimeout(() => {
+        observer.disconnect();
+        if (!truckContextApplied) {
+          truckContextApplied = true;
+          maybeClearQuickContext();
+        }
+      }, 5000);
     }
+  }
+
+  async function loadClients() {
+    clientInput.disabled = true;
+    const { data, error } = await client
+      .from('clients')
+      .select('id,company_name,is_active')
+      .eq('is_active', true)
+      .order('company_name', { ascending: true });
+
+    if (error) {
+      console.error('Impossible de charger les clients pour la mission :', error);
+      clientInput.innerHTML = '<option value="">Clients indisponibles</option>';
+      showError('Impossible de charger les clients. Actualisez la page puis réessayez.');
+      return;
+    }
+
+    const rows = data || [];
+    clientInput.innerHTML = rows.length
+      ? '<option value="">Sélectionner un client</option>' + rows.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.company_name)}</option>`).join('')
+      : '<option value="">Aucun client actif</option>';
+    clientInput.disabled = !rows.length;
+    applyClientContext();
   }
 
   async function handleSubmit(event) {
@@ -184,6 +268,7 @@
     const mission = {
       id: missionId,
       submission_token: missionId,
+      client_id: clientInput?.value || null,
       truck: truckInput?.value.trim().toUpperCase(),
       date: dateInput?.value,
       loadingZone: document.getElementById('mission-loading-zone')?.value.trim(),
@@ -191,8 +276,8 @@
       revenue: numberValue(revenueInput)
     };
 
-    if (!mission.truck || !mission.date || !mission.loadingZone || !mission.unloadingZone || revenueRaw === '') {
-      showError('Veuillez compléter le camion, la date, le trajet et le montant facturé.');
+    if (!mission.client_id || !mission.truck || !mission.date || !mission.loadingZone || !mission.unloadingZone || revenueRaw === '') {
+      showError('Veuillez sélectionner un client et compléter le camion, la date, le trajet et le montant facturé.');
       return;
     }
 
@@ -240,6 +325,7 @@
 
       if (saveMode === 'next') {
         sessionStorage.setItem('nexisQuickEntryContext', JSON.stringify({
+          client_id: mission.client_id,
           truck: mission.truck,
           date: mission.date
         }));
@@ -269,5 +355,6 @@
   }, 0));
 
   restoreQuickEntryContext();
+  loadClients();
   updateSummary();
 })();
