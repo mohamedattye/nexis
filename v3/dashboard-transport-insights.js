@@ -11,196 +11,225 @@
   const client = window.supabase.createClient();
   const formatter = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
   const money = (value) => `${formatter.format(Number(value) || 0)} FCFA`;
-  const chargeFields = ['maintenance', 'repairs', 'insurance', 'technical_visit', 'driver_cost', 'financing', 'other'];
   const expenseFields = ['fuel', 'ration', 'rapido', 'manoeuvre', 'misc'];
 
   let loading = false;
   let hasRendered = false;
+  let selectedDate = todayValue();
 
   const style = document.createElement('style');
   style.textContent = `
     .transport-insights-lite{margin-top:12px;margin-bottom:12px}
-    .transport-insight-lite-card{
+    .daily-runs-card{
       min-width:0;
       overflow:hidden;
       border:1px solid rgba(223,229,237,.96);
       border-radius:16px;
-      background:rgba(255,255,255,.96);
+      background:rgba(255,255,255,.97);
       box-shadow:0 10px 28px rgba(31,48,73,.055);
-      padding:14px 17px 13px;
+      padding:15px 17px 13px;
     }
-    .transport-insight-lite-head{
+    .daily-runs-head{
       display:flex;
-      align-items:flex-start;
+      align-items:center;
       justify-content:space-between;
-      gap:12px;
-      margin-bottom:12px;
+      gap:14px;
+      margin-bottom:11px;
     }
-    .transport-insight-lite-head small{
+    .daily-runs-title small{
       display:block;
-      margin-bottom:2px;
+      margin-bottom:3px;
       color:#9aa4b1;
       font-size:6.8px;
       font-weight:700;
       letter-spacing:.08em;
       text-transform:uppercase;
     }
-    .transport-insight-lite-head h3{
+    .daily-runs-title h3{
       margin:0;
       color:#1a2b40;
       font-family:var(--font-display,"Manrope","Inter",sans-serif);
-      font-size:13px;
-      font-weight:750;
+      font-size:14px;
+      font-weight:760;
       letter-spacing:-.035em;
     }
-    .transport-insight-lite-head p{
+    .daily-runs-title p{
       margin:3px 0 0;
       color:#929ca8;
-      font-size:8px;
-      font-weight:450;
+      font-size:8.2px;
     }
-    .transport-period-lite{
+    .daily-runs-date{
+      height:34px;
+      padding:0 10px;
+      border:1px solid #e0e6ed;
+      border-radius:10px;
+      background:#fbfcfd;
+      color:#4d5d70;
+      font:600 8.5px var(--font-ui,"Inter",sans-serif);
+      outline:none;
+    }
+    .daily-runs-date:focus{
+      border-color:#efaa5a;
+      box-shadow:0 0 0 3px rgba(255,139,20,.08);
+    }
+    .daily-runs-summary{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;
+      margin-bottom:10px;
+    }
+    .daily-runs-stat{
+      min-width:0;
+      padding:9px 10px;
+      border:1px solid #edf1f4;
+      border-radius:11px;
+      background:#fafbfd;
+    }
+    .daily-runs-stat span{
+      display:block;
+      color:#8a95a3;
+      font-size:7px;
+      font-weight:650;
+      text-transform:uppercase;
+      letter-spacing:.045em;
+    }
+    .daily-runs-stat strong{
+      display:block;
+      margin-top:4px;
+      color:#22364d;
+      font-family:var(--font-display,"Manrope","Inter",sans-serif);
+      font-size:11px;
+      font-weight:760;
+      letter-spacing:-.025em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .daily-runs-stat.profit strong{color:#07845d}
+    .daily-runs-stat.loss strong{color:#bd3d44}
+    .daily-runs-table-wrap{
+      overflow:auto;
+      border:1px solid #e7ebf0;
+      border-radius:11px;
+      background:#fff;
+    }
+    .daily-runs-table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:720px;
+    }
+    .daily-runs-table th{
+      padding:8px 10px!important;
+      background:#f8fafc!important;
+      color:#8994a2!important;
+      font-size:7px!important;
+      font-weight:700!important;
+      text-align:left;
+      border-bottom:1px solid #edf1f4;
+    }
+    .daily-runs-table td{
+      padding:9px 10px!important;
+      color:#35475b;
+      font-size:8.5px!important;
+      border-bottom:1px solid #f0f2f5;
+      vertical-align:middle;
+    }
+    .daily-runs-table tbody tr:last-child td{border-bottom:0}
+    .daily-runs-truck{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 7px;
+      border-radius:8px;
+      background:#eef4f8;
+      color:#345574;
+      font-weight:750;
+      white-space:nowrap;
+    }
+    .daily-runs-route{font-weight:700;color:#26394f}
+    .daily-runs-money{font-weight:700;white-space:nowrap}
+    .daily-runs-margin{font-weight:750;color:#07845d;white-space:nowrap}
+    .daily-runs-margin.loss{color:#bd3d44}
+    .daily-runs-status{
       display:inline-flex;
       align-items:center;
       gap:5px;
-      flex:0 0 auto;
-      padding:5px 8px;
-      border:1px solid #e8ecf0;
+      padding:4px 7px;
       border-radius:999px;
-      background:#fbfcfd;
-      color:#788493;
+      background:#edf8f3;
+      color:#087b5b;
       font-size:7.2px;
-      font-weight:650;
+      font-weight:700;
       white-space:nowrap;
     }
-    .transport-period-lite:before{
+    .daily-runs-status:before{
       content:"";
       width:4px;
       height:4px;
       border-radius:50%;
-      background:#ff9414;
+      background:#14a77b;
     }
-    .fleet-profit-list{display:grid;gap:8px}
-    .fleet-profit-row{
-      display:grid;
-      grid-template-columns:105px minmax(190px,1fr) 72px 115px;
-      align-items:center;
-      gap:12px;
-      min-height:36px;
-    }
-    .fleet-profit-truck{
+    .daily-runs-empty{
+      min-height:82px;
       display:flex;
       align-items:center;
-      gap:7px;
-      min-width:0;
-      color:#294966;
-      font-size:9px;
-      font-weight:750;
-    }
-    .fleet-profit-truck i{
-      width:26px;
-      height:26px;
-      display:grid;
-      place-items:center;
-      flex:0 0 26px;
-      border-radius:8px;
-      background:#eef4f8;
-      color:#3b668b;
-      font-style:normal;
-      font-size:11px;
-    }
-    .fleet-profit-truck.inactive{opacity:.55}
-    .fleet-profit-bar-wrap{min-width:0}
-    .fleet-profit-meta{
-      display:flex;
       justify-content:space-between;
-      gap:10px;
+      gap:14px;
+      padding:14px 16px;
+      border:1px dashed #dce3ea;
+      border-radius:11px;
+      background:#fbfcfd;
+    }
+    .daily-runs-empty strong{
+      display:block;
       margin-bottom:4px;
-      color:#8994a2;
-      font-size:7.2px;
-      white-space:nowrap;
+      color:#31445a;
+      font-size:10px;
     }
-    .fleet-profit-track{
-      position:relative;
-      height:7px;
-      overflow:hidden;
-      border-radius:999px;
-      background:#eef2f5;
+    .daily-runs-empty span{color:#8a95a3;font-size:8.5px}
+    .daily-runs-empty button{
+      flex:0 0 auto;
+      min-height:34px;
+      padding:0 11px;
+      border:1px solid #e0e6ed;
+      border-radius:9px;
+      background:#fff;
+      color:#485a6e;
+      font:700 8px var(--font-ui,"Inter",sans-serif);
+      cursor:pointer;
     }
-    .fleet-profit-fill{
-      height:100%;
-      min-width:2px;
-      border-radius:999px;
-      background:linear-gradient(90deg,#31b58b,#0d936b);
-    }
-    .fleet-profit-fill.loss{background:linear-gradient(90deg,#e98383,#c74b53)}
-    .fleet-profit-fill.zero{background:#cfd7df;min-width:0}
-    .fleet-profit-missions{
-      color:#718093;
-      font-size:8px;
-      font-weight:600;
-      text-align:right;
-      white-space:nowrap;
-    }
-    .fleet-profit-net{
-      color:#07845d;
-      font-family:var(--font-display,"Manrope","Inter",sans-serif);
-      font-size:9px;
-      font-weight:750;
-      text-align:right;
-      white-space:nowrap;
-    }
-    .fleet-profit-net.loss{color:#bd3d44}
-    .fleet-profit-net.zero{color:#7f8a98}
-    .fleet-profit-summary{
-      display:flex;
-      align-items:center;
-      gap:16px;
-      margin-top:11px;
-      padding-top:10px;
-      border-top:1px solid #edf1f4;
-      color:#7e8998;
-      font-size:7.6px;
-    }
-    .fleet-profit-summary strong{color:#273b52;font-size:8.2px}
-    .transport-lite-empty{
-      min-height:90px;
-      display:grid;
-      place-content:center;
-      text-align:center;
-      color:#8793a2;
-      font-size:9px;
-    }
-    .transport-lite-empty strong{display:block;margin-bottom:4px;color:#31445a;font-size:11px}
+    .daily-runs-empty button:hover{background:#f5f7fa}
     @media(max-width:900px){
-      .fleet-profit-row{grid-template-columns:100px minmax(150px,1fr) 65px 105px}
+      .daily-runs-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
     @media(max-width:740px){
-      .transport-insight-lite-card{padding:12px}
-      .fleet-profit-row{grid-template-columns:1fr;gap:5px;padding:7px 0;border-bottom:1px solid #edf1f4}
-      .fleet-profit-missions,.fleet-profit-net{text-align:left}
-      .fleet-profit-summary{flex-wrap:wrap}
+      .daily-runs-card{padding:12px}
+      .daily-runs-head{align-items:flex-start;flex-direction:column}
+      .daily-runs-date{width:100%}
+      .daily-runs-summary{grid-template-columns:1fr 1fr}
+      .daily-runs-empty{align-items:flex-start;flex-direction:column}
     }
   `;
   document.head.appendChild(style);
+
+  function todayValue() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   function expenseTotal(item) {
     return expenseFields.reduce((sum, key) => sum + (Number(item?.[key]) || 0), 0);
   }
 
-  function chargeTotal(item) {
-    return chargeFields.reduce((sum, key) => sum + (Number(item?.[key]) || 0), 0);
-  }
-
-  function currentMonth() {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  }
-
-  function monthLabel(month) {
-    if (!month || !/^\d{4}-\d{2}$/.test(month)) return 'Période';
-    const [year, monthNumber] = month.split('-').map(Number);
-    return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(year, monthNumber - 1, 1));
+  function formatHumanDate(value) {
+    if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Aujourd’hui';
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    const formatted = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(date);
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 
   function escapeHtml(value) {
@@ -229,76 +258,49 @@
     return container;
   }
 
-  function selectedActivityMonth(trips) {
-    const current = currentMonth();
-    if (trips.some((trip) => String(trip.date || '').startsWith(current))) {
-      return { month: current, fallback: false };
-    }
-    const months = trips
-      .map((trip) => String(trip.date || '').slice(0, 7))
-      .filter((value) => /^\d{4}-\d{2}$/.test(value))
+  function latestActiveDate(trips) {
+    const dates = trips
+      .map((trip) => String(trip.date || ''))
+      .filter((value) => /^\d{4}-\d{2}-\d{2}$/.test(value))
       .sort((a, b) => b.localeCompare(a));
-    return { month: months[0] || current, fallback: Boolean(months[0] && months[0] !== current) };
+    return dates[0] || '';
   }
 
-  function buildRows(trucks, trips, expenses, charges, month) {
-    const monthTrips = trips.filter((trip) => String(trip.date || '').startsWith(month));
-    const tripIds = new Set(monthTrips.map((trip) => String(trip.id)));
+  function buildRows(trips, expenses, date) {
+    const dayTrips = trips.filter((trip) => String(trip.date || '') === date);
     const expenseMap = new Map();
     expenses.forEach((item) => {
-      if (!tripIds.has(String(item.trip_id))) return;
       expenseMap.set(String(item.trip_id), (expenseMap.get(String(item.trip_id)) || 0) + expenseTotal(item));
     });
-    const chargeMap = new Map();
-    charges.forEach((item) => {
-      if (!String(item.month || '').startsWith(month)) return;
-      const plate = String(item.truck || '');
-      chargeMap.set(plate, (chargeMap.get(plate) || 0) + chargeTotal(item));
-    });
 
-    return trucks.map((truck) => {
-      const plate = String(truck.plate_number || '');
-      const related = monthTrips.filter((trip) => String(trip.truck || '') === plate);
-      const revenue = related.reduce((sum, trip) => sum + (Number(trip.revenue) || 0), 0);
-      const missionCosts = related.reduce((sum, trip) => sum + (expenseMap.get(String(trip.id)) || 0), 0);
-      const vehicleCosts = chargeMap.get(plate) || 0;
-      const costs = missionCosts + vehicleCosts;
+    return dayTrips.map((trip) => {
+      const revenue = Number(trip.revenue) || 0;
+      const costs = expenseMap.get(String(trip.id)) || 0;
       return {
-        plate,
-        active: truck.is_active !== false,
-        missions: related.length,
+        id: trip.id,
+        truck: trip.truck || '—',
+        loading: trip.loading_zone || '—',
+        unloading: trip.unloading_zone || '—',
         revenue,
         costs,
-        net: revenue - costs
+        margin: revenue - costs
       };
-    }).sort((a, b) => {
-      if (a.active !== b.active) return a.active ? -1 : 1;
-      if (b.missions !== a.missions) return b.missions - a.missions;
-      return b.net - a.net;
-    });
+    }).sort((a, b) => String(a.truck).localeCompare(String(b.truck), 'fr', { numeric: true }));
   }
 
-  function renderRows(rows) {
-    if (!rows.length) {
-      return '<div class="transport-lite-empty"><div><strong>Aucun camion enregistré</strong>Ajoutez des véhicules dans Flotte pour suivre leur rentabilité ici.</div></div>';
-    }
-
-    const visible = rows.slice(0, 6);
-    const maxAbsNet = Math.max(1, ...visible.map((row) => Math.abs(row.net)));
-    return `<div class="fleet-profit-list">${visible.map((row) => {
-      const width = row.net === 0 ? 0 : Math.max(4, Math.abs(row.net) / maxAbsNet * 100);
-      const state = row.net < 0 ? 'loss' : row.net === 0 ? 'zero' : '';
-      const truckState = row.active ? '' : ' inactive';
-      return `<div class="fleet-profit-row">
-        <div class="fleet-profit-truck${truckState}"><i>▣</i><span>${escapeHtml(row.plate || '—')}</span></div>
-        <div class="fleet-profit-bar-wrap">
-          <div class="fleet-profit-meta"><span>CA ${money(row.revenue)}</span><span>Coûts ${money(row.costs)}</span></div>
-          <div class="fleet-profit-track"><div class="fleet-profit-fill ${state}" style="width:${width}%"></div></div>
-        </div>
-        <div class="fleet-profit-missions">${row.missions} mission${row.missions > 1 ? 's' : ''}</div>
-        <div class="fleet-profit-net ${state}">${money(row.net)}</div>
-      </div>`;
-    }).join('')}</div>`;
+  function renderTable(rows) {
+    if (!rows.length) return '';
+    return `<div class="daily-runs-table-wrap"><table class="daily-runs-table">
+      <thead><tr><th>Camion</th><th>Trajet</th><th>Statut</th><th>CA</th><th>Dépenses</th><th>Marge</th></tr></thead>
+      <tbody>${rows.map((row) => `<tr>
+        <td><span class="daily-runs-truck">${escapeHtml(row.truck)}</span></td>
+        <td><span class="daily-runs-route">${escapeHtml(row.loading)} → ${escapeHtml(row.unloading)}</span></td>
+        <td><span class="daily-runs-status">Enregistrée</span></td>
+        <td class="daily-runs-money">${money(row.revenue)}</td>
+        <td class="daily-runs-money">${money(row.costs)}</td>
+        <td class="daily-runs-margin ${row.margin < 0 ? 'loss' : ''}">${money(row.margin)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
   }
 
   async function renderInsights(force = false) {
@@ -308,50 +310,57 @@
     const container = ensureContainer();
 
     try {
-      const [trucksResult, tripsResult, expensesResult, chargesResult] = await Promise.all([
-        client.from('trucks').select('*').order('plate_number'),
+      const [tripsResult, expensesResult] = await Promise.all([
         client.from('trips').select('*').order('date', { ascending: false }),
-        client.from('trip_expenses').select('*'),
-        client.from('vehicle_charges').select('*')
+        client.from('trip_expenses').select('*')
       ]);
-
-      if (trucksResult.error) throw trucksResult.error;
       if (tripsResult.error) throw tripsResult.error;
       if (expensesResult.error) throw expensesResult.error;
-      if (chargesResult.error) throw chargesResult.error;
 
-      const trucks = trucksResult.data || [];
       const trips = tripsResult.data || [];
       const expenses = expensesResult.data || [];
-      const charges = chargesResult.data || [];
-      const period = selectedActivityMonth(trips);
-      const rows = buildRows(trucks, trips, expenses, charges, period.month);
+      const rows = buildRows(trips, expenses, selectedDate);
+      const truckCount = new Set(rows.map((row) => row.truck).filter(Boolean)).size;
       const totals = rows.reduce((acc, row) => {
         acc.revenue += row.revenue;
         acc.costs += row.costs;
-        acc.net += row.net;
-        acc.missions += row.missions;
+        acc.margin += row.margin;
         return acc;
-      }, { revenue: 0, costs: 0, net: 0, missions: 0 });
+      }, { revenue: 0, costs: 0, margin: 0 });
+      const latest = latestActiveDate(trips);
 
-      container.innerHTML = `<article class="transport-insight-lite-card">
-        <div class="transport-insight-lite-head">
-          <div><small>Pilotage flotte</small><h3>Rentabilité par camion</h3><p>Résultat après dépenses de mission et charges véhicule.</p></div>
-          <span class="transport-period-lite">${escapeHtml(monthLabel(period.month))}${period.fallback ? ' · dernier mois actif' : ''}</span>
+      container.innerHTML = `<article class="daily-runs-card">
+        <div class="daily-runs-head">
+          <div class="daily-runs-title"><small>Exploitation quotidienne</small><h3>Courses du jour</h3><p>${escapeHtml(formatHumanDate(selectedDate))}</p></div>
+          <input class="daily-runs-date" id="daily-runs-date" type="date" value="${escapeHtml(selectedDate)}" />
         </div>
-        ${renderRows(rows)}
-        <div class="fleet-profit-summary">
-          <span>${totals.missions} mission${totals.missions > 1 ? 's' : ''}</span>
-          <span>CA <strong>${money(totals.revenue)}</strong></span>
-          <span>Coûts <strong>${money(totals.costs)}</strong></span>
-          <span>Résultat net <strong>${money(totals.net)}</strong></span>
+        <div class="daily-runs-summary">
+          <div class="daily-runs-stat"><span>Courses</span><strong>${rows.length}</strong></div>
+          <div class="daily-runs-stat"><span>Camions mobilisés</span><strong>${truckCount}</strong></div>
+          <div class="daily-runs-stat"><span>CA du jour</span><strong>${money(totals.revenue)}</strong></div>
+          <div class="daily-runs-stat ${totals.margin < 0 ? 'loss' : 'profit'}"><span>Marge du jour</span><strong>${money(totals.margin)}</strong></div>
         </div>
+        ${rows.length ? renderTable(rows) : `<div class="daily-runs-empty"><div><strong>Aucune course enregistrée pour cette journée.</strong><span>Sélectionnez une autre date ou créez une nouvelle mission.</span></div>${latest && latest !== selectedDate ? `<button type="button" id="daily-runs-last-active">Voir le dernier jour actif</button>` : ''}</div>`}
       </article>`;
+
+      document.getElementById('daily-runs-date')?.addEventListener('change', (event) => {
+        selectedDate = event.target.value || todayValue();
+        hasRendered = false;
+        renderInsights(true);
+      });
+
+      document.getElementById('daily-runs-last-active')?.addEventListener('click', () => {
+        if (!latest) return;
+        selectedDate = latest;
+        hasRendered = false;
+        renderInsights(true);
+      });
+
       hasRendered = true;
     } catch (error) {
-      console.error('Erreur rentabilité flotte dashboard :', error);
+      console.error('Erreur courses du jour dashboard :', error);
       if (!hasRendered) {
-        container.innerHTML = '<article class="transport-insight-lite-card"><div class="transport-lite-empty"><div><strong>Rentabilité indisponible</strong>Les indicateurs principaux restent accessibles.</div></div></article>';
+        container.innerHTML = '<article class="daily-runs-card"><div class="daily-runs-empty"><div><strong>Courses du jour indisponibles</strong><span>Les indicateurs principaux restent accessibles.</span></div></div></article>';
       }
     } finally {
       loading = false;
