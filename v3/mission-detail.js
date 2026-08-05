@@ -1,9 +1,7 @@
 (() => {
   'use strict';
 
-  const SUPABASE_URL = 'https://ifspadsghwizzjofcscf.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_XN7xuh4te5IypVwI0UySvg_A9qCUlTK';
-  const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const client = window.supabase?.createClient();
   const formatter = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
 
   const shell = document.getElementById('mission-detail-shell');
@@ -13,6 +11,7 @@
 
   let currentTrip = null;
   let currentExpenses = [];
+  let clients = [];
   let editingExpenseId = null;
 
   const money = (value) => `${formatter.format(Number(value) || 0)} FCFA`;
@@ -29,6 +28,18 @@
     .replaceAll("'", '&#039;');
   const expenseTotal = (expense) => ['fuel', 'ration', 'rapido', 'manoeuvre', 'misc']
     .reduce((sum, key) => sum + (Number(expense?.[key]) || 0), 0);
+
+  function clientName(clientId) {
+    if (!clientId) return 'Non renseigné';
+    return clients.find((item) => String(item.id) === String(clientId))?.company_name || 'Client';
+  }
+
+  function clientOptions(selectedId = '') {
+    return '<option value="">Aucun client</option>' + clients
+      .filter((item) => item.is_active || String(item.id) === String(selectedId))
+      .map((item) => `<option value="${escapeHtml(item.id)}" ${String(item.id) === String(selectedId) ? 'selected' : ''}>${escapeHtml(item.company_name)}</option>`)
+      .join('');
+  }
 
   function openShell() {
     shell.hidden = false;
@@ -58,14 +69,17 @@
     body.innerHTML = '<div class="drawer-loading">Chargement de la mission…</div>';
 
     try {
-      const [{ data: trip, error: tripError }, { data: expenses, error: expenseError }] = await Promise.all([
+      const [{ data: trip, error: tripError }, { data: expenses, error: expenseError }, { data: clientRows, error: clientsError }] = await Promise.all([
         client.from('trips').select('*').eq('id', tripId).single(),
-        client.from('trip_expenses').select('*').eq('trip_id', tripId).order('date', { ascending: false })
+        client.from('trip_expenses').select('*').eq('trip_id', tripId).order('date', { ascending: false }),
+        client.from('clients').select('id,company_name,is_active').order('company_name', { ascending: true })
       ]);
       if (tripError) throw tripError;
       if (expenseError) throw expenseError;
+      if (clientsError) console.warn('Clients indisponibles dans la fiche mission :', clientsError);
       currentTrip = trip;
       currentExpenses = expenses || [];
+      clients = clientRows || [];
       editingExpenseId = null;
       renderMission();
     } catch (error) {
@@ -80,11 +94,12 @@
     const expenses = currentExpenses.reduce((sum, item) => sum + expenseTotal(item), 0);
     const revenue = Number(currentTrip.revenue) || 0;
     const margin = revenue - expenses;
+    const missionClient = clientName(currentTrip.client_id);
     title.textContent = `${currentTrip.truck || 'Mission'} · ${currentTrip.loadingZone || '—'} → ${currentTrip.unloadingZone || '—'}`;
 
     body.innerHTML = `
       <section class="detail-hero">
-        <div><small>Mission du ${formatDate(currentTrip.date)}</small><h3>${escapeHtml(currentTrip.loadingZone || '—')} → ${escapeHtml(currentTrip.unloadingZone || '—')}</h3></div>
+        <div><small>${escapeHtml(missionClient)} · Mission du ${formatDate(currentTrip.date)}</small><h3>${escapeHtml(currentTrip.loadingZone || '—')} → ${escapeHtml(currentTrip.unloadingZone || '—')}</h3></div>
         <span class="status">Enregistrée</span>
       </section>
 
@@ -97,6 +112,7 @@
       <section class="detail-card">
         <div class="detail-card-head"><div><h3>Informations</h3><p>Données principales de la mission.</p></div><button class="secondary" type="button" id="edit-mission-button">Modifier</button></div>
         <div class="detail-info-grid">
+          <div class="detail-info"><span>Client</span><strong>${escapeHtml(missionClient)}</strong></div>
           <div class="detail-info"><span>Camion</span><strong>${escapeHtml(currentTrip.truck || '—')}</strong></div>
           <div class="detail-info"><span>Date</span><strong>${formatDate(currentTrip.date)}</strong></div>
           <div class="detail-info"><span>Chargement</span><strong>${escapeHtml(currentTrip.loadingZone || '—')}</strong></div>
@@ -149,6 +165,7 @@
     card.innerHTML = `
       <div class="detail-card-head"><div><h3>Modifier la mission</h3><p>Les dépenses liées garderont la même mission.</p></div></div>
       <form class="drawer-form" id="mission-edit-form">
+        <label class="full">Client<select id="detail-client">${clientOptions(currentTrip.client_id)}</select></label>
         <label>Camion<input id="detail-truck" value="${escapeHtml(currentTrip.truck || '')}" required /></label>
         <label>Date<input id="detail-date" type="date" value="${escapeHtml(currentTrip.date || '')}" required /></label>
         <label>Chargement<input id="detail-loading" value="${escapeHtml(currentTrip.loadingZone || '')}" required /></label>
@@ -166,6 +183,7 @@
     event.preventDefault();
     const errorBox = document.getElementById('mission-edit-error');
     const updated = {
+      client_id: document.getElementById('detail-client').value || null,
       truck: document.getElementById('detail-truck').value.trim().toUpperCase(),
       date: document.getElementById('detail-date').value,
       loadingZone: document.getElementById('detail-loading').value.trim(),
