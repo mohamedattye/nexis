@@ -6,6 +6,7 @@
     'new-trip': 'Créer une mission',
     trips: 'Centre des missions',
     fleet: 'Flotte',
+    clients: 'Clients',
     expenses: 'Dépenses',
     'vehicle-charges': 'Charges véhicules',
     reports: 'Rapports',
@@ -43,6 +44,28 @@
       section.innerHTML = '<section class="panel placeholder"><h2>Charges véhicules</h2><p>Chargement du module…</p></section>';
       const reportsView = document.getElementById('reports');
       workspace.insertBefore(section, reportsView || null);
+    }
+  }
+
+  function ensureClientsView() {
+    const nav = document.querySelector('.sidebar nav');
+    if (nav && !nav.querySelector('[data-view="clients"]')) {
+      const button = document.createElement('button');
+      button.className = 'nav-item';
+      button.dataset.view = 'clients';
+      button.textContent = 'Clients';
+      const expensesButton = nav.querySelector('[data-view="expenses"]');
+      nav.insertBefore(button, expensesButton || null);
+    }
+
+    const workspace = document.querySelector('.workspace');
+    if (workspace && !document.getElementById('clients')) {
+      const section = document.createElement('section');
+      section.className = 'view';
+      section.id = 'clients';
+      section.innerHTML = '<section class="panel placeholder"><h2>Clients</h2><p>Chargement du module Clients…</p></section>';
+      const expensesView = document.getElementById('expenses');
+      workspace.insertBefore(section, expensesView || null);
     }
   }
 
@@ -95,6 +118,10 @@
     loadScriptOnce('__NEXIS_VEHICLE_CHARGES_PREMIUM_LOADING__', 'vehicle-charges-premium.js?v=20260729-vehicle-charges-premium-1', 'Impossible de charger la finition premium des Charges véhicules.');
   }
 
+  function loadClientsModule() {
+    loadScriptOnce('__NEXIS_CLIENTS_MODULE_LOADING__', 'clients-module.js?v=20260805-clients-1', 'Impossible de charger le module Clients.');
+  }
+
   function loadReportsModule() {
     loadScriptOnce('__NEXIS_REPORTS_LOADING__', 'reports-module.js?v=20260724-reports-net-1', 'Impossible de charger le module Rapports.');
     loadScriptOnce('__NEXIS_REPORTS_NET_EXTENSION_LOADING__', 'reports-net-extension.js?v=20260724-reports-net-1', 'Impossible de charger le résultat net dans Rapports.');
@@ -125,7 +152,7 @@
 
   function loadSidebarNavigation() {
     ensureStylesheetOnce('nexis-sidebar-navigation-style', 'sidebar-navigation.css?v=20260728-sidebar-1');
-    loadScriptOnce('__NEXIS_SIDEBAR_NAVIGATION_LOADING__', 'sidebar-navigation.js?v=20260728-sidebar-1', 'Impossible de charger la nouvelle navigation latérale.');
+    loadScriptOnce('__NEXIS_SIDEBAR_NAVIGATION_LOADING__', 'sidebar-navigation.js?v=20260805-clients-1', 'Impossible de charger la nouvelle navigation latérale.');
   }
 
   function loadMissionCenterPremium() {
@@ -154,6 +181,7 @@
     if (topCreateButton) topCreateButton.hidden = viewId === 'new-trip';
 
     if (viewId === 'vehicle-charges') loadVehicleChargesModule();
+    if (viewId === 'clients') loadClientsModule();
     if (viewId === 'reports') loadReportsModule();
     if (viewId === 'dashboard') {
       loadDashboardNetModule();
@@ -184,6 +212,7 @@
   }
 
   ensureVehicleChargesView();
+  ensureClientsView();
   ensureUsersView();
   loadSidebarNavigation();
   loadAuthPreviewModule();
