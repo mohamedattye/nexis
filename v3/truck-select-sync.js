@@ -72,3 +72,16 @@
 
   if (location.hash === '#new-trip') syncActiveTrucks();
 })();
+
+(() => {
+  if (window.__NEXIS_INVOICES_INTEGRATION_LOADING__) return;
+  window.__NEXIS_INVOICES_INTEGRATION_LOADING__ = true;
+  const script = document.createElement('script');
+  script.src = 'invoices-integration.js?v=20260805-invoices-1';
+  script.defer = true;
+  script.onerror = () => {
+    window.__NEXIS_INVOICES_INTEGRATION_LOADING__ = false;
+    console.error('Impossible de charger l’intégration Facturation.');
+  };
+  document.body.appendChild(script);
+})();
