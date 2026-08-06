@@ -40,14 +40,43 @@
     }
   }
 
+  function showLoadError(message) {
+    const view = document.getElementById('invoices');
+    if (!view || view.querySelector('.invoice-page')) return;
+    view.innerHTML = `<section class="panel placeholder"><h2>Facturation</h2><p>${message}</p><button class="secondary" id="retry-invoices-module" type="button" style="margin-top:12px">Réessayer</button></section>`;
+    document.getElementById('retry-invoices-module')?.addEventListener('click', () => {
+      window.__NEXIS_INVOICES_LOADING__ = false;
+      window.__NEXIS_INVOICES_MODULE__ = false;
+      loadModule();
+    });
+  }
+
   function loadModule() {
-    if (window.__NEXIS_INVOICES_MODULE__ || window.__NEXIS_INVOICES_LOADING__) return;
+    const view = document.getElementById('invoices');
+    if (view?.querySelector('.invoice-page')) return;
+    if (window.__NEXIS_INVOICES_LOADING__) return;
+
     window.__NEXIS_INVOICES_LOADING__ = true;
+    window.__NEXIS_INVOICES_MODULE__ = false;
+
+    const previous = document.getElementById('nexis-invoices-module-script');
+    if (previous) previous.remove();
+
     const script = document.createElement('script');
-    script.src = 'invoices-module.js?v=20260805-invoices-1';
-    script.defer = true;
+    script.id = 'nexis-invoices-module-script';
+    script.src = `invoices-module.js?v=20260806-invoices-fix-2&t=${Date.now()}`;
+    script.async = true;
+    script.onload = () => {
+      window.__NEXIS_INVOICES_LOADING__ = false;
+      window.setTimeout(() => {
+        if (!document.querySelector('#invoices .invoice-page')) {
+          showLoadError('Le module Facturation n’a pas pu démarrer. Cliquez sur Réessayer.');
+        }
+      }, 300);
+    };
     script.onerror = () => {
       window.__NEXIS_INVOICES_LOADING__ = false;
+      showLoadError('Impossible de télécharger le module Facturation. Cliquez sur Réessayer.');
       console.error('Impossible de charger le module Facturation.');
     };
     document.body.appendChild(script);
@@ -62,7 +91,9 @@
 
   ensureView();
   ensureNav();
-  new MutationObserver(() => ensureNav()).observe(document.querySelector('.sidebar nav'), { childList: true, subtree: true });
+
+  const nav = document.querySelector('.sidebar nav');
+  if (nav) new MutationObserver(ensureNav).observe(nav, { childList: true, subtree: true });
 
   document.addEventListener('click', (event) => {
     if (!event.target.closest('[data-view="invoices"]')) return;
