@@ -12,7 +12,28 @@
   };
 
   let resolveReady;
+  let readyResolved = false;
   const ready = new Promise(resolve => { resolveReady = resolve; });
+
+  function loadScript(src, marker) {
+    if (marker && window[marker]) return Promise.resolve();
+    const existing = [...document.scripts].find(script => script.src.includes(src.split('?')[0]));
+    if (existing) {
+      if (existing.dataset.loaded === '1') return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        existing.addEventListener('load', resolve, { once:true });
+        existing.addEventListener('error', reject, { once:true });
+      });
+    }
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.addEventListener('load', () => { script.dataset.loaded = '1'; resolve(); }, { once:true });
+      script.addEventListener('error', reject, { once:true });
+      document.head.appendChild(script);
+    });
+  }
 
   function snapshot() {
     return {
@@ -72,18 +93,23 @@
   `;
   document.head.appendChild(style);
 
+  async function ensureAuthentication() {
+    await loadScript('saas-auth-gateway.js?v=20260807-saas-1', '__NEXIS_SAAS_AUTH_GATEWAY__');
+    if (!window.NexisAuth?.ready) throw new Error('Portail d’authentification Nexis indisponible.');
+    return window.NexisAuth.ready;
+  }
+
   async function load() {
     state.loading = true;
     state.error = null;
 
     try {
       if (!window.supabase?.createClient) throw new Error('Supabase indisponible.');
-      const db = window.supabase.createClient();
-      const { data: authData, error: authError } = await db.auth.getUser();
-      if (authError) throw authError;
+      const authenticatedUser = await ensureAuthentication();
+      if (!authenticatedUser) throw new Error('Utilisateur non connecté.');
 
-      state.user = authData?.user || null;
-      if (!state.user) throw new Error('Utilisateur non connecté.');
+      const db = window.NexisAuth?.client || window.supabase.createClient();
+      state.user = authenticatedUser;
 
       const profileResult = await db
         .from('profiles')
@@ -93,6 +119,7 @@
       if (profileResult.error) throw profileResult.error;
       state.profile = profileResult.data;
 
+      if (!state.profile?.is_active) throw new Error('Compte utilisateur désactivé.');
       if (!state.profile?.organization_id) throw new Error('Aucune entreprise associée à cet utilisateur.');
 
       const organizationResult = await db
@@ -103,13 +130,19 @@
       if (organizationResult.error) throw organizationResult.error;
       state.organization = organizationResult.data;
 
+      if (!state.organization?.is_active) throw new Error('Entreprise désactivée.');
+
       renderContext();
+      loadScript('saas-onboarding.js?v=20260807-saas-1', '__NEXIS_SAAS_ONBOARDING__').catch(error => console.error('Onboarding Nexis :', error));
     } catch (error) {
       state.error = error;
       console.error('Contexte entreprise Nexis :', error);
     } finally {
       state.loading = false;
-      resolveReady(snapshot());
+      if (!readyResolved) {
+        readyResolved = true;
+        resolveReady(snapshot());
+      }
       emit();
     }
 
