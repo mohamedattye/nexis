@@ -132,4 +132,15 @@
 
   window.addEventListener('nexis:open-organization-settings', open);
   window.NexisOrganizationSettings = { open, close };
+
+  function loadAddon(src, id) {
+    if (document.getElementById(id)) return;
+    const script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+    script.defer = true;
+    document.body.appendChild(script);
+  }
+  loadAddon('invite-auth-bridge.js?v=20260807-team-1', 'nexis-invite-auth-bridge-script');
+  loadAddon('team-management.js?v=20260807-team-1', 'nexis-team-management-script');
 })();
