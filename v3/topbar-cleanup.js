@@ -3,6 +3,16 @@
   if (window.__NEXIS_TOPBAR_CLEANUP__) return;
   window.__NEXIS_TOPBAR_CLEANUP__ = true;
 
+  // Le Design System est volontairement chargé ici, après les styles historiques,
+  // afin qu'il devienne la couche visuelle de référence sans modifier les modules métier.
+  if (!document.getElementById('nexis-design-system-css')) {
+    const link = document.createElement('link');
+    link.id = 'nexis-design-system-css';
+    link.rel = 'stylesheet';
+    link.href = 'nexis-design-system.css?v=20260811-uxui-1';
+    document.head.appendChild(link);
+  }
+
   const style = document.createElement('style');
   style.textContent = `
     .topbar-actions{gap:8px!important;align-items:center}.topbar-actions>.sync-state{display:none!important}
