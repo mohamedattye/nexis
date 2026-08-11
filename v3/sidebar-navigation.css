@@ -11,25 +11,38 @@
 }
 .sidebar nav::-webkit-scrollbar{display:none}
 
+/* Action principale volontairement discrète : visible sans rivaliser avec le workspace */
 .nav-primary-action{
   display:flex!important;
   align-items:center;
   gap:10px;
   width:100%;
-  min-height:42px!important;
-  margin:2px 0 14px!important;
-  padding:9px 11px!important;
+  min-height:38px!important;
+  margin:2px 0 13px!important;
+  padding:8px 10px!important;
+  border:1px solid rgba(255,255,255,.09)!important;
   border-radius:10px!important;
-  background:linear-gradient(180deg,#ff9c22,#ff8500)!important;
-  color:#14233a!important;
-  box-shadow:0 7px 18px rgba(255,133,0,.22)!important;
-  font-size:11px!important;
-  font-weight:800!important;
+  background:rgba(255,255,255,.045)!important;
+  color:#e8eef5!important;
+  box-shadow:none!important;
+  font-size:10.8px!important;
+  font-weight:720!important;
 }
-.nav-primary-action:hover{background:linear-gradient(180deg,#ffa536,#ff8a00)!important;color:#14233a!important;transform:translateY(-1px)!important}
-.nav-primary-action.active{background:linear-gradient(180deg,#ff9c22,#ff8500)!important;color:#14233a!important;box-shadow:0 7px 18px rgba(255,133,0,.22)!important}
+.nav-primary-action:hover{
+  background:rgba(255,255,255,.075)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  color:#fff!important;
+  transform:none!important;
+}
+.nav-primary-action.active{
+  background:rgba(255,138,0,.11)!important;
+  border-color:rgba(255,138,0,.26)!important;
+  color:#fff!important;
+  box-shadow:inset 2px 0 0 #ff8a00!important;
+}
 .nav-primary-action.active:after{display:none!important}
-.nav-primary-action .nav-icon{color:#14233a!important}
+.nav-primary-action .nav-icon{color:#ff9a1b!important}
+.nav-primary-action .nav-icon svg{stroke-width:2!important}
 
 .nav-group{margin-top:15px}
 .nav-group:first-of-type{margin-top:0}
@@ -127,7 +140,7 @@
   .nav-group{margin-top:10px}
   .nav-group-title{padding-bottom:5px}
   .nav-item{min-height:35px!important;padding-top:6px!important;padding-bottom:6px!important}
-  .nav-primary-action{min-height:38px!important;margin-bottom:10px!important}
+  .nav-primary-action{min-height:35px!important;margin-bottom:9px!important}
 }
 
 @media(max-width:740px){
