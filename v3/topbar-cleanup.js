@@ -11,8 +11,17 @@
     link.href = href;
     document.head.appendChild(link);
   }
+  function loadScript(id, src) {
+    if (document.getElementById(id)) return;
+    const script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+    script.defer = true;
+    document.body.appendChild(script);
+  }
   loadCss('nexis-design-system-css', 'nexis-design-system.css?v=20260811-uxui-3');
-  loadCss('nexis-dashboard-polish-css', 'dashboard-polish.css?v=20260811-dashboard-1');
+  loadCss('nexis-dashboard-polish-css', 'dashboard-polish.css?v=20260811-dashboard-final-1');
+  loadScript('nexis-dashboard-final-clean-script', 'dashboard-final-clean.js?v=20260811-dashboard-final-1');
 
   const subtitles = {
     dashboard: 'Vue d’ensemble de votre activité transport',
