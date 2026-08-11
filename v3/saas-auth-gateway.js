@@ -5,6 +5,7 @@
 
   if (!window.supabase?.createClient) return;
   const db = window.supabase.createClient();
+  const APP_URL = window.NEXIS_ENVIRONMENT?.appUrl || `${location.origin}/`;
 
   let resolveReady;
   let currentUser = null;
@@ -55,7 +56,7 @@
         <div class="nexis-auth-message" id="nexis-signup-message" hidden></div>
         <button class="nexis-auth-submit" type="submit">Créer mon espace Nexis</button>
       </form>
-      <p class="nexis-auth-legal">En créant un compte, vous créez un espace entreprise privé. Les données de votre société sont isolées de celles des autres transporteurs.</p>
+      <p class="nexis-auth-legal">Une adresse e-mail ne peut correspondre qu’à un seul compte Nexis. Votre espace entreprise est privé et isolé des autres transporteurs.</p>
     </div></div>`;
   document.body.appendChild(gate);
 
@@ -76,6 +77,27 @@
     signupForm.hidden = tab !== 'signup';
     showMessage('nexis-login-message');
     showMessage('nexis-signup-message');
+  }
+
+  function authErrorMessage(error, context = 'auth') {
+    const message = String(error?.message || '').toLowerCase();
+    const code = String(error?.code || '').toLowerCase();
+    if (message.includes('rate limit') || code.includes('rate_limit')) {
+      return 'Trop d’e-mails ont été demandés récemment. Attendez quelques minutes avant de réessayer.';
+    }
+    if (message.includes('already registered') || message.includes('already exists') || code.includes('user_already_exists')) {
+      return 'Un compte existe déjà avec cette adresse. Connectez-vous ou utilisez « Mot de passe oublié ? ».';
+    }
+    if (context === 'recovery') return 'Impossible d’envoyer le lien pour le moment. Réessayez dans quelques minutes.';
+    if (context === 'signup') return 'Création du compte impossible pour le moment. Réessayez dans quelques minutes.';
+    return 'E-mail ou mot de passe incorrect.';
+  }
+
+  function redirectExistingAccountToLogin(email) {
+    setTab('login');
+    document.getElementById('nexis-login-email').value = email;
+    showMessage('nexis-login-message', 'Un compte existe déjà avec cette adresse, ou une inscription est déjà en attente. Connectez-vous ou utilisez « Mot de passe oublié ? ».', 'error');
+    document.getElementById('nexis-login-password').focus();
   }
 
   document.querySelectorAll('[data-auth-tab]').forEach(button => button.addEventListener('click', () => setTab(button.dataset.authTab)));
@@ -112,7 +134,7 @@
     submit.disabled = true;
     showMessage('nexis-login-message');
     try {
-      const email = document.getElementById('nexis-login-email').value.trim();
+      const email = document.getElementById('nexis-login-email').value.trim().toLowerCase();
       const password = document.getElementById('nexis-login-password').value;
       const { data, error } = await db.auth.signInWithPassword({ email, password });
       if (error) throw error;
@@ -122,7 +144,7 @@
       location.reload();
     } catch (error) {
       console.error('Connexion Nexis :', error);
-      showMessage('nexis-login-message', 'E-mail ou mot de passe incorrect.', 'error');
+      showMessage('nexis-login-message', authErrorMessage(error, 'login'), 'error');
     } finally {
       submit.disabled = false;
     }
@@ -136,7 +158,7 @@
     try {
       const companyName = document.getElementById('nexis-signup-company').value.trim();
       const fullName = document.getElementById('nexis-signup-name').value.trim();
-      const email = document.getElementById('nexis-signup-email').value.trim();
+      const email = document.getElementById('nexis-signup-email').value.trim().toLowerCase();
       const password = document.getElementById('nexis-signup-password').value;
       if (password.length < 8) throw new Error('Le mot de passe doit contenir au moins 8 caractères.');
 
@@ -145,35 +167,48 @@
         password,
         options: {
           data: { company_name: companyName, full_name: fullName },
-          emailRedirectTo: `${location.origin}${location.pathname}`
+          emailRedirectTo: APP_URL
         }
       });
       if (error) throw error;
+
+      // Avec la protection anti-énumération de Supabase, un compte existant
+      // peut revenir sans erreur mais sans nouvelle identité. Dans ce cas,
+      // aucune nouvelle structure n'est créée : on renvoie vers Connexion.
+      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        redirectExistingAccountToLogin(email);
+        return;
+      }
 
       if (data?.session && data?.user) {
         showMessage('nexis-signup-message', 'Votre espace entreprise est prêt…', 'success');
         await completeAuth(data.user);
         location.reload();
       } else {
-        showMessage('nexis-signup-message', 'Compte créé. Vérifiez votre e-mail pour confirmer votre inscription, puis connectez-vous.', 'success');
+        showMessage('nexis-signup-message', 'Compte créé. Un e-mail de confirmation vient de vous être envoyé. Confirmez-le puis connectez-vous avec la même adresse.', 'success');
       }
     } catch (error) {
       console.error('Inscription Nexis :', error);
-      showMessage('nexis-signup-message', error.message || 'Création du compte impossible.', 'error');
+      const friendly = authErrorMessage(error, 'signup');
+      if (friendly.startsWith('Un compte existe déjà')) {
+        redirectExistingAccountToLogin(document.getElementById('nexis-signup-email').value.trim().toLowerCase());
+      } else {
+        showMessage('nexis-signup-message', friendly, 'error');
+      }
     } finally {
       submit.disabled = false;
     }
   });
 
   document.getElementById('nexis-forgot-password').addEventListener('click', async () => {
-    const email = document.getElementById('nexis-login-email').value.trim();
+    const email = document.getElementById('nexis-login-email').value.trim().toLowerCase();
     if (!email) return showMessage('nexis-login-message', 'Indiquez d’abord votre adresse e-mail.', 'error');
     try {
-      const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}${location.pathname}` });
+      const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: APP_URL });
       if (error) throw error;
-      showMessage('nexis-login-message', 'Un lien de réinitialisation a été envoyé par e-mail.', 'success');
+      showMessage('nexis-login-message', 'Si ce compte existe, un lien de réinitialisation vient d’être envoyé par e-mail.', 'success');
     } catch (error) {
-      showMessage('nexis-login-message', error.message || 'Envoi impossible.', 'error');
+      showMessage('nexis-login-message', authErrorMessage(error, 'recovery'), 'error');
     }
   });
 
