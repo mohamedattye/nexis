@@ -59,6 +59,22 @@
     if (eyebrow) eyebrow.textContent = subtitles[currentView()] || 'Vue synthétique';
   }
 
+  function refreshMenu() {
+    const { profile, org } = accountState();
+    const name = profile?.full_name || 'Mon compte';
+    const email = profile?.email || '';
+    const avatar = document.getElementById('nexis-account-avatar');
+    if (avatar) avatar.textContent = initials(name);
+    const nameEl = document.getElementById('nexis-account-name');
+    if (nameEl) nameEl.textContent = name;
+    const emailEl = document.getElementById('nexis-account-email');
+    if (emailEl) emailEl.textContent = [org?.name, email].filter(Boolean).join(' · ');
+    const team = document.querySelector('[data-account-action="team"]');
+    if (team) team.hidden = profile?.role !== 'admin';
+    const platform = document.querySelector('[data-account-action="platform"]');
+    if (platform) platform.hidden = !document.getElementById('platform-admin-open');
+  }
+
   function ensureMenu() {
     const actions = document.querySelector('.topbar-actions');
     if (!actions) return null;
@@ -83,7 +99,9 @@
 
     const button = wrap.querySelector('#nexis-account-button');
     const menu = wrap.querySelector('#nexis-account-menu');
+
     button.addEventListener('click', event => {
+      event.preventDefault();
       event.stopPropagation();
       menu.hidden = !menu.hidden;
       button.setAttribute('aria-expanded', String(!menu.hidden));
@@ -93,6 +111,8 @@
     wrap.addEventListener('click', event => {
       const item = event.target.closest('[data-account-action]');
       if (!item) return;
+      event.preventDefault();
+      event.stopPropagation();
       const action = item.dataset.accountAction;
       menu.hidden = true;
       button.setAttribute('aria-expanded', 'false');
@@ -109,68 +129,89 @@
         button.setAttribute('aria-expanded', 'false');
       }
     });
+
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
         menu.hidden = true;
         button.setAttribute('aria-expanded', 'false');
       }
     });
+
     return wrap;
   }
 
-  function refreshMenu() {
-    const { profile, org } = accountState();
-    const name = profile?.full_name || 'Mon compte';
-    const email = profile?.email || '';
-    const avatar = document.getElementById('nexis-account-avatar');
-    if (avatar) avatar.textContent = initials(name);
-    const nameEl = document.getElementById('nexis-account-name');
-    if (nameEl) nameEl.textContent = name;
-    const emailEl = document.getElementById('nexis-account-email');
-    if (emailEl) emailEl.textContent = [org?.name, email].filter(Boolean).join(' · ');
-    const team = document.querySelector('[data-account-action="team"]');
-    if (team) team.hidden = profile?.role !== 'admin';
-    const platform = document.querySelector('[data-account-action="platform"]');
-    if (platform) platform.hidden = !document.getElementById('platform-admin-open');
-  }
-
-  function clean() {
+  function normalizeTopbar() {
     const actions = document.querySelector('.topbar-actions');
     if (!actions) return;
     const wrap = ensureMenu();
     if (!wrap) return;
 
+    const company = document.getElementById('organization-context-badge');
+    const create = [...actions.querySelectorAll('button.primary')].find(button => button.dataset.view === 'new-trip');
+
     [...actions.children].forEach(child => {
-      const keep = child.id === 'organization-context-badge'
-        || child.id === 'nexis-account-wrap'
-        || (child.matches('button.primary') && child.dataset.view === 'new-trip');
+      const keep = child === company || child === create || child === wrap;
       if (!keep) child.style.display = 'none';
     });
 
-    const company = document.getElementById('organization-context-badge');
-    const create = [...actions.querySelectorAll('button.primary')].find(button => button.dataset.view === 'new-trip');
-    if (company) actions.appendChild(company);
-    if (create) actions.appendChild(create);
-    actions.appendChild(wrap);
+    // Ne déplace les éléments que si leur ordre est réellement incorrect.
+    const desired = [company, create, wrap].filter(Boolean);
+    const current = [...actions.children].filter(child => desired.includes(child));
+    const needsReorder = desired.length !== current.length || desired.some((child, index) => current[index] !== child);
+    if (needsReorder) desired.forEach(child => actions.appendChild(child));
+
     refreshMenu();
     updateSubtitle();
   }
 
-  let scheduled = false;
-  const scheduleClean = () => {
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(() => { scheduled = false; clean(); });
-  };
+  function navigateToNewTrip() {
+    const sidebarButton = document.querySelector('.nav-item[data-view="new-trip"]');
+    if (sidebarButton) {
+      sidebarButton.click();
+      return;
+    }
+    location.hash = '#new-trip';
+  }
 
-  const observer = new MutationObserver(scheduleClean);
-  const start = () => {
-    clean();
-    observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['class'] });
-  };
+  function bindTopbarActions() {
+    const actions = document.querySelector('.topbar-actions');
+    if (!actions || actions.dataset.nexisStableBound === '1') return;
+    actions.dataset.nexisStableBound = '1';
 
-  window.addEventListener('hashchange', scheduleClean);
-  window.addEventListener('nexis:organization-ready', scheduleClean);
-  window.addEventListener('nexis:organization-updated', scheduleClean);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once:true }); else start();
+    actions.addEventListener('click', event => {
+      const create = event.target.closest('button.primary[data-view="new-trip"]');
+      if (create) {
+        event.preventDefault();
+        navigateToNewTrip();
+      }
+    });
+  }
+
+  let observer = null;
+  function start() {
+    normalizeTopbar();
+    bindTopbarActions();
+
+    const actions = document.querySelector('.topbar-actions');
+    if (actions && !observer) {
+      observer = new MutationObserver(() => {
+        // Surveillance ciblée uniquement sur les ajouts/retraits de vrais boutons.
+        window.requestAnimationFrame(() => {
+          normalizeTopbar();
+          bindTopbarActions();
+        });
+      });
+      observer.observe(actions, { childList:true });
+    }
+  }
+
+  window.addEventListener('hashchange', () => {
+    updateSubtitle();
+    window.requestAnimationFrame(normalizeTopbar);
+  });
+  window.addEventListener('nexis:organization-ready', () => window.requestAnimationFrame(normalizeTopbar));
+  window.addEventListener('nexis:organization-updated', () => window.requestAnimationFrame(normalizeTopbar));
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once:true });
+  else start();
 })();
