@@ -3,13 +3,27 @@
   if (window.__NEXIS_TOPBAR_CLEANUP__) return;
   window.__NEXIS_TOPBAR_CLEANUP__ = true;
 
-  if (!document.getElementById('nexis-design-system-css')) {
+  function loadCss(id, href) {
+    if (document.getElementById(id)) return;
     const link = document.createElement('link');
-    link.id = 'nexis-design-system-css';
+    link.id = id;
     link.rel = 'stylesheet';
-    link.href = 'nexis-design-system.css?v=20260811-uxui-2';
+    link.href = href;
     document.head.appendChild(link);
   }
+  loadCss('nexis-design-system-css', 'nexis-design-system.css?v=20260811-uxui-3');
+  loadCss('nexis-dashboard-polish-css', 'dashboard-polish.css?v=20260811-dashboard-1');
+
+  const subtitles = {
+    dashboard: 'Vue d’ensemble de votre activité transport',
+    'new-trip': 'Créez une mission rapidement et sans friction',
+    trips: 'Suivez vos opérations et leur rentabilité',
+    fleet: 'Pilotez votre flotte et ses performances',
+    clients: 'Gérez vos clients et leur activité',
+    invoices: 'Facturation, notes de prix et suivi des paiements',
+    expenses: 'Suivez les dépenses de votre exploitation',
+    reports: 'Analysez vos performances et vos résultats'
+  };
 
   const style = document.createElement('style');
   style.textContent = `
@@ -38,6 +52,17 @@
     const profile = window.NexisOrganization?.profile?.() || null;
     const org = window.NexisOrganization?.organization?.() || null;
     return { profile, org };
+  }
+
+  function currentView() {
+    const active = document.querySelector('.view.active');
+    return active?.id || String(location.hash || '#dashboard').replace('#','') || 'dashboard';
+  }
+
+  function updateSubtitle() {
+    const eyebrow = document.getElementById('eyebrow');
+    if (!eyebrow) return;
+    eyebrow.textContent = subtitles[currentView()] || 'Pilotez votre activité transport simplement';
   }
 
   function ensureMenu() {
@@ -134,6 +159,7 @@
     if (create) actions.appendChild(create);
     actions.appendChild(wrap);
     refreshMenu();
+    updateSubtitle();
   }
 
   let scheduled = false;
@@ -146,9 +172,10 @@
   const observer = new MutationObserver(scheduleClean);
   const start = () => {
     clean();
-    observer.observe(document.body, { childList:true, subtree:true });
+    observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['class'] });
   };
 
+  window.addEventListener('hashchange', scheduleClean);
   window.addEventListener('nexis:organization-ready', scheduleClean);
   window.addEventListener('nexis:organization-updated', scheduleClean);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once:true }); else start();
