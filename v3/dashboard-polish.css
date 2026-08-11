@@ -1,0 +1,41 @@
+/* NEXIS — Dashboard polish pass */
+#dashboard{padding-top:34px!important}
+.dashboard-heading{margin-bottom:22px!important}
+.dashboard-heading h2{font-size:27px!important;font-weight:760!important;letter-spacing:-.035em!important}
+#period-label{height:42px!important;padding:0 15px!important;font-size:12.5px!important;box-shadow:0 1px 2px rgba(15,35,55,.025)}
+
+.dashboard-clean .kpi-grid{gap:18px!important}
+.dashboard-clean .kpi-card{min-height:142px!important;padding:23px 24px 21px!important}
+.dashboard-clean .kpi-card span{font-size:13px!important}
+.dashboard-clean .kpi-card strong{font-size:27px!important;margin-top:11px!important}
+.dashboard-clean .kpi-card small{font-size:12px!important;margin-top:9px!important}
+
+.dashboard-alert{margin-top:18px!important;min-height:58px!important;padding:12px 15px!important}
+.dashboard-main{margin-top:18px!important}
+.dashboard-main .panel{padding:25px 26px!important}
+.dashboard-main .panel-head{margin-bottom:18px!important}
+.dashboard-main .panel-head h2{font-size:21px!important}
+.dashboard-main .panel-head small{font-size:10.5px!important}
+.dashboard-main .table-scroll{border-radius:13px!important}
+.dashboard-main th{height:46px!important;font-size:11px!important;padding:0 16px!important}
+.dashboard-main td{padding:16px!important;font-size:13.5px!important}
+.dashboard-main .table-message{padding:40px 20px!important;font-size:13px!important}
+
+/* Courses du jour : donne plus de présence au module existant */
+.daily-ops-card,.daily-operations-card,.today-operations,.today-trips-card{border-radius:16px!important;box-shadow:0 8px 28px rgba(22,42,65,.045)!important}
+#dashboard [class*="daily"] h2,#dashboard [class*="today"] h2{font-size:19px!important}
+#dashboard [class*="daily"] small,#dashboard [class*="today"] small{font-size:11px!important}
+
+/* Empty states plus confortables */
+#dashboard .empty-state{min-height:105px!important;border-radius:12px!important}
+#dashboard .empty-state strong{font-size:13px!important}
+#dashboard .empty-state span{font-size:12px!important;max-width:420px!important}
+
+/* Desktop : la zone centrale paraît moins tassée */
+@media(min-width:1280px){
+  #dashboard{padding-left:44px!important;padding-right:44px!important}
+}
+@media(max-width:1240px){
+  #dashboard{padding-top:28px!important}
+  .dashboard-clean .kpi-grid{gap:14px!important}
+}
