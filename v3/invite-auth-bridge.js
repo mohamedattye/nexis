@@ -2,6 +2,17 @@
   'use strict';
   if (window.__NEXIS_INVITE_AUTH_BRIDGE__) return;
   window.__NEXIS_INVITE_AUTH_BRIDGE__ = true;
+
+  // Charge le nettoyage de la barre supérieure pour tous les utilisateurs,
+  // même lorsqu'aucun lien d'invitation n'est présent.
+  if (!document.getElementById('nexis-topbar-cleanup-script')) {
+    const cleanup = document.createElement('script');
+    cleanup.id = 'nexis-topbar-cleanup-script';
+    cleanup.src = 'topbar-cleanup.js?v=20260811-clean-1';
+    cleanup.defer = true;
+    document.body.appendChild(cleanup);
+  }
+
   if (!window.supabase?.createClient) return;
 
   const params = new URLSearchParams(location.search);
@@ -61,7 +72,7 @@
             password,
             options: {
               data: { full_name: fullName, invitation_token: token },
-              emailRedirectTo: `${location.origin}${location.pathname}`
+              emailRedirectTo: window.NEXIS_ENVIRONMENT?.appUrl || `${location.origin}/`
             }
           });
           if (signupError) throw signupError;
