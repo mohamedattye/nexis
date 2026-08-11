@@ -6,7 +6,7 @@
 
   const icons = {
     dashboard: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
-    'new-trip': '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/></svg>',
+    'new-trip': '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
     trips: '<svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
     fleet: '<svg viewBox="0 0 24 24"><path d="M3 15V8h12l3 4h3v3"/><path d="M5 15h14"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>',
     clients: '<svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4M2 21h20"/></svg>',
@@ -17,7 +17,7 @@
   };
 
   const groups = [
-    { title: 'Opérations', views: ['dashboard', 'new-trip', 'trips', 'fleet', 'clients'] },
+    { title: 'Opérations', views: ['dashboard', 'trips', 'fleet', 'clients'] },
     { title: 'Pilotage', views: ['expenses', 'vehicle-charges', 'reports'] },
     { title: 'Administration', views: ['users'] }
   ];
@@ -46,6 +46,15 @@
     const buttons = new Map([...nav.querySelectorAll('.nav-item[data-view]')].map((button) => [button.dataset.view, button]));
     const fragment = document.createDocumentFragment();
 
+    const createButton = buttons.get('new-trip');
+    if (createButton) {
+      decorate(createButton);
+      createButton.classList.add('nav-primary-action');
+      const label = createButton.querySelector('.nav-label');
+      if (label) label.textContent = 'Nouvelle mission';
+      fragment.appendChild(createButton);
+    }
+
     groups.forEach((group) => {
       const available = group.views.map((view) => buttons.get(view)).filter(Boolean);
       if (!available.length) return;
@@ -66,9 +75,9 @@
       fragment.appendChild(section);
     });
 
-    [...buttons.values()].filter((button) => !grouped(button.dataset.view)).forEach((button) => {
-      fragment.appendChild(decorate(button));
-    });
+    [...buttons.values()]
+      .filter((button) => button.dataset.view !== 'new-trip' && !grouped(button.dataset.view))
+      .forEach((button) => fragment.appendChild(decorate(button)));
 
     nav.replaceChildren(fragment);
     nav.dataset.enhanced = 'true';
@@ -77,7 +86,7 @@
   rebuild();
 
   new MutationObserver(() => {
-    if ([...nav.querySelectorAll(':scope > .nav-item')].length) {
+    if ([...nav.querySelectorAll(':scope > .nav-item:not(.nav-primary-action)')].length) {
       nav.dataset.enhanced = 'false';
       rebuild();
     }
