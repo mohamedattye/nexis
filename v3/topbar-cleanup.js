@@ -19,8 +19,7 @@
   const style = document.createElement('style');
   style.textContent = `
     .topbar-actions{gap:8px!important;align-items:center}
-    .topbar-actions>.sync-state,.topbar-actions>.environment-badge{display:none!important}
-    .organization-context-badge{height:34px!important;max-width:180px!important;padding:0 10px!important;border-radius:10px!important}
+    .topbar-actions>.sync-state,.topbar-actions>.environment-badge,.topbar-actions>#organization-context-badge,.topbar-actions>button.primary[data-view="new-trip"]{display:none!important}
     .nexis-account-wrap{position:relative;display:inline-flex}
     .nexis-account-button{width:36px;height:36px;border:1px solid #dce3ea;border-radius:11px;background:#fff;display:grid;place-items:center;color:#294057;font:800 9px var(--font-ui,'Inter',sans-serif);cursor:pointer}
     .nexis-account-button:hover{background:#f7f9fb}
@@ -34,7 +33,7 @@
     .nexis-account-item:hover{background:#f4f7f9}
     .nexis-account-item.danger{color:#a33f47}
     .nexis-account-separator{height:1px;background:#edf0f3;margin:5px 4px}
-    @media(max-width:760px){.organization-context-badge{display:none!important}.nexis-account-menu{position:fixed;right:12px;top:60px;width:min(260px,calc(100vw - 24px))}}
+    @media(max-width:760px){.nexis-account-menu{position:fixed;right:12px;top:60px;width:min(260px,calc(100vw - 24px))}}
   `;
   document.head.appendChild(style);
 
@@ -130,14 +129,24 @@
       }
     });
 
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        menu.hidden = true;
-        button.setAttribute('aria-expanded', 'false');
+    return wrap;
+  }
+
+  function bindSidebarCompany() {
+    const status = document.querySelector('.sidebar-status');
+    if (!status || status.dataset.companyBound === '1') return;
+    status.dataset.companyBound = '1';
+    status.setAttribute('role','button');
+    status.setAttribute('tabindex','0');
+    status.title = 'Paramètres de l’entreprise';
+    const open = () => window.dispatchEvent(new CustomEvent('nexis:open-organization-settings'));
+    status.addEventListener('click', open);
+    status.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        open();
       }
     });
-
-    return wrap;
   }
 
   function normalizeTopbar() {
@@ -145,72 +154,26 @@
     if (!actions) return;
     const wrap = ensureMenu();
     if (!wrap) return;
-
-    const company = document.getElementById('organization-context-badge');
-    const create = [...actions.querySelectorAll('button.primary')].find(button => button.dataset.view === 'new-trip');
-
     [...actions.children].forEach(child => {
-      const keep = child === company || child === create || child === wrap;
-      if (!keep) child.style.display = 'none';
+      child.style.display = child === wrap ? '' : 'none';
     });
-
-    // Ne déplace les éléments que si leur ordre est réellement incorrect.
-    const desired = [company, create, wrap].filter(Boolean);
-    const current = [...actions.children].filter(child => desired.includes(child));
-    const needsReorder = desired.length !== current.length || desired.some((child, index) => current[index] !== child);
-    if (needsReorder) desired.forEach(child => actions.appendChild(child));
-
+    actions.appendChild(wrap);
     refreshMenu();
     updateSubtitle();
+    bindSidebarCompany();
   }
 
-  function navigateToNewTrip() {
-    const sidebarButton = document.querySelector('.nav-item[data-view="new-trip"]');
-    if (sidebarButton) {
-      sidebarButton.click();
-      return;
-    }
-    location.hash = '#new-trip';
-  }
-
-  function bindTopbarActions() {
-    const actions = document.querySelector('.topbar-actions');
-    if (!actions || actions.dataset.nexisStableBound === '1') return;
-    actions.dataset.nexisStableBound = '1';
-
-    actions.addEventListener('click', event => {
-      const create = event.target.closest('button.primary[data-view="new-trip"]');
-      if (create) {
-        event.preventDefault();
-        navigateToNewTrip();
-      }
-    });
-  }
-
-  let observer = null;
   function start() {
     normalizeTopbar();
-    bindTopbarActions();
-
     const actions = document.querySelector('.topbar-actions');
-    if (actions && !observer) {
-      observer = new MutationObserver(() => {
-        // Surveillance ciblée uniquement sur les ajouts/retraits de vrais boutons.
-        window.requestAnimationFrame(() => {
-          normalizeTopbar();
-          bindTopbarActions();
-        });
-      });
-      observer.observe(actions, { childList:true });
+    if (actions) {
+      new MutationObserver(() => requestAnimationFrame(normalizeTopbar)).observe(actions,{childList:true});
     }
   }
 
-  window.addEventListener('hashchange', () => {
-    updateSubtitle();
-    window.requestAnimationFrame(normalizeTopbar);
-  });
-  window.addEventListener('nexis:organization-ready', () => window.requestAnimationFrame(normalizeTopbar));
-  window.addEventListener('nexis:organization-updated', () => window.requestAnimationFrame(normalizeTopbar));
+  window.addEventListener('hashchange', () => { updateSubtitle(); requestAnimationFrame(normalizeTopbar); });
+  window.addEventListener('nexis:organization-ready', () => requestAnimationFrame(normalizeTopbar));
+  window.addEventListener('nexis:organization-updated', () => requestAnimationFrame(normalizeTopbar));
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once:true });
   else start();
