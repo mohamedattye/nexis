@@ -3,24 +3,29 @@
   if (window.__NEXIS_TOPBAR_CLEANUP__) return;
   window.__NEXIS_TOPBAR_CLEANUP__ = true;
 
-  // Le Design System est volontairement chargé ici, après les styles historiques,
-  // afin qu'il devienne la couche visuelle de référence sans modifier les modules métier.
   if (!document.getElementById('nexis-design-system-css')) {
     const link = document.createElement('link');
     link.id = 'nexis-design-system-css';
     link.rel = 'stylesheet';
-    link.href = 'nexis-design-system.css?v=20260811-uxui-1';
+    link.href = 'nexis-design-system.css?v=20260811-uxui-2';
     document.head.appendChild(link);
   }
 
   const style = document.createElement('style');
   style.textContent = `
-    .topbar-actions{gap:8px!important;align-items:center}.topbar-actions>.sync-state{display:none!important}
-    .topbar-actions>.environment-badge{height:28px;padding:0 8px;font-size:7.5px;letter-spacing:.04em;text-transform:uppercase;opacity:.72}.topbar-actions>.environment-badge{font-size:0}.topbar-actions>.environment-badge:after{content:'TEST';font-size:7.5px}
-    .organization-context-badge{height:34px!important;max-width:180px!important;padding:0 10px!important;border-radius:10px!important}
-    .nexis-account-wrap{position:relative;display:inline-flex}.nexis-account-button{width:36px;height:36px;border:1px solid #dce3ea;border-radius:11px;background:#fff;display:grid;place-items:center;color:#294057;font:800 9px var(--font-ui,'Inter',sans-serif);cursor:pointer}.nexis-account-button:hover{background:#f7f9fb}.nexis-account-avatar{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:#eef3f7;color:#20374f}
-    .nexis-account-menu{position:absolute;right:0;top:43px;width:225px;padding:7px;border:1px solid #dfe5eb;border-radius:13px;background:#fff;box-shadow:0 18px 48px rgba(23,42,64,.16);z-index:22000}.nexis-account-menu[hidden]{display:none}.nexis-account-head{padding:9px 10px 10px;border-bottom:1px solid #edf0f3;margin-bottom:5px}.nexis-account-head strong{display:block;color:#1f354c;font-size:10px}.nexis-account-head small{display:block;margin-top:3px;color:#8894a2;font-size:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nexis-account-item{width:100%;height:35px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#405368;text-align:left;font:700 8.5px var(--font-ui,'Inter',sans-serif);cursor:pointer}.nexis-account-item:hover{background:#f4f7f9}.nexis-account-item.danger{color:#a33f47}.nexis-account-separator{height:1px;background:#edf0f3;margin:5px 4px}
-    @media(max-width:760px){.topbar-actions>.environment-badge,.organization-context-badge{display:none!important}.nexis-account-menu{position:fixed;right:12px;top:60px;width:min(260px,calc(100vw - 24px))}}
+    .topbar-actions{align-items:center}
+    .topbar-actions>.sync-state{display:none!important}
+    .nexis-account-wrap{position:relative;display:inline-flex}
+    .nexis-account-button{display:grid;place-items:center;cursor:pointer}
+    .nexis-account-avatar{display:grid;place-items:center}
+    .nexis-account-menu{position:absolute;right:0;z-index:22000;background:#fff}
+    .nexis-account-menu[hidden]{display:none}
+    .nexis-account-head strong,.nexis-account-head small{display:block}
+    .nexis-account-head small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nexis-account-item{width:100%;border:0;background:transparent;text-align:left;cursor:pointer}
+    .nexis-account-item.danger{color:#a33f47}
+    .nexis-account-separator{height:1px;background:#edf0f3}
+    @media(max-width:760px){.organization-context-badge{display:none!important}.nexis-account-menu{position:fixed;right:12px;top:68px;width:min(280px,calc(100vw - 24px))}}
   `;
   document.head.appendChild(style);
 
@@ -119,16 +124,13 @@
     [...actions.children].forEach(child => {
       const keep = child.id === 'organization-context-badge'
         || child.id === 'nexis-account-wrap'
-        || child.classList.contains('environment-badge')
         || (child.matches('button.primary') && child.dataset.view === 'new-trip');
       if (!keep) child.style.display = 'none';
     });
 
     const company = document.getElementById('organization-context-badge');
-    const env = actions.querySelector('.environment-badge');
     const create = [...actions.querySelectorAll('button.primary')].find(button => button.dataset.view === 'new-trip');
     if (company) actions.appendChild(company);
-    if (env) actions.appendChild(env);
     if (create) actions.appendChild(create);
     actions.appendChild(wrap);
     refreshMenu();
