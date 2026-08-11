@@ -19,7 +19,7 @@
   const style = document.createElement('style');
   style.textContent = `
     .topbar-actions{gap:8px!important;align-items:center}
-    .topbar-actions>.sync-state,.topbar-actions>.environment-badge,.topbar-actions>#organization-context-badge,.topbar-actions>button.primary[data-view="new-trip"]{display:none!important}
+    .topbar-actions>.sync-state,.topbar-actions>.environment-badge,.topbar-actions>button.primary[data-view="new-trip"]{display:none!important}
     .nexis-account-wrap{position:relative;display:inline-flex}
     .nexis-account-button{width:36px;height:36px;border:1px solid #dce3ea;border-radius:11px;background:#fff;display:grid;place-items:center;color:#294057;font:800 9px var(--font-ui,'Inter',sans-serif);cursor:pointer}
     .nexis-account-button:hover{background:#f7f9fb}
@@ -132,35 +132,26 @@
     return wrap;
   }
 
-  function bindSidebarCompany() {
-    const status = document.querySelector('.sidebar-status');
-    if (!status || status.dataset.companyBound === '1') return;
-    status.dataset.companyBound = '1';
-    status.setAttribute('role','button');
-    status.setAttribute('tabindex','0');
-    status.title = 'Paramètres de l’entreprise';
-    const open = () => window.dispatchEvent(new CustomEvent('nexis:open-organization-settings'));
-    status.addEventListener('click', open);
-    status.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        open();
-      }
-    });
-  }
-
   function normalizeTopbar() {
     const actions = document.querySelector('.topbar-actions');
     if (!actions) return;
     const wrap = ensureMenu();
     if (!wrap) return;
+
+    const company = document.getElementById('organization-context-badge');
+
     [...actions.children].forEach(child => {
-      child.style.display = child === wrap ? '' : 'none';
+      const keep = child === company || child === wrap;
+      child.style.display = keep ? '' : 'none';
     });
-    actions.appendChild(wrap);
+
+    const desired = [company, wrap].filter(Boolean);
+    const current = [...actions.children].filter(child => desired.includes(child));
+    const needsReorder = desired.length !== current.length || desired.some((child,index) => current[index] !== child);
+    if (needsReorder) desired.forEach(child => actions.appendChild(child));
+
     refreshMenu();
     updateSubtitle();
-    bindSidebarCompany();
   }
 
   function start() {
