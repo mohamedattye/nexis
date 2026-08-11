@@ -1,0 +1,380 @@
+/* =====================================================
+   NEXIS DESIGN SYSTEM — SaaS UI Foundation
+   Direction: lisible, premium, B2B, startup SaaS moderne
+   ===================================================== */
+
+:root{
+  --nexis-navy:#10243b;
+  --nexis-navy-2:#17314d;
+  --nexis-orange:#ff8a00;
+  --nexis-orange-hover:#f47f00;
+  --nexis-bg:#f6f8fb;
+  --nexis-surface:#ffffff;
+  --nexis-text:#182a40;
+  --nexis-muted:#64748b;
+  --nexis-subtle:#94a3b8;
+  --nexis-border:#e2e8f0;
+  --nexis-border-soft:#edf1f5;
+  --nexis-green:#0f996c;
+  --nexis-red:#c7474f;
+  --nexis-amber:#e99a32;
+  --nexis-radius-sm:10px;
+  --nexis-radius-md:14px;
+  --nexis-radius-lg:16px;
+  --nexis-shadow:0 8px 28px rgba(22,42,65,.055);
+  --nexis-shadow-hover:0 12px 34px rgba(22,42,65,.085);
+  --font-ui:Inter,"Segoe UI",Arial,sans-serif;
+
+  /* Compatibilité avec les variables historiques */
+  --nav:var(--nexis-navy);
+  --nav-2:var(--nexis-navy-2);
+  --bg:var(--nexis-bg);
+  --card:var(--nexis-surface);
+  --line:var(--nexis-border);
+  --text:var(--nexis-text);
+  --muted:var(--nexis-muted);
+  --green:var(--nexis-green);
+  --red:var(--nexis-red);
+  --shadow:var(--nexis-shadow);
+}
+
+html{font-size:16px;background:var(--nexis-bg)}
+body{
+  grid-template-columns:236px minmax(0,1fr)!important;
+  background:var(--nexis-bg)!important;
+  color:var(--nexis-text)!important;
+  font-family:var(--font-ui)!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,input,select,textarea{font-family:var(--font-ui)!important}
+
+/* -------------------- Sidebar -------------------- */
+.sidebar{
+  padding:22px 14px 16px!important;
+  background:linear-gradient(180deg,#102a43 0%,#0e2338 100%)!important;
+  box-shadow:1px 0 0 rgba(255,255,255,.03);
+}
+.brand{
+  min-height:68px;
+  gap:12px!important;
+  padding:0 7px 20px!important;
+  border-bottom:1px solid rgba(255,255,255,.09)!important;
+}
+.brand-logo{width:48px!important;height:48px!important;border-radius:13px!important}
+.brand strong{font-size:18px!important;letter-spacing:.015em!important;font-weight:800!important}
+.brand small{font-size:11px!important;line-height:1.3!important;color:#aebdce!important;margin-top:3px!important}
+.sidebar nav{gap:5px!important;margin-top:22px!important}
+.nav-item{
+  min-height:44px;
+  padding:0 13px!important;
+  border-radius:10px!important;
+  font-size:13.5px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+  letter-spacing:-.005em;
+  color:#cfdae6!important;
+  transition:background .16s ease,color .16s ease,transform .16s ease!important;
+}
+.nav-item:hover{background:rgba(255,255,255,.065)!important;color:#fff!important;transform:none!important}
+.nav-item.active{
+  background:#203d5b!important;
+  color:#fff!important;
+  box-shadow:inset 3px 0 0 var(--nexis-orange)!important;
+}
+.sidebar-status{
+  min-height:58px;
+  gap:10px!important;
+  padding:11px 12px!important;
+  border-radius:12px!important;
+  border-color:rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.045)!important;
+}
+.sidebar-status strong{font-size:12.5px!important;line-height:1.25!important}
+.sidebar-status small{font-size:11px!important;line-height:1.25!important;color:#afbdca!important}
+
+/* -------------------- Header / topbar -------------------- */
+.topbar{
+  height:92px!important;
+  padding:0 34px!important;
+  background:rgba(255,255,255,.975)!important;
+  border-bottom:1px solid var(--nexis-border)!important;
+  backdrop-filter:blur(14px)!important;
+  box-shadow:0 1px 0 rgba(15,35,55,.018);
+}
+.topbar>div:first-child{display:flex;flex-direction:column;justify-content:center;gap:5px}
+.topbar #page-title{
+  order:1;
+  margin:0!important;
+  font-size:27px!important;
+  line-height:1.06!important;
+  font-weight:760!important;
+  letter-spacing:-.035em!important;
+  color:var(--nexis-text)!important;
+}
+body .topbar #eyebrow{
+  display:block!important;
+  order:2;
+  margin:0!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:450!important;
+  color:#7b8a9c!important;
+}
+.topbar-actions{gap:10px!important}
+.topbar-actions>.environment-badge{display:none!important}
+.organization-context-badge{
+  height:44px!important;
+  max-width:220px!important;
+  padding:0 13px!important;
+  gap:9px!important;
+  border:1px solid #dce4ec!important;
+  border-radius:11px!important;
+  background:#fff!important;
+  color:#253b52!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  box-shadow:0 1px 2px rgba(15,35,55,.02)!important;
+}
+.organization-context-badge img{width:25px!important;height:25px!important;border-radius:7px!important}
+.organization-context-badge:hover{background:#f9fafb!important;border-color:#ced8e3!important}
+.nexis-account-button{
+  width:44px!important;height:44px!important;
+  border-radius:12px!important;
+  border-color:#dce4ec!important;
+  background:#fff!important;
+}
+.nexis-account-avatar{
+  width:30px!important;height:30px!important;
+  border-radius:9px!important;
+  background:#f1f5f8!important;
+  font-size:11px!important;
+}
+.nexis-account-menu{
+  top:52px!important;
+  width:260px!important;
+  padding:8px!important;
+  border-radius:15px!important;
+  border-color:#dfe6ed!important;
+  box-shadow:0 22px 58px rgba(23,42,64,.17)!important;
+}
+.nexis-account-head{padding:11px 12px 12px!important}
+.nexis-account-head strong{font-size:13px!important}
+.nexis-account-head small{font-size:11px!important;margin-top:4px!important}
+.nexis-account-item{height:42px!important;padding:0 12px!important;border-radius:9px!important;font-size:12.5px!important;font-weight:600!important}
+
+/* -------------------- Global content -------------------- */
+.view{padding:32px 34px 52px!important}
+.view.active{animation:fadeIn .16s ease!important}
+#dashboard{max-width:1540px!important;margin:0 auto!important}
+.dashboard-heading{
+  align-items:center!important;
+  margin-bottom:20px!important;
+}
+.dashboard-heading h2{
+  font-size:25px!important;
+  line-height:1.15!important;
+  font-weight:740!important;
+  letter-spacing:-.03em!important;
+}
+.period-pill,.step-label{
+  min-height:40px;
+  display:inline-flex!important;
+  align-items:center!important;
+  padding:0 13px!important;
+  border-radius:10px!important;
+  border-color:#dfe6ed!important;
+  font-size:12.5px!important;
+  font-weight:650!important;
+  color:#43566b!important;
+  background:#fff!important;
+}
+
+/* -------------------- Buttons -------------------- */
+.primary{
+  min-height:44px!important;
+  padding:0 17px!important;
+  border-radius:10px!important;
+  border:0!important;
+  background:var(--nexis-orange)!important;
+  color:#17283d!important;
+  font-size:13.5px!important;
+  font-weight:750!important;
+  letter-spacing:-.005em;
+  box-shadow:0 6px 14px rgba(255,138,0,.18)!important;
+}
+.primary:hover{
+  background:var(--nexis-orange-hover)!important;
+  transform:translateY(-1px)!important;
+  box-shadow:0 8px 18px rgba(255,138,0,.22)!important;
+}
+.secondary{
+  min-height:42px!important;
+  padding:0 15px!important;
+  border-radius:10px!important;
+  font-size:13px!important;
+  font-weight:650!important;
+}
+.link-btn,.text-action{font-size:13px!important;font-weight:700!important;color:#d96f00!important}
+
+/* -------------------- Cards / panels -------------------- */
+.kpi-grid{gap:16px!important}
+.dashboard-clean .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
+.kpi-card,.panel{
+  border:1px solid var(--nexis-border)!important;
+  border-radius:var(--nexis-radius-lg)!important;
+  background:#fff!important;
+  box-shadow:var(--nexis-shadow)!important;
+}
+.dashboard-clean .kpi-card{
+  min-height:132px!important;
+  padding:22px 22px 20px!important;
+  border-radius:16px!important;
+  box-shadow:var(--nexis-shadow)!important;
+  transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.dashboard-clean .kpi-card:hover{
+  border-color:#d8e1ea!important;
+  box-shadow:var(--nexis-shadow-hover)!important;
+  transform:translateY(-1px);
+}
+.kpi-card span,.dashboard-clean .kpi-card span{
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:500!important;
+  color:#718197!important;
+}
+.kpi-card strong,.dashboard-clean .kpi-card strong{
+  margin-top:10px!important;
+  font-size:25px!important;
+  line-height:1.12!important;
+  font-weight:760!important;
+  letter-spacing:-.035em!important;
+  color:var(--nexis-text);
+}
+.kpi-card small,.dashboard-clean .kpi-card small{
+  margin-top:8px!important;
+  font-size:11.5px!important;
+  line-height:1.4!important;
+  color:#8b98a8!important;
+}
+.panel{padding:23px 24px!important}
+.panel-head{margin-bottom:17px!important;gap:20px!important}
+.panel-head small{
+  font-size:10.5px!important;
+  line-height:1.2!important;
+  letter-spacing:.07em!important;
+  font-weight:750!important;
+  color:#8794a5!important;
+}
+.panel-head h2{
+  margin-top:5px!important;
+  font-size:19px!important;
+  line-height:1.2!important;
+  font-weight:720!important;
+  letter-spacing:-.02em!important;
+}
+.panel-description{font-size:12.5px!important;line-height:1.55!important}
+
+/* -------------------- Dashboard alerts -------------------- */
+.dashboard-alert{
+  min-height:54px;
+  margin-top:16px!important;
+  padding:11px 14px!important;
+  gap:12px!important;
+  border-radius:13px!important;
+  box-shadow:0 2px 10px rgba(22,42,65,.02);
+}
+.alert-symbol{width:31px!important;height:31px!important;border-radius:9px!important;font-size:14px!important}
+.dashboard-alert .empty-state strong{font-size:12.5px!important;font-weight:700!important}
+.dashboard-alert .empty-state span{font-size:12px!important;line-height:1.45!important;color:#8090a2!important}
+.alert-count{min-width:30px!important;height:30px!important;font-size:12px!important}
+.dashboard-main{margin-top:16px!important}
+.dashboard-main .panel{border-radius:16px!important;box-shadow:var(--nexis-shadow)!important}
+.mission-count{font-size:12px!important}
+.mission-count strong{font-size:13.5px!important}
+
+/* -------------------- Tables -------------------- */
+.table-scroll{
+  border:1px solid #e6ebf0!important;
+  border-radius:12px!important;
+  background:#fff;
+}
+table{font-size:13px!important}
+th{
+  height:42px;
+  padding:0 14px!important;
+  background:#f8fafc!important;
+  color:#728195!important;
+  font-size:10.5px!important;
+  line-height:1.2!important;
+  letter-spacing:.055em!important;
+  font-weight:750!important;
+}
+td{
+  min-height:50px;
+  padding:14px!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+  color:#35495f;
+}
+tbody tr:hover{background:#fbfcfd!important}
+.table-message{padding:34px 18px!important;font-size:12.5px!important;color:#8a97a7!important}
+.truck-badge{padding:6px 8px!important;border-radius:7px!important;font-size:11.5px!important}
+.status{padding:6px 9px!important;font-size:11px!important}
+
+/* -------------------- Forms -------------------- */
+.simple-form-title h3,.form-panel h2{font-size:18px!important;font-weight:720!important}
+.simple-form-title p{font-size:12.5px!important;line-height:1.5!important}
+.simple-form{gap:18px!important}
+.simple-form label,.form-grid label{
+  font-size:12.5px!important;
+  line-height:1.3!important;
+  font-weight:650!important;
+  color:#40536a!important;
+}
+.simple-form input,.simple-form select,.form-grid input,.form-grid select,.filters input,.filters select{
+  height:46px!important;
+  margin-top:7px!important;
+  padding:0 13px!important;
+  border:1px solid #d3dce6!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  font-size:13.5px!important;
+  color:#263b52!important;
+}
+.simple-form input:focus,.simple-form select:focus,.form-grid input:focus,.form-grid select:focus,.filters input:focus,.filters select:focus{
+  border-color:#e7a14c!important;
+  box-shadow:0 0 0 3px rgba(255,138,0,.10)!important;
+}
+.form-error{font-size:12px!important;border-radius:9px!important;padding:11px 13px!important}
+
+/* -------------------- Generic SaaS drawers / modals -------------------- */
+.organization-settings-head h3,.team-head h3,.subscription-status-head h3{font-size:20px!important}
+.organization-settings-head small,.team-head small,.subscription-status-head small{font-size:10px!important}
+.organization-settings-form label,.team-card>p,.subscription-status-note{font-size:12px!important;line-height:1.5!important}
+.organization-settings-form input,.organization-settings-form select,.team-invite-form input,.team-invite-form select{min-height:44px!important;font-size:13px!important}
+.organization-settings-section{font-size:10.5px!important}
+.organization-logo-copy strong{font-size:13px!important}.organization-logo-copy p{font-size:11.5px!important}
+.organization-logo-actions button{font-size:11px!important}.organization-logo-status{font-size:11px!important}
+
+/* -------------------- Responsive -------------------- */
+@media(max-width:1240px){
+  body{grid-template-columns:216px minmax(0,1fr)!important}
+  .dashboard-clean .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .topbar{padding:0 26px!important}
+  .view{padding:28px 26px 44px!important}
+}
+@media(max-width:820px){
+  body{display:block!important}
+  .sidebar{position:relative!important;height:auto!important}
+  .topbar{height:78px!important;padding:0 18px!important}
+  .topbar #page-title{font-size:22px!important}
+  body .topbar #eyebrow{font-size:12px!important}
+  .view{padding:22px 16px 34px!important}
+  .dashboard-clean .kpi-grid{grid-template-columns:1fr!important}
+  .dashboard-heading h2{font-size:22px!important}
+  .panel{padding:18px!important}
+}
