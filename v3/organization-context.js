@@ -49,35 +49,56 @@
     window.dispatchEvent(new CustomEvent(name, { detail: snapshot() }));
   }
 
+  function roleLabel(role) {
+    return ({ admin:'Administrateur', operator:'Exploitant', accountant:'Comptable' })[role] || 'Utilisateur';
+  }
+
+  function organizationInitials(name) {
+    const words = String(name || 'Entreprise').trim().split(/\s+/).filter(Boolean);
+    return (words.slice(0, 2).map(word => word[0]).join('') || 'EN').toUpperCase();
+  }
+
+  function ensureSidebarWorkspace(organization) {
+    const sidebar = document.querySelector('.sidebar');
+    const brand = sidebar?.querySelector('.brand');
+    let card = sidebar?.querySelector('.sidebar-status');
+    if (!sidebar || !brand || !card) return;
+
+    if (brand.nextElementSibling !== card) brand.insertAdjacentElement('afterend', card);
+
+    card.classList.add('sidebar-workspace');
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Paramètres de ${organization.name || 'l’entreprise'}`);
+    card.title = 'Paramètres de l’entreprise';
+
+    const logoMarkup = organization.logo_url
+      ? `<img class="sidebar-workspace-logo" src="${String(organization.logo_url).replaceAll('"','&quot;')}" alt="">`
+      : `<span class="sidebar-workspace-initials">${organizationInitials(organization.name || organization.legal_name)}</span>`;
+
+    card.innerHTML = `${logoMarkup}<div class="sidebar-workspace-copy"><strong>${organization.name || organization.legal_name || 'Entreprise'}</strong><small>${roleLabel(state.profile?.role)}</small></div><span class="sidebar-workspace-chevron" aria-hidden="true">›</span>`;
+
+    if (card.dataset.workspaceBound !== '1') {
+      card.dataset.workspaceBound = '1';
+      const openSettings = () => window.dispatchEvent(new CustomEvent('nexis:open-organization-settings'));
+      card.addEventListener('click', openSettings);
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openSettings();
+        }
+      });
+    }
+  }
+
   function renderContext() {
     const organization = state.organization;
     if (!organization) return;
 
-    let badge = document.getElementById('organization-context-badge');
-    const actions = document.querySelector('.topbar-actions');
-    if (!badge && actions) {
-      badge = document.createElement('button');
-      badge.type = 'button';
-      badge.id = 'organization-context-badge';
-      badge.className = 'organization-context-badge';
-      badge.title = 'Paramètres de l’entreprise';
-      actions.insertBefore(badge, actions.firstChild);
-      badge.addEventListener('click', () => {
-        window.dispatchEvent(new CustomEvent('nexis:open-organization-settings'));
-      });
-    }
+    ensureSidebarWorkspace(organization);
 
-    if (badge) {
-      badge.innerHTML = `${organization.logo_url ? `<img src="${String(organization.logo_url).replaceAll('"','&quot;')}" alt="">` : '<span class="organization-context-avatar">●</span>'}<span>${organization.name || organization.legal_name || 'Entreprise'}</span>`;
-    }
-
-    const sidebarStatus = document.querySelector('.sidebar-status div');
-    if (sidebarStatus) {
-      const strong = sidebarStatus.querySelector('strong');
-      const small = sidebarStatus.querySelector('small');
-      if (strong) strong.textContent = organization.name || 'Entreprise';
-      if (small) small.textContent = state.profile?.role === 'admin' ? 'Administrateur' : 'Utilisateur';
-    }
+    // Ancien badge de topbar : supprimé volontairement pour éviter le doublon.
+    document.getElementById('organization-context-badge')?.remove();
 
     document.documentElement.dataset.organizationId = organization.id || '';
     document.documentElement.dataset.organizationCurrency = organization.currency || 'XOF';
@@ -86,10 +107,42 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .organization-context-badge{display:inline-flex;align-items:center;gap:7px;height:32px;max-width:210px;padding:0 9px;border:1px solid #dce3ea;border-radius:10px;background:#fff;color:#34495f;font:750 8.5px var(--font-ui,"Inter",sans-serif);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .organization-context-badge:hover{background:#f8fafc;border-color:#cbd5df}.organization-context-badge img{width:20px;height:20px;border-radius:6px;object-fit:contain;background:#fff}.organization-context-avatar{color:#ff8a00;font-size:9px}
-    @media(max-width:920px){.organization-context-badge{max-width:130px}.organization-context-badge span:last-child{overflow:hidden;text-overflow:ellipsis}}
-    @media(max-width:740px){.organization-context-badge{display:none}}
+    .sidebar-workspace{
+      width:100%;
+      min-height:58px;
+      display:grid!important;
+      grid-template-columns:34px minmax(0,1fr) 16px;
+      align-items:center;
+      gap:10px!important;
+      margin:12px 0 0!important;
+      padding:9px 10px!important;
+      border:1px solid rgba(255,255,255,.11)!important;
+      border-radius:12px!important;
+      background:rgba(255,255,255,.055)!important;
+      color:#fff;
+      cursor:pointer;
+      box-shadow:none!important;
+      transition:background .16s ease,border-color .16s ease,transform .16s ease;
+    }
+    .sidebar-workspace:hover,.sidebar-workspace:focus-visible{
+      background:rgba(255,255,255,.09)!important;
+      border-color:rgba(255,255,255,.17)!important;
+      outline:none;
+    }
+    .sidebar-workspace-logo,.sidebar-workspace-initials{
+      width:34px;height:34px;border-radius:9px;display:grid;place-items:center;object-fit:contain;
+      background:#fff;color:#15304c;font:800 10px var(--font-ui,"Inter",sans-serif);overflow:hidden;
+    }
+    .sidebar-workspace-copy{min-width:0}
+    .sidebar-workspace-copy strong{
+      display:block!important;margin:0!important;color:#fff!important;font-size:11px!important;line-height:1.25!important;font-weight:760!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .sidebar-workspace-copy small{
+      display:block!important;margin-top:3px!important;color:#9fb0c2!important;font-size:8.5px!important;line-height:1.2!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .sidebar-workspace-chevron{color:#8097ad;font-size:18px;line-height:1;text-align:right}
+    .sidebar nav{margin-top:12px!important}
+    @media(max-width:740px){.sidebar-workspace{display:none!important}}
   `;
   document.head.appendChild(style);
 
