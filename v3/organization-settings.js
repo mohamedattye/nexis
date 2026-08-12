@@ -9,20 +9,21 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .organization-settings-shell{position:fixed;inset:0;z-index:130;display:grid;grid-template-columns:1fr min(560px,96vw)}
+    .organization-settings-shell{position:fixed;inset:0;z-index:30000;display:grid;grid-template-columns:1fr min(560px,96vw);height:100dvh;max-height:100dvh;overflow:hidden}
     .organization-settings-shell[hidden]{display:none}
     .organization-settings-overlay{border:0;background:rgba(15,29,45,.48);backdrop-filter:blur(3px)}
-    .organization-settings-drawer{min-width:0;display:flex;flex-direction:column;background:#f7f9fb;box-shadow:-22px 0 55px rgba(14,31,52,.20)}
+    .organization-settings-drawer{height:100dvh;max-height:100dvh;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:#f7f9fb;box-shadow:-22px 0 55px rgba(14,31,52,.20)}
 
-    .organization-settings-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:20px 22px 18px;background:#fff;border-bottom:1px solid #e1e7ed}
+    .organization-settings-head{flex:0 0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:20px 22px 18px;background:#fff;border-bottom:1px solid #e1e7ed}
     .organization-settings-head small{display:block;color:#8c97a5;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
     .organization-settings-head h3{margin:5px 0 0;color:#1b2d43;font-size:19px;line-height:1.2}
     .organization-settings-head p{margin:6px 0 0;color:#7a8797;font-size:11.5px;line-height:1.45}
     .organization-settings-close{width:34px;height:34px;flex:0 0 34px;border:1px solid #dce3ea;border-radius:10px;background:#fff;color:#536579;font-size:19px;cursor:pointer}
     .organization-settings-close:hover{background:#f7f9fb}
 
-    .organization-settings-form{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-    .organization-settings-body{flex:1;min-height:0;overflow:auto;padding:18px 20px 26px}
+    .organization-settings-form{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+    .organization-settings-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:18px 20px 34px;scrollbar-gutter:stable}
+    .organization-settings-body::-webkit-scrollbar{width:9px}.organization-settings-body::-webkit-scrollbar-track{background:transparent}.organization-settings-body::-webkit-scrollbar-thumb{background:#d4dce5;border-radius:999px;border:2px solid #f7f9fb}
     .organization-settings-card{padding:16px;border:1px solid #e1e7ed;border-radius:14px;background:#fff;box-shadow:0 4px 16px rgba(22,42,65,.025)}
     .organization-settings-card+.organization-settings-card,.organization-settings-card+.organization-settings-advanced{margin-top:12px}
     .organization-settings-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
@@ -63,13 +64,13 @@
     .organization-advanced-content .organization-fields{padding-top:13px}
 
     .organization-settings-error{margin:12px 0 0;padding:10px 11px;border-radius:9px;background:#fff1f1;color:#a53d45;font-size:10px;line-height:1.45}
-    .organization-settings-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 20px;background:#fff;border-top:1px solid #e1e7ed;box-shadow:0 -7px 22px rgba(22,42,65,.025)}
+    .organization-settings-footer{position:relative;z-index:3;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 20px;background:#fff;border-top:1px solid #e1e7ed;box-shadow:0 -7px 22px rgba(22,42,65,.04)}
     .organization-settings-footer small{max-width:230px;color:#8794a4;font-size:9.5px;line-height:1.4}
     .organization-settings-actions{display:flex;justify-content:flex-end;gap:8px}
 
     @media(max-width:740px){
       .organization-settings-shell{grid-template-columns:1fr}.organization-settings-overlay{display:none}
-      .organization-settings-head{padding:17px 16px}.organization-settings-body{padding:14px 14px 22px}
+      .organization-settings-head{padding:17px 16px}.organization-settings-body{padding:14px 14px 28px}
       .organization-fields{grid-template-columns:1fr}.organization-fields label.full{grid-column:auto}
       .organization-settings-footer{padding:12px 14px;align-items:stretch;flex-direction:column}.organization-settings-footer small{max-width:none}.organization-settings-actions button{flex:1}
     }
@@ -87,7 +88,7 @@
         <div>
           <small>Entreprise</small>
           <h3 id="organization-settings-title">Paramètres de l’entreprise</h3>
-          <p>Gardez l’essentiel à jour. Les réglages avancés restent accessibles lorsque vous en avez besoin.</p>
+          <p>Votre identité principale d’abord. Les informations administratives et de facturation restent dans les réglages avancés.</p>
         </div>
         <button class="organization-settings-close" type="button" data-close-organization-settings aria-label="Fermer">×</button>
       </header>
@@ -96,14 +97,14 @@
         <div class="organization-settings-body">
           <section class="organization-settings-card">
             <div class="organization-settings-card-head">
-              <div><h4>Identité</h4><p>Le nom et le logo visibles dans Nexis et sur vos documents.</p></div>
+              <div><h4>Identité de l’entreprise</h4><p>Le nom et le logo visibles dans Nexis et sur vos documents.</p></div>
               <span class="organization-settings-card-badge">Essentiel</span>
             </div>
 
             <div class="organization-logo-row">
               <div class="organization-logo-preview"><img id="org-logo-preview" alt="Logo entreprise"></div>
               <div class="organization-logo-copy">
-                <strong>Logo de l’entreprise</strong>
+                <strong>Logo</strong>
                 <p>PNG, JPG ou WebP · 2 Mo maximum.</p>
                 <div class="organization-logo-actions">
                   <input id="org-logo-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
@@ -116,14 +117,13 @@
             <input id="org-logo-url" type="hidden">
 
             <div class="organization-fields" style="margin-top:15px">
-              <label>Nom affiché<input id="org-name" type="text" required placeholder="Ex. Transport BEM"></label>
-              <label>Raison sociale <span class="field-note">Facultatif</span><input id="org-legal-name" type="text" placeholder="Ex. Transport BEM SARL"></label>
+              <label class="full">Nom de l’entreprise<input id="org-name" type="text" required placeholder="Ex. Transport BEM"></label>
             </div>
           </section>
 
           <section class="organization-settings-card">
             <div class="organization-settings-card-head">
-              <div><h4>Contact</h4><p>Les coordonnées principales de votre entreprise.</p></div>
+              <div><h4>Coordonnées</h4><p>Les informations utilisées pour vous identifier et vous contacter.</p></div>
             </div>
             <div class="organization-fields">
               <label>Téléphone<input id="org-phone" type="text" placeholder="Ex. +221 77 000 00 00"></label>
@@ -137,11 +137,12 @@
           <details class="organization-settings-advanced" id="organization-legal-details">
             <summary>
               <span class="organization-advanced-icon">§</span>
-              <span class="organization-advanced-copy"><strong>Informations légales</strong><small>NINEA, RCCM et informations administratives.</small></span>
+              <span class="organization-advanced-copy"><strong>Informations légales</strong><small>Raison sociale, NINEA et RCCM.</small></span>
               <span class="organization-advanced-chevron">›</span>
             </summary>
             <div class="organization-advanced-content">
               <div class="organization-fields">
+                <label class="full">Raison sociale <span class="field-note">Facultatif</span><input id="org-legal-name" type="text" placeholder="Ex. Transport BEM SARL"></label>
                 <label>NINEA <span class="field-note">Facultatif</span><input id="org-ninea" type="text"></label>
                 <label>RCCM <span class="field-note">Facultatif</span><input id="org-rccm" type="text"></label>
               </div>
@@ -200,7 +201,6 @@
     selectedLogoFile = null;
     removeLogoRequested = false;
     logoFileInput.value = '';
-
     val('org-name', org.name);
     val('org-legal-name', org.legal_name);
     val('org-ninea', org.ninea);
@@ -215,11 +215,11 @@
     val('org-vat', Number(org.default_vat_rate ?? 18));
     val('org-invoice-prefix', org.invoice_prefix || 'FAC');
     val('org-price-note-prefix', org.price_note_prefix || 'NP');
-
     document.getElementById('organization-legal-details').open = false;
     document.getElementById('organization-billing-details').open = false;
     setLogoStatus(org.logo_url ? 'Logo actuel chargé.' : 'Aucun logo personnalisé pour le moment.');
     refreshPreview();
+    document.querySelector('.organization-settings-body')?.scrollTo({ top:0, behavior:'instant' });
   }
 
   async function open() {
@@ -230,13 +230,9 @@
     populate(state.organization);
     shell.hidden = false;
     document.body.style.overflow = 'hidden';
-    window.setTimeout(() => document.getElementById('org-name')?.focus(), 50);
   }
 
-  function close() {
-    shell.hidden = true;
-    document.body.style.overflow = '';
-  }
+  function close() { shell.hidden = true; document.body.style.overflow = ''; }
 
   async function uploadLogo(db, organizationId, file) {
     if (!['image/png','image/jpeg','image/webp'].includes(file.type)) throw new Error('Format de logo non accepté. Utilisez PNG, JPG ou WebP.');
@@ -244,10 +240,12 @@
     const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
     const path = `${organizationId}/logo.${extension}`;
 
-    const candidates = ['png','jpg','webp'].filter(ext => ext !== extension).map(ext => `${organizationId}/logo.${ext}`);
-    if (candidates.length) await db.storage.from(LOGO_BUCKET).remove(candidates);
+    const removeResult = await db.storage.from(LOGO_BUCKET).remove([
+      `${organizationId}/logo.png`, `${organizationId}/logo.jpg`, `${organizationId}/logo.webp`
+    ]);
+    if (removeResult.error) throw removeResult.error;
 
-    const result = await db.storage.from(LOGO_BUCKET).upload(path, file, { upsert: true, cacheControl: '3600', contentType: file.type });
+    const result = await db.storage.from(LOGO_BUCKET).upload(path, file, { upsert:false, cacheControl:'3600', contentType:file.type });
     if (result.error) throw result.error;
     const publicResult = db.storage.from(LOGO_BUCKET).getPublicUrl(path);
     const publicUrl = publicResult?.data?.publicUrl;
@@ -256,15 +254,14 @@
   }
 
   async function deleteStoredLogo(db, organizationId) {
-    await db.storage.from(LOGO_BUCKET).remove([
+    const result = await db.storage.from(LOGO_BUCKET).remove([
       `${organizationId}/logo.png`, `${organizationId}/logo.jpg`, `${organizationId}/logo.webp`
     ]);
+    if (result.error) throw result.error;
   }
 
   document.querySelectorAll('[data-close-organization-settings]').forEach(button => button.addEventListener('click', close));
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !shell.hidden) close();
-  });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && !shell.hidden) close(); });
 
   document.getElementById('org-logo-upload').addEventListener('click', () => logoFileInput.click());
   logoFileInput.addEventListener('change', () => {
@@ -304,9 +301,8 @@
     const save = document.getElementById('organization-settings-save');
     save.disabled = true;
     errorBox.hidden = true;
-
     try {
-      const db = window.supabase.createClient();
+      const db = window.NexisAuth?.client || window.supabase.createClient();
       let finalLogoUrl = state.organization.logo_url || null;
 
       if (removeLogoRequested) {
@@ -339,13 +335,18 @@
 
       selectedLogoFile = null;
       removeLogoRequested = false;
+      setLogoStatus(finalLogoUrl ? 'Logo enregistré.' : 'Logo supprimé.', 'success');
       await window.NexisOrganization.refresh();
       close();
     } catch (error) {
       console.error('Paramètres entreprise Nexis :', error);
-      errorBox.textContent = error.message || 'Impossible d’enregistrer les paramètres.';
+      const message = String(error?.message || '');
+      errorBox.textContent = message.includes('row-level security')
+        ? 'Le logo n’a pas pu être enregistré à cause des droits de stockage. Rechargez la page puis réessayez.'
+        : (message || 'Impossible d’enregistrer les paramètres.');
       errorBox.hidden = false;
-      errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      setLogoStatus(selectedLogoFile ? 'Le logo n’a pas pu être enregistré.' : '', selectedLogoFile ? 'error' : '');
+      document.querySelector('.organization-settings-body')?.scrollTo({ top:document.querySelector('.organization-settings-body').scrollHeight, behavior:'smooth' });
     } finally {
       save.disabled = false;
     }
@@ -362,7 +363,6 @@
     script.defer = true;
     document.body.appendChild(script);
   }
-
   loadAddon('invite-auth-bridge.js?v=20260807-team-1', 'nexis-invite-auth-bridge-script');
   loadAddon('team-management.js?v=20260807-team-1', 'nexis-team-management-script');
 })();
