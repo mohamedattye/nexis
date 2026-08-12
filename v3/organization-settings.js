@@ -9,19 +9,70 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .organization-settings-shell{position:fixed;inset:0;z-index:130;display:grid;grid-template-columns:1fr min(620px,96vw)}.organization-settings-shell[hidden]{display:none}
+    .organization-settings-shell{position:fixed;inset:0;z-index:130;display:grid;grid-template-columns:1fr min(560px,96vw)}
+    .organization-settings-shell[hidden]{display:none}
     .organization-settings-overlay{border:0;background:rgba(15,29,45,.48);backdrop-filter:blur(3px)}
-    .organization-settings-drawer{display:flex;flex-direction:column;background:#f6f8fb;box-shadow:-22px 0 55px rgba(14,31,52,.2)}
-    .organization-settings-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;background:#fff;border-bottom:1px solid #e1e7ed}
-    .organization-settings-head small{display:block;color:#8c97a5;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}.organization-settings-head h3{margin:4px 0 0;font-size:18px;color:#1b2d43}
-    .organization-settings-close{width:34px;height:34px;border:1px solid #dce3ea;border-radius:10px;background:#fff;font-size:20px;cursor:pointer}
-    .organization-settings-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:19px;overflow:auto}.organization-settings-form label{display:grid;gap:6px;color:#405168;font-size:9px;font-weight:700}
-    .organization-settings-form label.full{grid-column:1/-1}.organization-settings-form input,.organization-settings-form select{height:41px;width:100%;margin:0!important}.organization-settings-form textarea{width:100%;min-height:80px;padding:10px}
-    .organization-settings-section{grid-column:1/-1;padding:12px 0 2px;border-top:1px solid #e3e8ee;color:#7b8796;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.organization-settings-section:first-of-type{border-top:0;padding-top:0}
-    .organization-logo-card{grid-column:1/-1;display:grid;grid-template-columns:78px 1fr;gap:14px;padding:14px;border:1px solid #e0e6ec;border-radius:14px;background:#fff}.organization-logo-preview{width:78px;height:78px;border:1px dashed #cfd8e2;border-radius:14px;display:grid;place-items:center;overflow:hidden;background:#f8fafc}.organization-logo-preview img{width:100%;height:100%;object-fit:contain;padding:7px}.organization-logo-copy strong{display:block;color:#20364d;font-size:11px}.organization-logo-copy p{margin:4px 0 10px;color:#7d8998;font-size:8.5px;line-height:1.45}.organization-logo-actions{display:flex;flex-wrap:wrap;gap:7px}.organization-logo-actions button{height:34px;padding:0 10px;border-radius:9px;font:750 8px var(--font-ui,"Inter",sans-serif);cursor:pointer}.organization-logo-upload{border:0;background:#172f49;color:#fff}.organization-logo-remove{border:1px solid #dfe5eb;background:#fff;color:#9b4248}.organization-logo-status{margin-top:8px;color:#7a8797;font-size:8px}.organization-logo-status.success{color:#087a59}.organization-logo-status.error{color:#a53d45}
-    .organization-settings-preview{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #e0e6ec;border-radius:12px;background:#fff}.organization-settings-preview img{width:52px;height:52px;border-radius:10px;object-fit:contain;background:#f7f9fb}.organization-settings-preview strong{display:block;color:#20364d}.organization-settings-preview small{display:block;margin-top:3px;color:#8591a0}
-    .organization-settings-error{grid-column:1/-1;margin:0;padding:10px;border-radius:10px;background:#fff1f1;color:#a53d45;font-size:9px}.organization-settings-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px;padding-top:4px}
-    @media(max-width:740px){.organization-settings-shell{grid-template-columns:1fr}.organization-settings-overlay{display:none}.organization-settings-form{grid-template-columns:1fr}.organization-settings-form label.full,.organization-settings-section,.organization-logo-card,.organization-settings-preview,.organization-settings-error,.organization-settings-actions{grid-column:auto}.organization-logo-card{grid-template-columns:64px 1fr}.organization-logo-preview{width:64px;height:64px}}
+    .organization-settings-drawer{min-width:0;display:flex;flex-direction:column;background:#f7f9fb;box-shadow:-22px 0 55px rgba(14,31,52,.20)}
+
+    .organization-settings-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:20px 22px 18px;background:#fff;border-bottom:1px solid #e1e7ed}
+    .organization-settings-head small{display:block;color:#8c97a5;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .organization-settings-head h3{margin:5px 0 0;color:#1b2d43;font-size:19px;line-height:1.2}
+    .organization-settings-head p{margin:6px 0 0;color:#7a8797;font-size:11.5px;line-height:1.45}
+    .organization-settings-close{width:34px;height:34px;flex:0 0 34px;border:1px solid #dce3ea;border-radius:10px;background:#fff;color:#536579;font-size:19px;cursor:pointer}
+    .organization-settings-close:hover{background:#f7f9fb}
+
+    .organization-settings-form{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+    .organization-settings-body{flex:1;min-height:0;overflow:auto;padding:18px 20px 26px}
+    .organization-settings-card{padding:16px;border:1px solid #e1e7ed;border-radius:14px;background:#fff;box-shadow:0 4px 16px rgba(22,42,65,.025)}
+    .organization-settings-card+.organization-settings-card,.organization-settings-card+.organization-settings-advanced{margin-top:12px}
+    .organization-settings-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+    .organization-settings-card-head h4{margin:0;color:#20354b;font-size:13px;line-height:1.3}
+    .organization-settings-card-head p{margin:4px 0 0;color:#8290a0;font-size:10.5px;line-height:1.45}
+    .organization-settings-card-badge{flex:0 0 auto;padding:5px 7px;border-radius:999px;background:#f2f5f8;color:#758498;font-size:8.5px;font-weight:750}
+
+    .organization-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .organization-fields label{display:grid;gap:6px;color:#405168;font-size:10.5px;font-weight:700}
+    .organization-fields label.full{grid-column:1/-1}
+    .organization-fields .field-note{font-size:8.5px;color:#9aa5b1;font-weight:500}
+    .organization-fields input,.organization-fields select{width:100%;height:42px;margin:0!important;padding:0 11px;border:1px solid #d5dde6;border-radius:9px;background:#fff;color:#253a51;font:inherit;font-size:11.5px;outline:none}
+    .organization-fields input:focus,.organization-fields select:focus{border-color:#e79a43;box-shadow:0 0 0 3px rgba(255,138,0,.09)}
+
+    .organization-logo-row{display:grid;grid-template-columns:66px minmax(0,1fr);gap:13px;align-items:center}
+    .organization-logo-preview{width:66px;height:66px;border:1px solid #dfe5eb;border-radius:13px;display:grid;place-items:center;overflow:hidden;background:#f8fafc}
+    .organization-logo-preview img{width:100%;height:100%;object-fit:contain;padding:7px}
+    .organization-logo-copy strong{display:block;color:#20364d;font-size:11.5px}
+    .organization-logo-copy p{margin:4px 0 9px;color:#7d8998;font-size:9.5px;line-height:1.45}
+    .organization-logo-actions{display:flex;flex-wrap:wrap;gap:7px}
+    .organization-logo-actions button{height:32px;padding:0 9px;border-radius:8px;font:750 9px var(--font-ui,"Inter",sans-serif);cursor:pointer}
+    .organization-logo-upload{border:0;background:#172f49;color:#fff}
+    .organization-logo-remove{border:1px solid #dfe5eb;background:#fff;color:#9b4248}
+    .organization-logo-status{margin-top:7px;color:#7a8797;font-size:9px;line-height:1.35}
+    .organization-logo-status.success{color:#087a59}.organization-logo-status.error{color:#a53d45}
+
+    .organization-settings-advanced{border:1px solid #e1e7ed;border-radius:14px;background:#fff;overflow:hidden}
+    .organization-settings-advanced+.organization-settings-advanced{margin-top:10px}
+    .organization-settings-advanced summary{list-style:none;display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:11px;padding:13px 14px;cursor:pointer;user-select:none}
+    .organization-settings-advanced summary::-webkit-details-marker{display:none}
+    .organization-settings-advanced summary:hover{background:#fbfcfd}
+    .organization-advanced-icon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:#f2f5f8;color:#5f7287;font-size:14px}
+    .organization-advanced-copy strong{display:block;color:#293e54;font-size:11.5px}
+    .organization-advanced-copy small{display:block;margin-top:3px;color:#8996a5;font-size:9.5px;line-height:1.35}
+    .organization-advanced-chevron{color:#8a97a6;font-size:16px;transition:transform .16s ease}
+    .organization-settings-advanced[open] .organization-advanced-chevron{transform:rotate(90deg)}
+    .organization-advanced-content{padding:3px 14px 15px;border-top:1px solid #edf1f4}
+    .organization-advanced-content .organization-fields{padding-top:13px}
+
+    .organization-settings-error{margin:12px 0 0;padding:10px 11px;border-radius:9px;background:#fff1f1;color:#a53d45;font-size:10px;line-height:1.45}
+    .organization-settings-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 20px;background:#fff;border-top:1px solid #e1e7ed;box-shadow:0 -7px 22px rgba(22,42,65,.025)}
+    .organization-settings-footer small{max-width:230px;color:#8794a4;font-size:9.5px;line-height:1.4}
+    .organization-settings-actions{display:flex;justify-content:flex-end;gap:8px}
+
+    @media(max-width:740px){
+      .organization-settings-shell{grid-template-columns:1fr}.organization-settings-overlay{display:none}
+      .organization-settings-head{padding:17px 16px}.organization-settings-body{padding:14px 14px 22px}
+      .organization-fields{grid-template-columns:1fr}.organization-fields label.full{grid-column:auto}
+      .organization-settings-footer{padding:12px 14px;align-items:stretch;flex-direction:column}.organization-settings-footer small{max-width:none}.organization-settings-actions button{flex:1}
+    }
   `;
   document.head.appendChild(style);
 
@@ -30,47 +81,99 @@
   shell.id = 'organization-settings-shell';
   shell.hidden = true;
   shell.innerHTML = `
-    <button class="organization-settings-overlay" type="button" data-close-organization-settings></button>
-    <aside class="organization-settings-drawer">
-      <header class="organization-settings-head"><div><small>Configuration</small><h3>Paramètres de l’entreprise</h3></div><button class="organization-settings-close" type="button" data-close-organization-settings>×</button></header>
-      <form class="organization-settings-form" id="organization-settings-form">
-        <div class="organization-settings-section">Identité</div>
-        <label>Nom affiché<input id="org-name" type="text" required></label>
-        <label>Raison sociale<input id="org-legal-name" type="text"></label>
-        <label>NINEA<input id="org-ninea" type="text"></label>
-        <label>RCCM<input id="org-rccm" type="text"></label>
-        <label class="full">Adresse<input id="org-address" type="text"></label>
-        <label>Ville<input id="org-city" type="text"></label>
-        <label>Pays<input id="org-country" type="text"></label>
-
-        <div class="organization-settings-section">Logo de l’entreprise</div>
-        <div class="organization-logo-card">
-          <div class="organization-logo-preview"><img id="org-logo-preview" alt="Logo entreprise"></div>
-          <div class="organization-logo-copy">
-            <strong>Votre identité visuelle</strong>
-            <p>PNG, JPG ou WebP · 2 Mo maximum. Ce logo apparaîtra dans Nexis et sur vos documents commerciaux.</p>
-            <div class="organization-logo-actions">
-              <input id="org-logo-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-              <button class="organization-logo-upload" id="org-logo-upload" type="button">Téléverser un logo</button>
-              <button class="organization-logo-remove" id="org-logo-remove" type="button">Supprimer le logo</button>
-            </div>
-            <div class="organization-logo-status" id="org-logo-status">Aucun changement.</div>
-          </div>
+    <button class="organization-settings-overlay" type="button" data-close-organization-settings aria-label="Fermer"></button>
+    <aside class="organization-settings-drawer" role="dialog" aria-modal="true" aria-labelledby="organization-settings-title">
+      <header class="organization-settings-head">
+        <div>
+          <small>Entreprise</small>
+          <h3 id="organization-settings-title">Paramètres de l’entreprise</h3>
+          <p>Gardez l’essentiel à jour. Les réglages avancés restent accessibles lorsque vous en avez besoin.</p>
         </div>
-        <input id="org-logo-url" type="hidden">
-        <div class="organization-settings-preview"><img id="org-brand-preview-logo" alt="Aperçu"><div><strong id="org-preview-name">Entreprise</strong><small id="org-preview-meta">Identité utilisée sur les documents</small></div></div>
+        <button class="organization-settings-close" type="button" data-close-organization-settings aria-label="Fermer">×</button>
+      </header>
 
-        <div class="organization-settings-section">Contact</div>
-        <label>Téléphone<input id="org-phone" type="text"></label>
-        <label>Email<input id="org-email" type="email"></label>
+      <form class="organization-settings-form" id="organization-settings-form">
+        <div class="organization-settings-body">
+          <section class="organization-settings-card">
+            <div class="organization-settings-card-head">
+              <div><h4>Identité</h4><p>Le nom et le logo visibles dans Nexis et sur vos documents.</p></div>
+              <span class="organization-settings-card-badge">Essentiel</span>
+            </div>
 
-        <div class="organization-settings-section">Facturation</div>
-        <label>Devise<select id="org-currency"><option value="XOF">XOF — FCFA</option><option value="EUR">EUR — Euro</option><option value="USD">USD — Dollar</option></select></label>
-        <label>TVA par défaut (%)<input id="org-vat" type="number" min="0" max="100" step="0.01"></label>
-        <label>Préfixe facture<input id="org-invoice-prefix" type="text" maxlength="8"></label>
-        <label>Préfixe note de prix<input id="org-price-note-prefix" type="text" maxlength="8"></label>
-        <p class="organization-settings-error" id="organization-settings-error" hidden></p>
-        <div class="organization-settings-actions"><button type="button" class="secondary" data-close-organization-settings>Annuler</button><button type="submit" class="primary" id="organization-settings-save">Enregistrer</button></div>
+            <div class="organization-logo-row">
+              <div class="organization-logo-preview"><img id="org-logo-preview" alt="Logo entreprise"></div>
+              <div class="organization-logo-copy">
+                <strong>Logo de l’entreprise</strong>
+                <p>PNG, JPG ou WebP · 2 Mo maximum.</p>
+                <div class="organization-logo-actions">
+                  <input id="org-logo-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+                  <button class="organization-logo-upload" id="org-logo-upload" type="button">Choisir un logo</button>
+                  <button class="organization-logo-remove" id="org-logo-remove" type="button">Supprimer</button>
+                </div>
+                <div class="organization-logo-status" id="org-logo-status">Aucun changement.</div>
+              </div>
+            </div>
+            <input id="org-logo-url" type="hidden">
+
+            <div class="organization-fields" style="margin-top:15px">
+              <label>Nom affiché<input id="org-name" type="text" required placeholder="Ex. Transport BEM"></label>
+              <label>Raison sociale <span class="field-note">Facultatif</span><input id="org-legal-name" type="text" placeholder="Ex. Transport BEM SARL"></label>
+            </div>
+          </section>
+
+          <section class="organization-settings-card">
+            <div class="organization-settings-card-head">
+              <div><h4>Contact</h4><p>Les coordonnées principales de votre entreprise.</p></div>
+            </div>
+            <div class="organization-fields">
+              <label>Téléphone<input id="org-phone" type="text" placeholder="Ex. +221 77 000 00 00"></label>
+              <label>Email<input id="org-email" type="email" placeholder="contact@entreprise.com"></label>
+              <label>Ville<input id="org-city" type="text" placeholder="Ex. Dakar"></label>
+              <label>Pays<input id="org-country" type="text" placeholder="Sénégal"></label>
+              <label class="full">Adresse <span class="field-note">Facultatif</span><input id="org-address" type="text" placeholder="Adresse complète de l’entreprise"></label>
+            </div>
+          </section>
+
+          <details class="organization-settings-advanced" id="organization-legal-details">
+            <summary>
+              <span class="organization-advanced-icon">§</span>
+              <span class="organization-advanced-copy"><strong>Informations légales</strong><small>NINEA, RCCM et informations administratives.</small></span>
+              <span class="organization-advanced-chevron">›</span>
+            </summary>
+            <div class="organization-advanced-content">
+              <div class="organization-fields">
+                <label>NINEA <span class="field-note">Facultatif</span><input id="org-ninea" type="text"></label>
+                <label>RCCM <span class="field-note">Facultatif</span><input id="org-rccm" type="text"></label>
+              </div>
+            </div>
+          </details>
+
+          <details class="organization-settings-advanced" id="organization-billing-details">
+            <summary>
+              <span class="organization-advanced-icon">₣</span>
+              <span class="organization-advanced-copy"><strong>Facturation & documents</strong><small>Devise, TVA et numérotation de vos documents.</small></span>
+              <span class="organization-advanced-chevron">›</span>
+            </summary>
+            <div class="organization-advanced-content">
+              <div class="organization-fields">
+                <label>Devise<select id="org-currency"><option value="XOF">XOF — FCFA</option><option value="EUR">EUR — Euro</option><option value="USD">USD — Dollar</option></select></label>
+                <label>TVA par défaut (%)<input id="org-vat" type="number" min="0" max="100" step="0.01"></label>
+                <label>Préfixe facture <span class="field-note">Ex. FAC</span><input id="org-invoice-prefix" type="text" maxlength="8"></label>
+                <label>Préfixe note de prix <span class="field-note">Ex. NP</span><input id="org-price-note-prefix" type="text" maxlength="8"></label>
+              </div>
+            </div>
+          </details>
+
+          <p class="organization-settings-error" id="organization-settings-error" hidden></p>
+        </div>
+
+        <footer class="organization-settings-footer">
+          <small>Vous pourrez modifier ces informations à tout moment.</small>
+          <div class="organization-settings-actions">
+            <button type="button" class="secondary" data-close-organization-settings>Annuler</button>
+            <button type="submit" class="primary" id="organization-settings-save">Enregistrer</button>
+          </div>
+        </footer>
       </form>
     </aside>`;
   document.body.appendChild(shell);
@@ -85,15 +188,11 @@
   function setLogoStatus(text, type = '') { logoStatus.textContent = text; logoStatus.className = `organization-logo-status${type ? ` ${type}` : ''}`; }
 
   function refreshPreview() {
-    const src = logoSrc();
-    ['org-logo-preview','org-brand-preview-logo'].forEach(id => {
-      const img = document.getElementById(id);
-      if (img) { img.src = src; img.onerror = () => { img.src = 'nexis-logo.svg'; }; }
-    });
-    document.getElementById('org-preview-name').textContent = document.getElementById('org-name')?.value?.trim() || 'Entreprise';
-    const ninea = document.getElementById('org-ninea')?.value?.trim();
-    const city = document.getElementById('org-city')?.value?.trim();
-    document.getElementById('org-preview-meta').textContent = [ninea ? `NINEA ${ninea}` : '', city].filter(Boolean).join(' · ') || 'Identité utilisée sur les documents';
+    const img = document.getElementById('org-logo-preview');
+    if (img) {
+      img.src = logoSrc();
+      img.onerror = () => { img.src = 'nexis-logo.svg'; };
+    }
   }
 
   function populate(org) {
@@ -101,10 +200,24 @@
     selectedLogoFile = null;
     removeLogoRequested = false;
     logoFileInput.value = '';
-    val('org-name', org.name); val('org-legal-name', org.legal_name); val('org-ninea', org.ninea); val('org-rccm', org.rccm);
-    val('org-address', org.address); val('org-city', org.city); val('org-country', org.country || 'Sénégal'); val('org-phone', org.phone); val('org-email', org.email);
-    val('org-logo-url', org.logo_url); val('org-currency', org.currency || 'XOF'); val('org-vat', Number(org.default_vat_rate ?? 18));
-    val('org-invoice-prefix', org.invoice_prefix || 'FAC'); val('org-price-note-prefix', org.price_note_prefix || 'NP');
+
+    val('org-name', org.name);
+    val('org-legal-name', org.legal_name);
+    val('org-ninea', org.ninea);
+    val('org-rccm', org.rccm);
+    val('org-address', org.address);
+    val('org-city', org.city);
+    val('org-country', org.country || 'Sénégal');
+    val('org-phone', org.phone);
+    val('org-email', org.email);
+    val('org-logo-url', org.logo_url);
+    val('org-currency', org.currency || 'XOF');
+    val('org-vat', Number(org.default_vat_rate ?? 18));
+    val('org-invoice-prefix', org.invoice_prefix || 'FAC');
+    val('org-price-note-prefix', org.price_note_prefix || 'NP');
+
+    document.getElementById('organization-legal-details').open = false;
+    document.getElementById('organization-billing-details').open = false;
     setLogoStatus(org.logo_url ? 'Logo actuel chargé.' : 'Aucun logo personnalisé pour le moment.');
     refreshPreview();
   }
@@ -117,9 +230,13 @@
     populate(state.organization);
     shell.hidden = false;
     document.body.style.overflow = 'hidden';
+    window.setTimeout(() => document.getElementById('org-name')?.focus(), 50);
   }
 
-  function close() { shell.hidden = true; document.body.style.overflow = ''; }
+  function close() {
+    shell.hidden = true;
+    document.body.style.overflow = '';
+  }
 
   async function uploadLogo(db, organizationId, file) {
     if (!['image/png','image/jpeg','image/webp'].includes(file.type)) throw new Error('Format de logo non accepté. Utilisez PNG, JPG ou WebP.');
@@ -127,7 +244,6 @@
     const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
     const path = `${organizationId}/logo.${extension}`;
 
-    // Nettoie d'anciens formats éventuels pour éviter plusieurs logos inutiles.
     const candidates = ['png','jpg','webp'].filter(ext => ext !== extension).map(ext => `${organizationId}/logo.${ext}`);
     if (candidates.length) await db.storage.from(LOGO_BUCKET).remove(candidates);
 
@@ -146,7 +262,9 @@
   }
 
   document.querySelectorAll('[data-close-organization-settings]').forEach(button => button.addEventListener('click', close));
-  ['org-name','org-ninea','org-city'].forEach(id => document.getElementById(id)?.addEventListener('input', refreshPreview));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !shell.hidden) close();
+  });
 
   document.getElementById('org-logo-upload').addEventListener('click', () => logoFileInput.click());
   logoFileInput.addEventListener('change', () => {
@@ -164,9 +282,8 @@
     }
     selectedLogoFile = file;
     removeLogoRequested = false;
-    const previewUrl = URL.createObjectURL(file);
-    document.getElementById('org-logo-url').value = previewUrl;
-    setLogoStatus(`${file.name} sélectionné. Cliquez sur Enregistrer.`, 'success');
+    document.getElementById('org-logo-url').value = URL.createObjectURL(file);
+    setLogoStatus(`${file.name} sélectionné. Enregistrez pour confirmer.`, 'success');
     refreshPreview();
   });
 
@@ -175,7 +292,7 @@
     removeLogoRequested = true;
     logoFileInput.value = '';
     document.getElementById('org-logo-url').value = '';
-    setLogoStatus('Le logo sera supprimé après Enregistrer.');
+    setLogoStatus('Le logo sera supprimé après enregistrement.');
     refreshPreview();
   });
 
@@ -187,6 +304,7 @@
     const save = document.getElementById('organization-settings-save');
     save.disabled = true;
     errorBox.hidden = true;
+
     try {
       const db = window.supabase.createClient();
       let finalLogoUrl = state.organization.logo_url || null;
@@ -218,7 +336,7 @@
 
       const result = await db.from('organizations').update(payload).eq('id', state.organization.id).select().single();
       if (result.error) throw result.error;
-      setLogoStatus(finalLogoUrl ? 'Logo enregistré.' : 'Logo supprimé.', 'success');
+
       selectedLogoFile = null;
       removeLogoRequested = false;
       await window.NexisOrganization.refresh();
@@ -227,7 +345,7 @@
       console.error('Paramètres entreprise Nexis :', error);
       errorBox.textContent = error.message || 'Impossible d’enregistrer les paramètres.';
       errorBox.hidden = false;
-      setLogoStatus('Le logo n’a pas pu être enregistré.', 'error');
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } finally {
       save.disabled = false;
     }
@@ -244,6 +362,7 @@
     script.defer = true;
     document.body.appendChild(script);
   }
+
   loadAddon('invite-auth-bridge.js?v=20260807-team-1', 'nexis-invite-auth-bridge-script');
   loadAddon('team-management.js?v=20260807-team-1', 'nexis-team-management-script');
 })();
