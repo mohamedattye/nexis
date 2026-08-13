@@ -4,7 +4,7 @@
   const root = document.getElementById('fleet');
   if (!root || !window.supabase?.createClient) return;
 
-  const client = window.supabase.createClient();
+  const client = window.NexisAuth?.client || window.supabase.createClient();
   const money = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
 
   root.innerHTML = `
@@ -35,7 +35,7 @@
         <div class="fleet-table-wrap">
           <table class="fleet-table">
             <thead><tr><th>Camion</th><th>Statut</th><th>Missions</th><th>Chiffre d'affaires</th><th>Dépenses</th><th>Marge</th><th>Dernière mission</th><th></th></tr></thead>
-            <tbody id="fleet-body"><tr><td colspan="8" class="fleet-loading">Chargement de la flotte…</td></tr></tbody>
+            <tbody id="fleet-body"><tr><td colspan="8" class="fleet-loading">Ouvrez Flotte pour charger les données.</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -60,25 +60,22 @@
   let trucks = [];
   let trips = [];
   let expenses = [];
+  let loaded = false;
+  let loading = false;
 
   function currentMonth() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   }
 
-  function formatMoney(value) {
-    return `${money.format(Number(value) || 0)} FCFA`;
-  }
-
+  function formatMoney(value) { return `${money.format(Number(value) || 0)} FCFA`; }
   function formatDate(value) {
     if (!value) return '—';
     const [y, m, d] = String(value).split('-');
     return y && m && d ? `${d}/${m}/${y}` : value;
   }
-
   function expenseTotal(expense) {
-    return ['fuel', 'ration', 'rapido', 'manoeuvre', 'misc']
-      .reduce((sum, key) => sum + (Number(expense?.[key]) || 0), 0);
+    return ['fuel', 'ration', 'rapido', 'manoeuvre', 'misc'].reduce((sum, key) => sum + (Number(expense?.[key]) || 0), 0);
   }
 
   function dataByTruck() {
@@ -90,15 +87,7 @@
       const revenue = relatedTrips.reduce((sum, trip) => sum + (Number(trip.revenue) || 0), 0);
       const expense = relatedExpenses.reduce((sum, item) => sum + expenseTotal(item), 0);
       const lastTrip = [...relatedTrips].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))[0];
-      return {
-        plate: truck.plate_number,
-        active: truck.is_active !== false,
-        missions: relatedTrips.length,
-        revenue,
-        expense,
-        margin: revenue - expense,
-        lastTrip: lastTrip?.date || null
-      };
+      return { plate: truck.plate_number, active: truck.is_active !== false, missions: relatedTrips.length, revenue, expense, margin: revenue - expense, lastTrip: lastTrip?.date || null };
     });
   }
 
@@ -106,11 +95,7 @@
     const rows = dataByTruck();
     const query = String(els.search.value || '').trim().toLowerCase();
     const status = els.status.value;
-    const filtered = rows.filter((row) => {
-      const queryMatch = !query || row.plate.toLowerCase().includes(query);
-      const statusMatch = !status || (status === 'active' ? row.active : !row.active);
-      return queryMatch && statusMatch;
-    });
+    const filtered = rows.filter((row) => (!query || row.plate.toLowerCase().includes(query)) && (!status || (status === 'active' ? row.active : !row.active)));
 
     els.activeCount.textContent = String(rows.filter((row) => row.active).length);
     els.tripCount.textContent = String(rows.reduce((sum, row) => sum + row.missions, 0));
@@ -123,76 +108,46 @@
       els.body.innerHTML = '<tr><td colspan="8" class="fleet-empty">Aucun camion ne correspond aux filtres.</td></tr>';
       return;
     }
-
     els.body.innerHTML = filtered.map((row) => `
-      <tr>
-        <td><span class="fleet-plate">${row.plate}</span></td>
-        <td><span class="fleet-status ${row.active ? 'active' : 'inactive'}">${row.active ? 'Actif' : 'Inactif'}</span></td>
-        <td>${row.missions}</td>
-        <td>${formatMoney(row.revenue)}</td>
-        <td>${formatMoney(row.expense)}</td>
-        <td class="fleet-money ${row.margin < 0 ? 'negative' : 'positive'}">${formatMoney(row.margin)}</td>
-        <td>${formatDate(row.lastTrip)}</td>
-        <td><div class="fleet-actions"><button type="button" class="fleet-action ${row.active ? 'warn' : ''}" data-toggle-truck="${row.plate}" data-active="${row.active}">${row.active ? 'Désactiver' : 'Activer'}</button></div></td>
-      </tr>`).join('');
+      <tr><td><span class="fleet-plate">${row.plate}</span></td><td><span class="fleet-status ${row.active ? 'active' : 'inactive'}">${row.active ? 'Actif' : 'Inactif'}</span></td><td>${row.missions}</td><td>${formatMoney(row.revenue)}</td><td>${formatMoney(row.expense)}</td><td class="fleet-money ${row.margin < 0 ? 'negative' : 'positive'}">${formatMoney(row.margin)}</td><td>${formatDate(row.lastTrip)}</td><td><div class="fleet-actions"><button type="button" class="fleet-action ${row.active ? 'warn' : ''}" data-toggle-truck="${row.plate}" data-active="${row.active}">${row.active ? 'Désactiver' : 'Activer'}</button></div></td></tr>`).join('');
   }
 
-  async function load() {
+  async function load(force = false) {
+    if (loading || (loaded && !force)) return;
+    loading = true;
     els.body.innerHTML = '<tr><td colspan="8" class="fleet-loading">Chargement de la flotte…</td></tr>';
-    const [trucksResult, tripsResult, expensesResult] = await Promise.all([
-      client.from('trucks').select('*').order('plate_number'),
-      client.from('trips').select('*'),
-      client.from('trip_expenses').select('*')
-    ]);
-
-    if (trucksResult.error || tripsResult.error || expensesResult.error) {
-      console.error(trucksResult.error || tripsResult.error || expensesResult.error);
+    try {
+      const [trucksResult, tripsResult, expensesResult] = await Promise.all([
+        client.from('trucks').select('plate_number,is_active').order('plate_number'),
+        client.from('trips').select('id,truck,date,revenue'),
+        client.from('trip_expenses').select('trip_id,fuel,ration,rapido,manoeuvre,misc')
+      ]);
+      if (trucksResult.error || tripsResult.error || expensesResult.error) throw (trucksResult.error || tripsResult.error || expensesResult.error);
+      trucks = trucksResult.data || [];
+      trips = tripsResult.data || [];
+      expenses = expensesResult.data || [];
+      loaded = true;
+      render();
+    } catch (error) {
+      console.error(error);
       els.body.innerHTML = '<tr><td colspan="8" class="fleet-empty">Impossible de charger la flotte.</td></tr>';
-      return;
-    }
-
-    trucks = trucksResult.data || [];
-    trips = tripsResult.data || [];
-    expenses = expensesResult.data || [];
-    render();
+    } finally { loading = false; }
   }
 
-  function showError(message = '') {
-    els.error.textContent = message;
-    els.error.hidden = !message;
-  }
-
-  els.toggle.addEventListener('click', () => {
-    els.addWrap.hidden = !els.addWrap.hidden;
-    showError('');
-    if (!els.addWrap.hidden) els.plate.focus();
-  });
-
-  els.cancel.addEventListener('click', () => {
-    els.addWrap.hidden = true;
-    els.addForm.reset();
-    showError('');
-  });
-
+  function showError(message = '') { els.error.textContent = message; els.error.hidden = !message; }
+  els.toggle.addEventListener('click', () => { els.addWrap.hidden = !els.addWrap.hidden; showError(''); if (!els.addWrap.hidden) els.plate.focus(); });
+  els.cancel.addEventListener('click', () => { els.addWrap.hidden = true; els.addForm.reset(); showError(''); });
   els.addForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const plate = els.plate.value.trim().toUpperCase();
     if (!plate) return showError('Saisissez une immatriculation.');
-
-    const duplicate = trucks.some((truck) => truck.plate_number === plate);
-    if (duplicate) return showError('Ce camion existe déjà.');
-
+    if (trucks.some((truck) => truck.plate_number === plate)) return showError('Ce camion existe déjà.');
     const submit = els.addForm.querySelector('button[type="submit"]');
-    submit.disabled = true;
-    submit.textContent = 'Enregistrement…';
+    submit.disabled = true; submit.textContent = 'Enregistrement…';
     const { error } = await client.from('trucks').insert([{ plate_number: plate, is_active: true }]);
-    submit.disabled = false;
-    submit.textContent = 'Enregistrer';
-
+    submit.disabled = false; submit.textContent = 'Enregistrer';
     if (error) return showError("Impossible d'ajouter le camion.");
-    els.addForm.reset();
-    els.addWrap.hidden = true;
-    await load();
+    els.addForm.reset(); els.addWrap.hidden = true; loaded = false; await load(true);
   });
 
   els.body.addEventListener('click', async (event) => {
@@ -202,19 +157,13 @@
     const plate = button.dataset.toggleTruck;
     const nextState = button.dataset.active !== 'true';
     const { error } = await client.from('trucks').update({ is_active: nextState }).eq('plate_number', plate);
-    if (error) {
-      button.disabled = false;
-      return;
-    }
-    await load();
+    if (error) { button.disabled = false; return; }
+    loaded = false; await load(true);
   });
 
-  [els.search, els.status].forEach((input) => {
-    input.addEventListener('input', render);
-    input.addEventListener('change', render);
-  });
+  [els.search, els.status].forEach((input) => { input.addEventListener('input', render); input.addEventListener('change', render); });
+  window.addEventListener('hashchange', () => { if (location.hash === '#fleet') load(); });
+  window.addEventListener('nexis:data-changed', () => { loaded = false; if (location.hash === '#fleet') load(true); });
 
-  const fleetNav = document.querySelector('[data-view="fleet"]');
-  fleetNav?.addEventListener('click', () => window.setTimeout(load, 0));
-  load();
+  if (location.hash === '#fleet') load();
 })();
