@@ -7,6 +7,7 @@
     trips: 'Centre des missions',
     fleet: 'Flotte',
     clients: 'Clients',
+    invoices: 'Facturation',
     expenses: 'Dépenses',
     'vehicle-charges': 'Charges véhicules',
     reports: 'Rapports',
@@ -105,7 +106,7 @@
     window[flag] = true;
     const script = document.createElement('script');
     script.src = source;
-    script.defer = true;
+    script.async = false;
     script.onerror = () => {
       window[flag] = false;
       console.error(errorMessage);
@@ -156,14 +157,16 @@
   }
 
   function loadMissionCenterPremium() {
-    loadScriptOnce('__NEXIS_MISSION_CENTER_PREMIUM_LOADING__', 'mission-center-premium.js?v=20260729-premium-1', 'Impossible de charger la finition du Centre des missions.');
+    loadScriptOnce('__NEXIS_MISSION_CENTER_PREMIUM_LOADING__', 'mission-center-premium.js?v=20260813-missions-1', 'Impossible de charger la finition du Centre des missions.');
   }
 
   function loadFleetPremium() {
+    loadScriptOnce('__NEXIS_FLEET_MODULE_LOADING__', 'fleet-module.js?v=20260813-lazy-1', 'Impossible de charger le module Flotte.');
     loadScriptOnce('__NEXIS_FLEET_PREMIUM_LOADING__', 'fleet-premium.js?v=20260729-fleet-premium-1', 'Impossible de charger la finition premium du module Flotte.');
   }
 
   function loadExpensesPremium() {
+    loadScriptOnce('__NEXIS_EXPENSES_MODULE_LOADING__', 'expenses-module.js?v=20260813-lazy-1', 'Impossible de charger le module Dépenses.');
     loadScriptOnce('__NEXIS_EXPENSES_PREMIUM_LOADING__', 'expenses-premium.js?v=20260729-expenses-premium-1', 'Impossible de charger la finition premium du module Dépenses.');
   }
 
