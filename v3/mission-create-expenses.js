@@ -42,20 +42,17 @@
     .quick-client-helper{color:#8a96a5;font-size:8.5px;line-height:1.4}
 
     .quick-expenses{grid-column:1/-1;border:1px solid #e3e9ef;border-radius:10px;background:#fbfcfd;overflow:hidden}
-    .quick-expenses summary{list-style:none;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:12px 13px;cursor:pointer;user-select:none}
-    .quick-expenses summary::-webkit-details-marker{display:none}
-    .quick-expenses summary:hover{background:#f7f9fb}
+    .quick-expenses-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border-bottom:1px solid #e8edf2}
     .quick-expenses-title strong{display:block;color:#34475c;font-size:10.5px;line-height:1.3}
     .quick-expenses-title small{display:block;margin-top:2px;color:#8c98a6;font-size:8.5px;line-height:1.3}
-    .quick-expenses-total{color:#6f7e8f;font-size:10px;font-weight:750}
-    .quick-expenses-chevron{color:#bd6500;font-size:16px;line-height:1;transition:transform .16s ease}
-    .quick-expenses[open] .quick-expenses-chevron{transform:rotate(45deg)}
-    .quick-expenses-body{padding:0 13px 13px;border-top:1px solid #e8edf2}
-    .quick-expense-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;padding-top:12px}
+    .quick-expenses-total{color:#6f7e8f;font-size:10px;font-weight:750;white-space:nowrap}
+    .quick-expenses-body{padding:0 13px 12px}
+    .quick-expense-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;padding-top:11px}
     .quick-expense-grid label,.quick-advanced-grid label{font-size:9.5px!important}
     .quick-expense-grid input,.quick-advanced-grid input{height:39px!important;margin-top:5px!important}
     .quick-advanced{margin-top:9px;border:1px solid #e7ecf1;border-radius:8px;background:#fff}
-    .quick-advanced summary{display:flex!important;justify-content:space-between!important;padding:9px 10px!important;border:0!important;font-size:9px!important;font-weight:750!important;color:#637286!important}
+    .quick-advanced summary{list-style:none;display:flex!important;justify-content:space-between!important;padding:9px 10px!important;border:0!important;font-size:9px!important;font-weight:750!important;color:#637286!important;cursor:pointer}
+    .quick-advanced summary::-webkit-details-marker{display:none}
     .quick-advanced summary:after{content:'+';color:#bd6500;font-size:13px}.quick-advanced[open] summary:after{content:'−'}
     .quick-advanced-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 10px 10px}
 
@@ -94,14 +91,13 @@
   const routeRow = form.querySelector('.route-row');
   form.insertBefore(clientField, routeRow || errorBox || formActions);
 
-  const expenseSection = document.createElement('details');
+  const expenseSection = document.createElement('section');
   expenseSection.className = 'quick-expenses';
   expenseSection.innerHTML = `
-    <summary>
-      <span class="quick-expenses-title"><strong>Dépenses de la mission</strong><small>Facultatif · ouvrez uniquement si nécessaire</small></span>
+    <div class="quick-expenses-head">
+      <span class="quick-expenses-title"><strong>Dépenses de la mission</strong><small>Facultatif</small></span>
       <span class="quick-expenses-total" id="quick-expenses-total-label">0 FCFA</span>
-      <span class="quick-expenses-chevron">+</span>
-    </summary>
+    </div>
     <div class="quick-expenses-body">
       <div class="quick-expense-grid">
         <label>Carburant<input id="create-expense-fuel" type="number" min="0" step="100" value="0" /></label>
@@ -241,7 +237,7 @@
   [truckInput,clientInput,dateInput,loadingInput,unloadingInput,revenueInput,newClientCompany].forEach(input=>{input?.addEventListener('input',()=>{input.classList.remove('mission-field-invalid');input.removeAttribute('aria-invalid');if(!errorBox.hidden)showError('');});input?.addEventListener('change',()=>{input.classList.remove('mission-field-invalid');input.removeAttribute('aria-invalid');if(!errorBox.hidden)showError('');});});
   [...Object.values(expenseInputs),revenueInput].forEach(input=>input?.addEventListener('input',updateSummary));
   form.addEventListener('submit',handleSubmit,true);
-  form.addEventListener('reset',()=>setTimeout(()=>{showError('');clearInvalidState();expenseSection.open=false;newClientExtra.hidden=true;if(hasExistingClients)setNewClientMode(false,{focus:false});else setNewClientMode(true,{focus:false});updateSummary();},0));
+  form.addEventListener('reset',()=>setTimeout(()=>{showError('');clearInvalidState();newClientExtra.hidden=true;if(hasExistingClients)setNewClientMode(false,{focus:false});else setNewClientMode(true,{focus:false});updateSummary();},0));
 
   restoreQuickEntryContext();loadClients();updateSummary();
 })();
