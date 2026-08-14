@@ -215,7 +215,7 @@
     if (!match || !window.supabase?.createClient) return;
 
     try {
-      const db = window.supabase.createClient();
+      const db = window.NexisAuth?.client || window.supabase.createClient();
       const result = await db.from('invoices').select('notes,vat_rate');
       if (result.error) return;
       const marker = `[[NEXIS_PRICE_NOTE:${match[1]}]]`;
@@ -228,16 +228,16 @@
 
   async function nextPriceNoteNumber(db) {
     const year = new Date().getFullYear();
-    const result = await db.from('invoices').select('notes');
+    const result = await db.from('invoices').select('notes,document_type');
     if (result.error) throw result.error;
-    const nums = (result.data || []).map(item => {
+    const nums = (result.data || []).filter(item => item.document_type === 'price_note' || String(item.notes || '').includes('[[NEXIS_PRICE_NOTE:')).map(item => {
       const match = String(item.notes || '').match(new RegExp(`\\[\\[NEXIS_PRICE_NOTE:NP-${year}-(\\d+)\\]\\]`));
       return match ? Number(match[1]) : 0;
     });
     return `NP-${year}-${String(Math.max(0, ...nums) + 1).padStart(5, '0')}`;
   }
 
-  async function saveWithoutVat(form) {
+  async function saveBillingDocument(form) {
     const errorBox = document.getElementById('invoice-error');
     const saveButton = document.getElementById('invoice-save');
     const clientId = document.getElementById('invoice-client')?.value || '';
@@ -259,10 +259,13 @@
     if (saveButton) saveButton.disabled = true;
 
     try {
-      const db = window.supabase.createClient();
+      const db = window.NexisAuth?.client || window.supabase.createClient();
       const tripResult = await db.from('trips').select('id,revenue').in('id', tripIds);
       if (tripResult.error) throw tripResult.error;
+
       const ht = (tripResult.data || []).reduce((sum, trip) => sum + (Number(trip.revenue) || 0), 0);
+      const vatAmount = Math.round(ht * vatRate / 100);
+      const totalTtc = ht + vatAmount;
       const title = document.getElementById('invoice-form-title')?.textContent?.trim() || '';
       const isNote = /note de prix/i.test(title) || /^Modifier\s+NP-/i.test(title);
       const editMatch = title.match(/Modifier\s+(NP-\d{4}-\d+)/i);
@@ -271,10 +274,11 @@
       if (isNote) {
         let number = editMatch?.[1] || '';
         if (editMatch) {
-          const allResult = await db.from('invoices').select('id,notes');
+          const allResult = await db.from('invoices').select('id,notes,document_type');
           if (allResult.error) throw allResult.error;
           const marker = `[[NEXIS_PRICE_NOTE:${number}]]`;
-          const existing = (allResult.data || []).find(item => String(item.notes || '').includes(marker));
+          const existing = (allResult.data || []).find(item => item.document_type === 'price_note' && String(item.notes || '').includes(marker))
+            || (allResult.data || []).find(item => String(item.notes || '').includes(marker));
           if (!existing) throw new Error('Note de prix introuvable.');
           documentId = existing.id;
         } else {
@@ -283,14 +287,16 @@
 
         const taggedNotes = `[[NEXIS_PRICE_NOTE:${number}]]${notesText ? `\n${notesText}` : ''}`;
         const payload = {
+          document_type: 'price_note',
+          document_number: number,
           client_id: clientId,
           issue_date: issueDate,
           due_date: dueDate,
           status: 'draft',
           subtotal_ht: ht,
-          vat_rate: 0,
-          vat_amount: 0,
-          total_ttc: ht,
+          vat_rate: vatRate,
+          vat_amount: vatAmount,
+          total_ttc: totalTtc,
           notes: taggedNotes
         };
 
@@ -306,14 +312,15 @@
         }
       } else {
         const payload = {
+          document_type: 'invoice',
           client_id: clientId,
           issue_date: issueDate,
           due_date: dueDate,
           status: 'draft',
           subtotal_ht: ht,
-          vat_rate: 0,
-          vat_amount: 0,
-          total_ttc: ht,
+          vat_rate: vatRate,
+          vat_amount: vatAmount,
+          total_ttc: totalTtc,
           notes: notesText || null
         };
         const insertResult = await db.from('invoices').insert(payload).select().single();
@@ -322,12 +329,15 @@
       }
 
       const links = await db.from('invoice_trips').insert(tripIds.map(trip_id => ({ invoice_id: documentId, trip_id })));
-      if (links.error) throw links.error;
+      if (links.error) {
+        if (!editMatch) await db.from('invoices').delete().eq('id', documentId);
+        throw links.error;
+      }
 
       document.querySelector('#invoice-shell [data-close-invoice]')?.click();
       window.setTimeout(() => document.getElementById('invoice-refresh')?.click(), 120);
     } catch (error) {
-      console.error('Enregistrement sans TVA :', error);
+      console.error('Enregistrement facturation :', error);
       if (errorBox) {
         errorBox.textContent = error.message || 'Enregistrement impossible.';
         errorBox.hidden = false;
@@ -370,10 +380,10 @@
 
   document.addEventListener('submit', event => {
     const form = event.target.closest?.('#invoice-form');
-    if (!form || vatRate !== 0) return;
+    if (!form) return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    saveWithoutVat(form);
+    saveBillingDocument(form);
   }, true);
 
   document.addEventListener('keydown', event => { if (event.key === 'Escape') closePopover(); });
