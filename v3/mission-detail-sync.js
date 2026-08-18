@@ -11,6 +11,7 @@
   let currentClientId = null;
   let clientsCache = null;
   let enhancementBusy = false;
+  let deletionBusy = false;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -81,11 +82,8 @@
   document.head.appendChild(style);
 
   const esc = (value) => String(value ?? '')
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'",'&#039;');
+    .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('"','&quot;').replaceAll("'",'&#039;');
 
   function editFormIsVisible() {
     const card = document.getElementById('mission-edit-card');
@@ -101,6 +99,18 @@
         document.getElementById('detail-client')?.focus({ preventScroll: true });
       });
     }
+  }
+
+  function notify(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (!toast) {
+      if (type === 'error') window.alert(message);
+      return;
+    }
+    toast.textContent = message;
+    toast.dataset.type = type;
+    toast.classList.add('visible');
+    window.setTimeout(() => toast.classList.remove('visible'), type === 'error' ? 5000 : 3000);
   }
 
   async function loadClients() {
@@ -186,6 +196,85 @@
     dataChanged = true;
   }
 
+  async function linkedBillingDocuments(tripId) {
+    const { data: links, error: linkError } = await db
+      .from('invoice_trips')
+      .select('invoice_id')
+      .eq('trip_id', tripId);
+    if (linkError) throw linkError;
+    const invoiceIds = [...new Set((links || []).map(item => item.invoice_id).filter(Boolean))];
+    if (!invoiceIds.length) return [];
+
+    const { data: invoices, error: invoiceError } = await db
+      .from('invoices')
+      .select('id,invoice_number,status')
+      .in('id', invoiceIds);
+    if (invoiceError) throw invoiceError;
+    return invoices || [];
+  }
+
+  async function deleteMissionSafely(event) {
+    const button = event.target.closest('#delete-mission-button');
+    if (!button || !currentTripId || !db || deletionBusy) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    deletionBusy = true;
+    const initialLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Vérification…';
+
+    try {
+      const documents = await linkedBillingDocuments(currentTripId);
+      if (documents.length) {
+        const labels = documents.map(item => item.invoice_number || 'document de facturation').join(', ');
+        const statusText = documents.some(item => item.status && item.status !== 'cancelled')
+          ? 'La mission ne peut pas être supprimée tant que ce document existe.'
+          : 'La mission reste liée à un document de facturation.';
+        notify(`Suppression bloquée : cette mission est liée à ${labels}. ${statusText}`, 'error');
+        window.alert(`Cette mission est déjà liée à ${labels}.\n\nPour protéger la facturation, Nexis ne la supprime pas directement. Supprimez ou détachez d’abord le document concerné depuis Facturation, puis revenez supprimer la mission.`);
+        return;
+      }
+
+      if (!window.confirm('Supprimer définitivement cette mission et ses dépenses ?')) return;
+
+      const { error: expenseError } = await db
+        .from('trip_expenses')
+        .delete()
+        .eq('trip_id', currentTripId);
+      if (expenseError) throw expenseError;
+
+      const { data: deletedTrips, error: tripError } = await db
+        .from('trips')
+        .delete()
+        .eq('id', currentTripId)
+        .select('id');
+      if (tripError) throw tripError;
+
+      if (!deletedTrips?.length) {
+        throw new Error('DELETE_NOT_ALLOWED');
+      }
+
+      dataChanged = true;
+      notify('Mission supprimée.');
+      shell.hidden = true;
+      document.body.style.overflow = '';
+      window.setTimeout(() => window.location.reload(), 350);
+    } catch (error) {
+      console.error('Suppression sécurisée mission :', error);
+      if (error?.message === 'DELETE_NOT_ALLOWED') {
+        notify('Suppression refusée. Seul un administrateur de cette entreprise peut supprimer une mission.', 'error');
+      } else {
+        notify(`Impossible de supprimer la mission${error?.message ? ` : ${error.message}` : '.'}`, 'error');
+      }
+    } finally {
+      deletionBusy = false;
+      button.disabled = false;
+      button.textContent = initialLabel;
+    }
+  }
+
   document.addEventListener('click', (event) => {
     const opener = event.target.closest('[data-open-mission]');
     if (opener) {
@@ -206,6 +295,8 @@
       window.setTimeout(syncEditFocus, 0);
     }
   }, true);
+
+  document.addEventListener('click', deleteMissionSafely, true);
 
   shell.addEventListener('submit', (event) => {
     if (event.target.matches('#mission-edit-form')) {
