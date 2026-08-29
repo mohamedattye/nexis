@@ -110,6 +110,11 @@
 
         <form id="trip-form" class="form-grid">
           <label>
+            Client
+            <input type="text" id="client" list="client-options" autocomplete="off" required />
+          </label>
+
+          <label>
             Camion
             <input type="text" id="truck" required />
           </label>
@@ -342,6 +347,31 @@
         </article>
       </section>
 
+      <section class="card client-performance">
+        <div class="section-title-row">
+          <div>
+            <p class="card-head__kicker">CLIENTS</p>
+            <h2>Activité mensuelle par client</h2>
+          </div>
+          <p class="subtle" id="client-summary-period"></p>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Courses</th>
+                <th>Chiffre d’affaires</th>
+                <th>Dépenses course</th>
+                <th>Marge opérationnelle</th>
+                <th>Part du CA</th>
+              </tr>
+            </thead>
+            <tbody id="client-review-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="card">
         <h2>Détail des courses</h2>
         <div class="table-wrapper">
@@ -350,6 +380,7 @@
               <tr>
                 <th>Date</th>
                 <th>Camion</th>
+                <th>Client</th>
                 <th>Zone</th>
                 <th>Revenu</th>
                 <th>Dépenses course</th>
@@ -410,6 +441,8 @@
     <template id="stat-card-template">
       <article class="card stat-card"><h3></h3><p></p></article>
     </template>
+
+    <datalist id="client-options"></datalist>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
