@@ -79,6 +79,7 @@
     }
 
     editingTripId = String(trip.id);
+    document.getElementById('client').value = trip.client || '';
     document.getElementById('truck').value = trip.truck || '';
     document.getElementById('date').value = trip.date || '';
     document.getElementById('loading-zone').value = trip.loadingZone || '';
@@ -128,6 +129,7 @@
     if (isUpdatingTrip) return;
 
     const updatedTrip = {
+      client: document.getElementById('client').value.trim(),
       truck: document.getElementById('truck').value.trim(),
       date: document.getElementById('date').value,
       loadingZone: document.getElementById('loading-zone').value.trim(),
@@ -136,6 +138,7 @@
     };
 
     if (
+      !updatedTrip.client ||
       !updatedTrip.truck ||
       !updatedTrip.date ||
       !updatedTrip.loadingZone ||
@@ -148,6 +151,7 @@
 
     const duplicateExists = trips.some((trip) =>
       String(trip.id) !== String(editingTripId) &&
+      normalizeClientKey(trip.client) === normalizeClientKey(updatedTrip.client) &&
       String(trip.truck || '').trim().toUpperCase() === updatedTrip.truck.toUpperCase() &&
       String(trip.date || '') === updatedTrip.date &&
       String(trip.loadingZone || '').trim().toUpperCase() === updatedTrip.loadingZone.toUpperCase() &&
