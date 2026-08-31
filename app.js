@@ -18,9 +18,6 @@ const exportCsvButton = document.getElementById('export-csv');
 const tableBody = document.getElementById('trip-table-body');
 const costTableBody = document.getElementById('cost-table-body');
 const reviewTableBody = document.getElementById('review-table-body');
-const clientReviewTableBody = document.getElementById('client-review-table-body');
-const clientOptions = document.getElementById('client-options');
-const clientSummaryPeriod = document.getElementById('client-summary-period');
 const statsContainer = document.getElementById('stats');
 const statCardTemplate = document.getElementById('stat-card-template');
 const financeChartCanvas = document.getElementById('finance-chart');
@@ -49,7 +46,6 @@ const submissionToken = crypto.randomUUID();
   const trip = {
     id: submissionToken,
 submission_token: submissionToken,
-    client: document.getElementById('client').value.trim(),
     truck: document.getElementById('truck').value.trim(),
     date: document.getElementById('date').value,
     loadingZone: document.getElementById('loading-zone').value.trim(),
@@ -58,7 +54,6 @@ submission_token: submissionToken,
   };
 
   if (
-    !trip.client ||
     !trip.truck ||
     !trip.date ||
     !trip.loadingZone ||
@@ -69,7 +64,6 @@ submission_token: submissionToken,
   }
 
   const duplicateExists = trips.some((existingTrip) =>
-    normalizeClientKey(existingTrip.client) === normalizeClientKey(trip.client) &&
     String(existingTrip.truck || '').trim().toUpperCase() ===
       trip.truck.toUpperCase() &&
     String(existingTrip.date || '') === trip.date &&
@@ -349,50 +343,6 @@ function ensureTruck(map, truck) {
   }
 }
 
-function normalizeClientKey(value) {
-  return String(value || '')
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ');
-}
-
-function summarizeByClient(filteredTrips) {
-  const byClient = new Map();
-  const totalRevenue = filteredTrips.reduce(
-    (sum, trip) => sum + Number(trip.revenue || 0),
-    0
-  );
-
-  filteredTrips.forEach((trip) => {
-    const clientName = String(trip.client || '').trim() || 'Non renseigné';
-    const key = normalizeClientKey(clientName) || 'non-renseigne';
-
-    if (!byClient.has(key)) {
-      byClient.set(key, {
-        client: clientName,
-        tripCount: 0,
-        revenue: 0,
-        tripExpense: 0
-      });
-    }
-
-    const item = byClient.get(key);
-    item.tripCount += 1;
-    item.revenue += Number(trip.revenue || 0);
-    item.tripExpense += Number(trip.expense || trip.tripExpense || 0);
-  });
-
-  return [...byClient.values()]
-    .map((item) => ({
-      ...item,
-      operationalMargin: item.revenue - item.tripExpense,
-      revenueShare: totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0
-    }))
-    .sort((a, b) => b.revenue - a.revenue || a.client.localeCompare(b.client, 'fr'));
-}
-
 function render() {
   const filteredTrips = getFilteredTrips();
   const filteredCosts = getFilteredCosts();
@@ -418,18 +368,15 @@ function render() {
   });
 
   const truckSummary = summarizeByTruck(enrichedReviewTrips, reviewCosts);
-  const clientSummary = summarizeByClient(enrichedTrips);
 
   renderStats(enrichedTrips, filteredCosts);
   renderTripTable(enrichedTrips);
   renderCostTable(reviewCosts);
   renderEcoIntelligence(enrichedTrips);
   renderReviewTable(truckSummary);
-  renderClientReviewTable(clientSummary);
   renderFinanceChart(enrichedTrips, filteredCosts);
   renderTruckChart(truckSummary);
   populateTripExpenseOptions();
-  populateClientOptions();
 }
 
 function renderStats(filteredTrips, filteredCosts) {
@@ -465,7 +412,7 @@ function renderStats(filteredTrips, filteredCosts) {
 
 function renderTripTable(filteredTrips) {
   if (filteredTrips.length === 0) {
-    tableBody.innerHTML = '<tr><td colspan="8" class="empty">Aucune course pour ce filtre.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="7" class="empty">Aucune course pour ce filtre.</td></tr>';
     return;
   }
 
@@ -480,7 +427,6 @@ function renderTripTable(filteredTrips) {
         <tr>
           <td>${formatDate(trip.date)}</td>
           <td>${trip.truck}</td>
-          <td>${escapeHtml(trip.client || 'Non renseigné')}</td>
           <td>${zoneLabel}</td>
           <td>${money(trip.revenue)} FCFA</td>
           <td>${money(expenseAmount)} FCFA</td>
@@ -489,34 +435,6 @@ function renderTripTable(filteredTrips) {
         </tr>
       `;
     })
-    .join('');
-}
-
-function renderClientReviewTable(clientSummary) {
-  if (!clientReviewTableBody) return;
-
-  if (clientSummaryPeriod) {
-    clientSummaryPeriod.textContent = monthFilter.value
-      ? `Mois : ${monthFilter.value}`
-      : 'Toutes les périodes';
-  }
-
-  if (clientSummary.length === 0) {
-    clientReviewTableBody.innerHTML = '<tr><td colspan="6" class="empty">Aucune donnée client pour ce filtre.</td></tr>';
-    return;
-  }
-
-  clientReviewTableBody.innerHTML = clientSummary
-    .map((item) => `
-      <tr data-client-name="${escapeHtml(item.client)}">
-        <td><strong>${escapeHtml(item.client)}</strong></td>
-        <td>${item.tripCount}</td>
-        <td>${money(item.revenue)} FCFA</td>
-        <td>${money(item.tripExpense)} FCFA</td>
-        <td class="${item.operationalMargin < 0 ? 'bad' : 'good'}">${money(item.operationalMargin)} FCFA</td>
-        <td>${item.revenueShare.toLocaleString('fr-FR', { maximumFractionDigits: 1 })}%</td>
-      </tr>
-    `)
     .join('');
 }
 
@@ -684,62 +602,52 @@ function shortLabel(label) {
   return label.length > 14 ? `${label.slice(0, 14)}…` : label;
 }
 
+function summarizeTripsByClient(tripsToSummarize) {
+  const byClient = new Map();
+
+  tripsToSummarize.forEach((trip) => {
+    const client = String(trip.loadingZone || '').trim().toUpperCase() || 'NON RENSEIGNÉ';
+    const key = client
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ');
+
+    if (!byClient.has(key)) {
+      byClient.set(key, { client, tripCount: 0 });
+    }
+
+    byClient.get(key).tripCount += 1;
+  });
+
+  return [...byClient.values()]
+    .sort((a, b) => b.tripCount - a.tripCount || a.client.localeCompare(b.client, 'fr'));
+}
+
 function exportFilteredTripsAsCsv() {
   const filteredTrips = getFilteredTrips();
-  const filteredCosts = getFilteredCosts();
 
-  if (filteredTrips.length === 0 && filteredCosts.length === 0) {
+  if (filteredTrips.length === 0) {
+    alert('Aucune course à exporter pour le filtre sélectionné.');
     return;
   }
 
   const month = monthFilter.value || 'toutes-periodes';
-  const rows = [
-    'type,date_ou_mois,camion,client,zone,revenu_fcfa,depenses_course_fcfa,entretien_fcfa,mecanique_fcfa,assurance_fcfa,salaire_fcfa,charges_sociales_fcfa,autres_fcfa,total_ligne_fcfa'
-  ];
+  const clientSummary = summarizeTripsByClient(filteredTrips);
+  const rows = ['Client;Nombre de courses'];
 
-  filteredTrips.forEach((trip) => {
-  const expenseAmount = Number(trip.expense || trip.tripExpense || 0);
-  const zoneLabel = `${trip.loadingZone || '-'} -> ${trip.unloadingZone || '-'}`;
-
-  rows.push([
-    'course',
-    trip.date,
-    safeCsv(trip.truck),
-    safeCsv(trip.client || 'Non renseigné'),
-    safeCsv(zoneLabel),
-    trip.revenue,
-    expenseAmount,
-    '', '', '', '', '', '',
-    trip.revenue - expenseAmount
-  ].join(','));
-});
-
-  filteredCosts.forEach((item) => {
-    rows.push([
-      'charge',
-      item.month,
-      safeCsv(item.truck),
-      '',
-      '',
-      '',
-      '',
-      item.maintenance,
-      item.mechanical,
-      item.insurance,
-      item.driverSalary,
-      item.socialCharges,
-      item.otherCharges,
-      costTotal(item)
-    ].join(','));
+  clientSummary.forEach((item) => {
+    rows.push(`${safeCsv(item.client)};${item.tripCount}`);
   });
 
-  const csvContent = rows.join('\n');
+  rows.push(`${safeCsv('TOTAL')};${filteredTrips.length}`);
+
+  const csvContent = `\uFEFF${rows.join('\n')}`;
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement('a');
   link.href = url;
-  link.download = `performance-reelle-${month}.csv`;
+  link.download = `nombre-courses-par-client-${month}.csv`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -748,15 +656,6 @@ function exportFilteredTripsAsCsv() {
 
 function safeCsv(value) {
   return `"${String(value).replaceAll('"', '""')}"`;
-}
-
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
 }
 
 function money(value) {
@@ -896,32 +795,9 @@ function populateTripExpenseOptions() {
     .forEach((trip) => {
       const option = document.createElement('option');
       option.value = trip.id;
-      const clientLabel = trip.client ? ` | ${trip.client}` : '';
-      option.textContent = `${trip.truck} | ${trip.date}${clientLabel} | ${trip.loadingZone} → ${trip.unloadingZone}`;
+      option.textContent = `${trip.truck} | ${trip.date} | ${trip.loadingZone} → ${trip.unloadingZone}`;
       expenseTripSelect.appendChild(option);
     });
-}
-
-function populateClientOptions() {
-  if (!clientOptions) return;
-
-  const clients = new Map();
-
-  trips.forEach((trip) => {
-    const name = String(trip.client || '').trim();
-    const key = normalizeClientKey(name);
-    if (name && key && !clients.has(key)) clients.set(key, name);
-  });
-
-  clientOptions.replaceChildren(
-    ...[...clients.values()]
-      .sort((a, b) => a.localeCompare(b, 'fr'))
-      .map((client) => {
-        const option = document.createElement('option');
-        option.value = client;
-        return option;
-      })
-  );
 }
 document.getElementById("export-pdf").addEventListener("click", () => {
   const { jsPDF } = window.jspdf;
