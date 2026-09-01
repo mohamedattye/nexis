@@ -211,3 +211,13 @@
   script.dataset.nexisBannerV2 = 'true';
   document.body.appendChild(script);
 })();
+
+(() => {
+  if (document.querySelector('script[data-nexis-modern-dashboard-v3]')) return;
+
+  const script = document.createElement('script');
+  script.src = 'modern-dashboard-v3.js';
+  script.defer = true;
+  script.dataset.nexisModernDashboardV3 = 'true';
+  document.body.appendChild(script);
+})();
