@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RYVO | Connexion entreprise</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --navy: #0b1730;
+        --navy-soft: #13264b;
+        --blue: #2f6ff4;
+        --blue-dark: #205bd3;
+        --orange: #ff7a00;
+        --ink: #18233a;
+        --muted: #6a7690;
+        --line: #dce3ef;
+        --surface: #ffffff;
+        --background: #edf2fa;
+        --success: #0f8a61;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 6% 8%, rgba(47, 111, 244, .13), transparent 28rem),
+          var(--background);
+      }
+
+      button, input { font: inherit; }
+
+      .page {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: minmax(360px, .95fr) minmax(460px, 1.05fr);
+      }
+
+      .brand-panel {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100vh;
+        padding: 52px clamp(34px, 5vw, 78px);
+        color: #fff;
+        background:
+          radial-gradient(circle at 100% 0%, rgba(47, 111, 244, .46), transparent 34rem),
+          linear-gradient(145deg, #071226 0%, var(--navy) 58%, #0d2750 100%);
+      }
+
+      .brand-panel::after {
+        content: "";
+        position: absolute;
+        right: -170px;
+        bottom: -190px;
+        width: 480px;
+        height: 480px;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 50%;
+        box-shadow: 0 0 0 70px rgba(255,255,255,.025), 0 0 0 140px rgba(255,255,255,.018);
+      }
+
+      .brand, .brand-copy, .trust { position: relative; z-index: 1; }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        width: fit-content;
+      }
+
+      .logo-shell {
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 16px;
+        background: #06243a;
+        box-shadow: 0 12px 28px rgba(0,0,0,.22);
+      }
+
+      .logo-mark {
+        color: #fff;
+        font-size: 27px;
+        font-weight: 900;
+        letter-spacing: -.08em;
+      }
+
+      .logo-mark::after {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 3px;
+        margin: 1px auto 0;
+        border-radius: 999px;
+        background: var(--orange);
+      }
+
+      .brand-name { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: .08em; }
+      .brand-label { margin: 3px 0 0; color: #a8b8d5; font-size: 12px; font-weight: 650; }
+
+      .brand-copy { max-width: 550px; margin: 70px 0; }
+      .eyebrow { margin: 0 0 14px; color: #8fb5ff; font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+      .brand-copy h1 { margin: 0; font-size: clamp(36px, 4.1vw, 60px); line-height: 1.02; letter-spacing: -.045em; }
+      .brand-copy > p:last-of-type { max-width: 500px; margin: 22px 0 0; color: #c5d1e5; font-size: 17px; line-height: 1.65; }
+
+      .benefits { display: grid; gap: 14px; margin-top: 30px; }
+      .benefit { display: flex; align-items: center; gap: 12px; color: #e7edf8; font-size: 14px; font-weight: 650; }
+      .benefit span { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; color: #cfe0ff; background: rgba(47,111,244,.22); }
+
+      .trust { display: flex; align-items: center; gap: 10px; color: #9eacc3; font-size: 12px; }
+      .trust-dot { width: 8px; height: 8px; border-radius: 50%; background: #38c995; box-shadow: 0 0 0 5px rgba(56,201,149,.12); }
+
+      .login-panel {
+        display: grid;
+        place-items: center;
+        padding: 40px clamp(24px, 6vw, 86px);
+      }
+
+      .login-wrap { width: min(100%, 480px); }
+      .mobile-brand { display: none; }
+
+      .login-card {
+        padding: clamp(28px, 4vw, 44px);
+        border: 1px solid rgba(209,218,233,.9);
+        border-radius: 24px;
+        background: rgba(255,255,255,.94);
+        box-shadow: 0 24px 70px rgba(20, 42, 82, .13);
+        backdrop-filter: blur(14px);
+      }
+
+      .preview-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 22px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        color: #315b9b;
+        background: #edf4ff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+      }
+
+      .login-card h2 { margin: 0; font-size: 30px; letter-spacing: -.035em; }
+      .intro { margin: 9px 0 28px; color: var(--muted); line-height: 1.55; }
+      .field { margin-bottom: 18px; }
+      .field label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 760; }
+
+      .input-wrap { position: relative; }
+      .input-wrap input {
+        width: 100%;
+        height: 52px;
+        padding: 0 46px 0 15px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        outline: none;
+        color: var(--ink);
+        background: #fff;
+        transition: border-color .18s ease, box-shadow .18s ease;
+      }
+
+      .input-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(47,111,244,.12); }
+      .input-icon, .password-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8490a6; }
+      .password-toggle { border: 0; padding: 4px; cursor: pointer; background: transparent; }
+
+      .form-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: -2px 0 22px; font-size: 13px; }
+      .remember { display: inline-flex; align-items: center; gap: 8px; color: #536079; }
+      .remember input { width: 16px; height: 16px; accent-color: var(--blue); }
+      a { color: var(--blue-dark); font-weight: 750; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .primary {
+        width: 100%;
+        height: 54px;
+        border: 0;
+        border-radius: 12px;
+        cursor: pointer;
+        color: #fff;
+        background: linear-gradient(135deg, var(--blue), #3e82ff);
+        box-shadow: 0 12px 24px rgba(47,111,244,.25);
+        font-weight: 800;
+        transition: transform .16s ease, box-shadow .16s ease;
+      }
+
+      .primary:hover { transform: translateY(-1px); box-shadow: 0 15px 30px rgba(47,111,244,.31); }
+      .primary:active { transform: translateY(0); }
+
+      .help { margin: 25px 0 0; padding-top: 22px; border-top: 1px solid #e7ebf2; color: var(--muted); font-size: 13px; text-align: center; line-height: 1.6; }
+      .help strong { color: var(--ink); }
+
+      .message { display: none; margin-top: 16px; padding: 12px 14px; border-radius: 10px; color: var(--success); background: #eaf8f2; font-size: 13px; font-weight: 700; }
+      .message.show { display: block; }
+
+      .legal { margin: 18px 0 0; color: #8792a5; font-size: 11px; text-align: center; }
+
+      @media (max-width: 900px) {
+        .page { grid-template-columns: 1fr; }
+        .brand-panel { display: none; }
+        .login-panel { min-height: 100vh; padding: 24px 18px; }
+        .mobile-brand { display: flex; align-items: center; justify-content: center; gap: 11px; margin-bottom: 22px; color: var(--navy); font-weight: 850; letter-spacing: .04em; }
+        .mobile-brand .logo-shell { width: 46px; height: 46px; border-color: #d6dfed; }
+        .login-card { padding: 28px 22px; border-radius: 20px; }
+      }
+
+      @media (max-width: 440px) {
+        .form-row { align-items: flex-start; flex-direction: column; gap: 11px; }
+        .login-card h2 { font-size: 27px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <aside class="brand-panel" aria-label="Présentation RYVO">
+        <div class="brand">
+          <div class="logo-shell">
+            <span class="logo-mark" aria-hidden="true">R</span>
+          </div>
+          <div>
+            <p class="brand-name">RYVO</p>
+            <p class="brand-label">PILOTAGE DES OPÉRATIONS</p>
+          </div>
+        </div>
+
+        <div class="brand-copy">
+          <p class="eyebrow">Simple. Clair. Rentable.</p>
+          <h1>Votre activité logistique, enfin sous contrôle.</h1>
+          <p>Suivez vos courses, vos dépenses et la rentabilité de votre flotte depuis un espace sécurisé, adapté à votre entreprise.</p>
+          <div class="benefits">
+            <div class="benefit"><span>✓</span> Vos données restent séparées et confidentielles</div>
+            <div class="benefit"><span>✓</span> Accessible sur ordinateur, tablette et téléphone</div>
+            <div class="benefit"><span>✓</span> Interface en français et montants en FCFA</div>
+          </div>
+        </div>
+
+        <div class="trust"><span class="trust-dot"></span> Service opérationnel au Sénégal</div>
+      </aside>
+
+      <main class="login-panel">
+        <div class="login-wrap">
+          <div class="mobile-brand">
+            <div class="logo-shell">
+              <span class="logo-mark" aria-hidden="true">R</span>
+            </div>
+            RYVO
+          </div>
+
+          <section class="login-card" aria-labelledby="login-title">
+            <span class="preview-badge">Aperçu de la connexion</span>
+            <h2 id="login-title">Bienvenue</h2>
+            <p class="intro">Connectez-vous à l’espace de votre entreprise.</p>
+
+            <form id="preview-form">
+              <div class="field">
+                <label for="email">Adresse e-mail professionnelle</label>
+                <div class="input-wrap">
+                  <input id="email" name="email" type="email" autocomplete="email" placeholder="nom@entreprise.sn" required />
+                  <span class="input-icon" aria-hidden="true">✉</span>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="password">Mot de passe</label>
+                <div class="input-wrap">
+                  <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe" minlength="8" required />
+                  <button class="password-toggle" id="password-toggle" type="button" aria-label="Afficher le mot de passe">Afficher</button>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <label class="remember"><input type="checkbox" checked /> Rester connecté</label>
+                <a href="#" id="forgot-link">Mot de passe oublié ?</a>
+              </div>
+
+              <button class="primary" type="submit">Se connecter</button>
+              <div class="message" id="preview-message" role="status"></div>
+            </form>
+
+            <p class="help"><strong>Vous n’avez pas encore d’accès ?</strong><br />L’administrateur de votre entreprise peut créer votre compte.</p>
+          </section>
+          <p class="legal">Connexion sécurisée · © 2026 RYVO</p>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const form = document.querySelector('#preview-form');
+      const password = document.querySelector('#password');
+      const toggle = document.querySelector('#password-toggle');
+      const forgot = document.querySelector('#forgot-link');
+      const message = document.querySelector('#preview-message');
+
+      toggle.addEventListener('click', () => {
+        const visible = password.type === 'text';
+        password.type = visible ? 'password' : 'text';
+        toggle.textContent = visible ? 'Afficher' : 'Masquer';
+        toggle.setAttribute('aria-label', visible ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
+      });
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        message.textContent = 'Aperçu uniquement : aucune connexion réelle n’a été effectuée.';
+        message.classList.add('show');
+      });
+
+      forgot.addEventListener('click', (event) => {
+        event.preventDefault();
+        message.textContent = 'Dans la version finale, un lien sécurisé sera envoyé par e-mail.';
+        message.classList.add('show');
+      });
+    </script>
+  </body>
+</html>
