@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Connexion | Nexis Pilotage Logistique</title>
+    <title>Connexion | RYVO</title>
     <style>
       :root {
         color-scheme: light;
@@ -87,14 +87,21 @@
         box-shadow: 0 12px 28px rgba(0,0,0,.22);
       }
 
-      .logo-shell img { width: 116%; height: 116%; object-fit: contain; }
-
-      .logo-fallback {
-        display: none;
-        color: var(--orange);
-        font-size: 25px;
+      .logo-mark {
+        color: #fff;
+        font-size: 27px;
         font-weight: 900;
         letter-spacing: -.08em;
+      }
+
+      .logo-mark::after {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 3px;
+        margin: 1px auto 0;
+        border-radius: 999px;
+        background: var(--orange);
       }
 
       .brand-name { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: .08em; }
@@ -214,15 +221,14 @@
   </head>
   <body>
     <div class="page">
-      <aside class="brand-panel" aria-label="Présentation Nexis">
+      <aside class="brand-panel" aria-label="Présentation RYVO">
         <div class="brand">
           <div class="logo-shell">
-            <img src="assets/logo-nexis.png" alt="Nexis" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
-            <span class="logo-fallback">NX</span>
+            <span class="logo-mark" aria-hidden="true">R</span>
           </div>
           <div>
-            <p class="brand-name">NEXIS</p>
-            <p class="brand-label">PILOTAGE LOGISTIQUE</p>
+            <p class="brand-name">RYVO</p>
+            <p class="brand-label">PILOTAGE DES OPÉRATIONS</p>
           </div>
         </div>
 
@@ -244,10 +250,9 @@
         <div class="login-wrap">
           <div class="mobile-brand">
             <div class="logo-shell">
-              <img src="assets/logo-nexis.png" alt="Nexis" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
-              <span class="logo-fallback">NX</span>
+              <span class="logo-mark" aria-hidden="true">R</span>
             </div>
-            NEXIS
+            RYVO
           </div>
 
           <section class="login-card" aria-labelledby="login-title">
@@ -281,9 +286,9 @@
               <div class="message" id="preview-message" role="status"></div>
             </form>
 
-            <p class="help"><strong>Vous n’avez pas encore d’accès ?</strong><br />Votre administrateur Nexis peut créer votre compte.</p>
+            <p class="help"><strong>Vous n’avez pas encore d’accès ?</strong><br />L’administrateur de votre entreprise peut créer votre compte.</p>
           </section>
-          <p class="legal">Connexion sécurisée · © 2026 Nexis Logistics</p>
+          <p class="legal">Connexion sécurisée · © 2026 RYVO</p>
         </div>
       </main>
     </div>
