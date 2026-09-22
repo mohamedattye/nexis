@@ -143,10 +143,10 @@
       ],
       fixed:[{label:'Assurance flotte',amount:125000},{label:'Entretien mensuel',amount:180000}]
     };
-    let state=load();
     const $=id=>document.getElementById(id);
     const money=n=>new Intl.NumberFormat('fr-FR').format(Number(n)||0)+' FCFA';
     const copy=o=>JSON.parse(JSON.stringify(o));
+    let state=load();
     function load(){try{return JSON.parse(localStorage.getItem(KEY))||copy(seed)}catch(e){return copy(seed)}}
     function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
     function toast(text){$('toast').textContent=text;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
