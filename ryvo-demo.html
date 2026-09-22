@@ -50,8 +50,8 @@
         <span class="pill">DÉMONSTRATION RYVO</span>
         <h2>Bienvenue</h2>
         <p>Découvrez l’espace de pilotage avec des données entièrement fictives.</p>
-        <div class="field"><label>Votre nom</label><input id="visitorName" placeholder="Ex. Amadou Diop" required></div>
-        <div class="field"><label>Nom de l’entreprise</label><input id="companyName" placeholder="Ex. Transports Horizon" required></div>
+        <div class="field"><label>Votre nom</label><input id="visitorName" value="Amadou Diop" placeholder="Ex. Amadou Diop"></div>
+        <div class="field"><label>Nom de l’entreprise</label><input id="companyName" value="Transports Horizon" placeholder="Ex. Transports Horizon"></div>
         <button class="primary wide" type="submit">Entrer dans la démo</button>
         <p class="login-note">Aucun mot de passe requis · Aucune donnée réelle</p>
       </form>
@@ -164,7 +164,7 @@
       $('fixedRows').innerHTML=state.fixed.map(c=>`<tr><td>${c.label}</td><td class="money">${money(c.amount)}</td></tr>`).join('')||'<tr><td class="empty" colspan="2">Aucune charge</td></tr>';
       $('resultRows').innerHTML=state.trips.map(t=>{const e=expenseFor(t.id),m=t.amount-e;return `<tr><td>${t.truck}</td><td>${t.from} → ${t.to}</td><td>${money(t.amount)}</td><td>${money(e)}</td><td class="money ${m>=0?'positive':'negative'}">${money(m)}</td></tr>`}).join('');
     }
-    $('loginForm').addEventListener('submit',e=>{e.preventDefault();const company=$('companyName').value.trim();$('companyTitle').textContent=company;$('companyInitial').textContent=company[0].toUpperCase();$('welcome').textContent='Bienvenue '+$('visitorName').value.trim()+' · Tableau de bord de démonstration';$('login').classList.add('hidden');$('app').classList.remove('hidden');render()});
+    $('loginForm').addEventListener('submit',e=>{e.preventDefault();const company=$('companyName').value.trim()||'Transports Horizon';const visitor=$('visitorName').value.trim()||'Amadou Diop';$('companyTitle').textContent=company;$('companyInitial').textContent=company[0].toUpperCase();$('welcome').textContent='Bienvenue '+visitor+' · Tableau de bord de démonstration';$('login').classList.add('hidden');$('app').classList.remove('hidden');render()});
     document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));$(btn.dataset.tab+'View').classList.remove('hidden')}));
     $('tripForm').addEventListener('submit',e=>{e.preventDefault();state.trips.push({id:Date.now(),date:$('date').value,truck:$('truck').value,from:$('from').value,to:$('to').value,amount:Number($('amount').value)});e.target.reset();save();toast('Course ajoutée à la démo')});
     $('expenseForm').addEventListener('submit',e=>{e.preventDefault();state.expenses.push({tripId:Number($('tripSelect').value),fuel:Number($('fuel').value),ration:Number($('ration').value),other:Number($('other').value)});e.target.reset();save();toast('Dépense ajoutée à la démo')});
