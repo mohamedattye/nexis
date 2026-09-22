@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RYVO — Démonstration</title>
+  <style>
+    :root{--navy:#0b1833;--navy2:#102a59;--blue:#2874f0;--pale:#edf3fc;--ink:#18243b;--muted:#687892;--line:#dbe4f1;--green:#16a37a;--orange:#ff8a18;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;background:#eef3fb;color:var(--ink);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+    button,input,select{font:inherit}.hidden{display:none!important}
+    .login{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:#f5f8fd}
+    .hero{padding:54px 8vw;color:white;background:linear-gradient(145deg,#07142d,#143a78);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+    .hero:after{content:"";position:absolute;width:520px;height:520px;border:1px solid #ffffff20;border-radius:50%;right:-240px;bottom:-260px;box-shadow:0 0 0 80px #ffffff08}
+    .brand{display:flex;align-items:center;gap:13px;font-weight:900;letter-spacing:2px;font-size:19px}.brandmark{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,#24a1ff,#2865ee);color:#fff;font-size:24px;box-shadow:0 12px 30px #001a4c80}
+    .hero h1{font-size:clamp(40px,5vw,68px);line-height:1.02;margin:22px 0}.eyebrow{color:#8ab6ff;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero p{font-size:18px;max-width:650px;color:#dbe8ff}
+    .checks{display:grid;gap:12px;margin-top:30px}.check:before{content:"✓";display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#1f5ba9;margin-right:10px}
+    .status{position:relative;z-index:1;color:#b9cbea}.status:before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#39d2a7;box-shadow:0 0 0 5px #39d2a720;margin-right:9px}
+    .login-side{display:grid;place-items:center;padding:35px}.login-card{width:min(455px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:42px;box-shadow:0 26px 70px #12315e1c}.pill{display:inline-block;padding:7px 12px;border-radius:99px;background:#eaf2ff;color:#265ca8;font-size:11px;font-weight:900;letter-spacing:.8px}.login-card h2{font-size:32px;margin:24px 0 5px}.login-card p{color:var(--muted);margin:0 0 28px}.field{display:grid;gap:8px;margin:16px 0}.field label{font-weight:750}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:14px;background:white;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2874f019}
+    .primary{border:0;border-radius:12px;padding:14px 18px;background:linear-gradient(90deg,#276aeb,#3e87ff);color:white;font-weight:850;cursor:pointer;box-shadow:0 10px 22px #2874f02e}.primary:hover{filter:brightness(1.04)}.primary.wide{width:100%;margin-top:8px}.login-note{text-align:center;font-size:12px!important;margin-top:16px!important}
+    .app{min-height:100vh}.top{background:var(--navy);color:white;padding:22px max(22px,calc((100vw - 1280px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px}.top .brandmark{width:42px;height:42px;font-size:20px}.top-right{display:flex;align-items:center;gap:12px}.demo-badge{background:#ffefcf;color:#874900;padding:7px 11px;border-radius:99px;font-weight:850;font-size:12px}.ghost{border:1px solid #ffffff33;color:#fff;background:#ffffff0c;border-radius:10px;padding:9px 12px;cursor:pointer}
+    .wrap{width:min(1280px,calc(100% - 32px));margin:22px auto 50px}.intro{background:linear-gradient(120deg,#0d1d3b,#142f61);border-radius:20px;color:#fff;padding:25px 28px;display:flex;justify-content:space-between;align-items:center}.intro h1{margin:4px 0;font-size:28px}.intro p{margin:0;color:#bdcce8}.company{display:flex;align-items:center;gap:14px}.company-logo{width:58px;height:58px;display:grid;place-items:center;border-radius:15px;background:#fff;color:var(--blue);font-size:22px;font-weight:950}
+    .tabs{display:flex;gap:8px;background:#fff;padding:8px;border-radius:14px;margin:14px 0;border:1px solid var(--line);overflow:auto}.tab{border:0;background:transparent;padding:11px 24px;border-radius:10px;color:#526078;font-weight:750;cursor:pointer}.tab.active{background:#eaf2ff;color:#2561c4}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.kpi{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;display:flex;gap:13px;align-items:center}.kpi-icon{width:42px;height:42px;border-radius:12px;background:#e9f2ff;display:grid;place-items:center;font-size:20px}.kpi small{display:block;color:var(--muted);font-weight:700}.kpi strong{display:block;font-size:19px;margin-top:1px}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:16px;box-shadow:0 8px 25px #17335d0a}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:17px}.panel-title{display:flex;gap:11px;align-items:center}.panel-title span{font-size:22px}.panel h2{font-size:18px;margin:0}.panel h2 small{display:block;font-size:10px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase}
+    .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:13px}.grid.three{grid-template-columns:repeat(3,1fr)}.grid .field{margin:0}.grid .primary{align-self:end}.secondary{border:1px solid var(--line);background:white;color:#365071;border-radius:10px;padding:10px 13px;font-weight:750;cursor:pointer}
+    .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:11px 10px;border-bottom:1px solid var(--line)}td{padding:13px 10px;border-bottom:1px solid #edf1f7;font-weight:550}.money{font-weight:800}.positive{color:var(--green)}.negative{color:#d4514c}.empty{text-align:center;color:var(--muted);padding:30px}
+    .toast{position:fixed;right:22px;bottom:22px;background:#102343;color:#fff;padding:13px 17px;border-radius:12px;box-shadow:0 15px 35px #001a4c4d;transform:translateY(90px);opacity:0;transition:.25s;z-index:10}.toast.show{transform:none;opacity:1}
+    @media(max-width:900px){.login{grid-template-columns:1fr}.hero{min-height:460px}.kpis{grid-template-columns:repeat(2,1fr)}.grid,.grid.three{grid-template-columns:repeat(2,1fr)}.intro{align-items:flex-start;gap:18px;flex-direction:column}.top{align-items:flex-start}.top-right{flex-wrap:wrap;justify-content:flex-end}}
+    @media(max-width:560px){.hero{padding:32px 24px}.hero h1{font-size:42px}.login-side{padding:18px}.login-card{padding:28px 22px}.kpis,.grid,.grid.three{grid-template-columns:1fr}.top{padding:16px}.top-right{display:none}.wrap{width:min(100% - 20px,1280px)}}
+  </style>
+</head>
+<body>
+  <section id="login" class="login">
+    <div class="hero">
+      <div class="brand"><span class="brandmark">R</span> RYVO</div>
+      <div>
+        <div class="eyebrow">Pilotez simplement</div>
+        <h1>Votre activité,<br>enfin sous contrôle.</h1>
+        <p>Suivez vos courses, vos dépenses et la rentabilité de votre flotte depuis un espace clair, sécurisé et adapté à votre entreprise.</p>
+        <div class="checks">
+          <div class="check">Données séparées pour chaque entreprise</div>
+          <div class="check">Accessible sur ordinateur, tablette et téléphone</div>
+          <div class="check">Interface en français et montants en FCFA</div>
+        </div>
+      </div>
+      <div class="status">Démo opérationnelle au Sénégal</div>
+    </div>
+    <div class="login-side">
+      <form id="loginForm" class="login-card">
+        <span class="pill">DÉMONSTRATION RYVO</span>
+        <h2>Bienvenue</h2>
+        <p>Découvrez l’espace de pilotage avec des données entièrement fictives.</p>
+        <div class="field"><label>Votre nom</label><input id="visitorName" placeholder="Ex. Amadou Diop" required></div>
+        <div class="field"><label>Nom de l’entreprise</label><input id="companyName" placeholder="Ex. Transports Horizon" required></div>
+        <button class="primary wide" type="submit">Entrer dans la démo</button>
+        <p class="login-note">Aucun mot de passe requis · Aucune donnée réelle</p>
+      </form>
+    </div>
+  </section>
+
+  <main id="app" class="app hidden">
+    <header class="top">
+      <div class="brand"><span class="brandmark">R</span> RYVO</div>
+      <div class="top-right"><span class="demo-badge">MODE DÉMO · DONNÉES FICTIVES</span><button id="resetBtn" class="ghost">Réinitialiser</button><button id="logoutBtn" class="ghost">Quitter</button></div>
+    </header>
+    <div class="wrap">
+      <section class="intro">
+        <div class="company"><div id="companyInitial" class="company-logo">T</div><div><small>ESPACE ENTREPRISE</small><h1 id="companyTitle">Transports Horizon</h1><p id="welcome">Tableau de bord de démonstration</p></div></div>
+        <div>Flotte connectée · Temps réel · Multi-camions</div>
+      </section>
+      <nav class="tabs">
+        <button class="tab active" data-tab="course">Courses</button>
+        <button class="tab" data-tab="depense">Dépenses</button>
+        <button class="tab" data-tab="charge">Charges</button>
+        <button class="tab" data-tab="resultat">Résultats</button>
+      </nav>
+      <section class="kpis">
+        <article class="kpi"><div class="kpi-icon">💰</div><div><small>Chiffre d’affaires</small><strong id="revenue">0 FCFA</strong></div></article>
+        <article class="kpi"><div class="kpi-icon">🧾</div><div><small>Dépenses variables</small><strong id="variable">0 FCFA</strong></div></article>
+        <article class="kpi"><div class="kpi-icon">🏢</div><div><small>Charges fixes</small><strong id="fixed">0 FCFA</strong></div></article>
+        <article class="kpi"><div class="kpi-icon">📈</div><div><small>Résultat net</small><strong id="net">0 FCFA</strong></div></article>
+      </section>
+
+      <div id="courseView" class="view">
+        <section class="panel">
+          <div class="panel-title"><span>🚚</span><h2><small>Exploitation</small>Nouvelle course</h2></div>
+          <form id="tripForm" class="grid">
+            <div class="field"><label>Camion</label><input id="truck" placeholder="Ex. DK-5589-BB" required></div>
+            <div class="field"><label>Date</label><input id="date" type="date" required></div>
+            <div class="field"><label>Chargement</label><input id="from" placeholder="Dakar" required></div>
+            <div class="field"><label>Déchargement</label><input id="to" placeholder="Thiès" required></div>
+            <div class="field"><label>Chiffre d’affaires</label><input id="amount" type="number" min="0" placeholder="350000" required></div>
+            <button class="primary" type="submit">Ajouter la course</button>
+          </form>
+        </section>
+        <section class="panel"><div class="panel-head"><div class="panel-title"><span>📋</span><h2><small>Historique</small>Dernières courses</h2></div><span id="tripCount"></span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Camion</th><th>Trajet</th><th>Chiffre d’affaires</th></tr></thead><tbody id="tripRows"></tbody></table></div></section>
+      </div>
+
+      <div id="depenseView" class="view hidden">
+        <section class="panel">
+          <div class="panel-title"><span>⛽</span><h2><small>Dépenses variables</small>Dépense liée à une course</h2></div>
+          <form id="expenseForm" class="grid">
+            <div class="field"><label>Course</label><select id="tripSelect" required></select></div>
+            <div class="field"><label>Carburant</label><input id="fuel" type="number" min="0" value="0"></div>
+            <div class="field"><label>Ration</label><input id="ration" type="number" min="0" value="0"></div>
+            <div class="field"><label>Frais annexes</label><input id="other" type="number" min="0" value="0"></div>
+            <button class="primary" type="submit">Ajouter la dépense</button>
+          </form>
+        </section>
+        <section class="panel"><div class="panel-title"><span>🧾</span><h2><small>Suivi</small>Dépenses enregistrées</h2></div><div class="table-wrap"><table><thead><tr><th>Course</th><th>Carburant</th><th>Ration</th><th>Autres</th><th>Total</th></tr></thead><tbody id="expenseRows"></tbody></table></div></section>
+      </div>
+
+      <div id="chargeView" class="view hidden">
+        <section class="panel">
+          <div class="panel-title"><span>🏢</span><h2><small>Charges mensuelles</small>Nouvelle charge fixe</h2></div>
+          <form id="fixedForm" class="grid three">
+            <div class="field"><label>Libellé</label><input id="fixedLabel" placeholder="Ex. Assurance flotte" required></div>
+            <div class="field"><label>Montant</label><input id="fixedAmount" type="number" min="0" placeholder="125000" required></div>
+            <button class="primary" type="submit">Ajouter la charge</button>
+          </form>
+        </section>
+        <section class="panel"><div class="panel-title"><span>📌</span><h2><small>Ce mois</small>Charges enregistrées</h2></div><div class="table-wrap"><table><thead><tr><th>Libellé</th><th>Montant</th></tr></thead><tbody id="fixedRows"></tbody></table></div></section>
+      </div>
+
+      <div id="resultatView" class="view hidden">
+        <section class="panel"><div class="panel-title"><span>📊</span><h2><small>Rentabilité</small>Résultat par course</h2></div><div class="table-wrap"><table><thead><tr><th>Camion</th><th>Trajet</th><th>Recette</th><th>Dépenses</th><th>Marge</th></tr></thead><tbody id="resultRows"></tbody></table></div></section>
+      </div>
+    </div>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script>
+    const KEY='ryvo-demo-v1';
+    const seed={
+      trips:[
+        {id:1,date:'2026-09-18',truck:'DK-5589-BB',from:'Dakar',to:'Kaolack',amount:425000},
+        {id:2,date:'2026-09-19',truck:'DK-7042-BC',from:'Dakar',to:'Saint-Louis',amount:510000},
+        {id:3,date:'2026-09-20',truck:'DK-5589-BB',from:'Thiès',to:'Touba',amount:365000}
+      ],
+      expenses:[
+        {tripId:1,fuel:142000,ration:18000,other:9000},
+        {tripId:2,fuel:176000,ration:22000,other:12000},
+        {tripId:3,fuel:119000,ration:16000,other:7000}
+      ],
+      fixed:[{label:'Assurance flotte',amount:125000},{label:'Entretien mensuel',amount:180000}]
+    };
+    let state=load();
+    const $=id=>document.getElementById(id);
+    const money=n=>new Intl.NumberFormat('fr-FR').format(Number(n)||0)+' FCFA';
+    const copy=o=>JSON.parse(JSON.stringify(o));
+    function load(){try{return JSON.parse(localStorage.getItem(KEY))||copy(seed)}catch(e){return copy(seed)}}
+    function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+    function toast(text){$('toast').textContent=text;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+    function expenseFor(id){return state.expenses.filter(e=>e.tripId===id).reduce((s,e)=>s+e.fuel+e.ration+e.other,0)}
+    function render(){
+      const revenue=state.trips.reduce((s,t)=>s+t.amount,0);
+      const variable=state.expenses.reduce((s,e)=>s+e.fuel+e.ration+e.other,0);
+      const fixed=state.fixed.reduce((s,c)=>s+c.amount,0);
+      $('revenue').textContent=money(revenue);$('variable').textContent=money(variable);$('fixed').textContent=money(fixed);
+      const net=revenue-variable-fixed;$('net').textContent=money(net);$('net').className=net>=0?'positive':'negative';
+      $('tripCount').textContent=state.trips.length+' course'+(state.trips.length>1?'s':'');
+      $('tripRows').innerHTML=state.trips.slice().reverse().map(t=>`<tr><td>${t.date}</td><td>${t.truck}</td><td>${t.from} → ${t.to}</td><td class="money">${money(t.amount)}</td></tr>`).join('')||'<tr><td class="empty" colspan="4">Aucune course</td></tr>';
+      $('tripSelect').innerHTML=state.trips.map(t=>`<option value="${t.id}">${t.truck} · ${t.from} → ${t.to}</option>`).join('');
+      $('expenseRows').innerHTML=state.expenses.map(e=>{const t=state.trips.find(x=>x.id===e.tripId);return `<tr><td>${t?t.truck+' · '+t.from+' → '+t.to:'Course'}</td><td>${money(e.fuel)}</td><td>${money(e.ration)}</td><td>${money(e.other)}</td><td class="money">${money(e.fuel+e.ration+e.other)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="5">Aucune dépense</td></tr>';
+      $('fixedRows').innerHTML=state.fixed.map(c=>`<tr><td>${c.label}</td><td class="money">${money(c.amount)}</td></tr>`).join('')||'<tr><td class="empty" colspan="2">Aucune charge</td></tr>';
+      $('resultRows').innerHTML=state.trips.map(t=>{const e=expenseFor(t.id),m=t.amount-e;return `<tr><td>${t.truck}</td><td>${t.from} → ${t.to}</td><td>${money(t.amount)}</td><td>${money(e)}</td><td class="money ${m>=0?'positive':'negative'}">${money(m)}</td></tr>`}).join('');
+    }
+    $('loginForm').addEventListener('submit',e=>{e.preventDefault();const company=$('companyName').value.trim();$('companyTitle').textContent=company;$('companyInitial').textContent=company[0].toUpperCase();$('welcome').textContent='Bienvenue '+$('visitorName').value.trim()+' · Tableau de bord de démonstration';$('login').classList.add('hidden');$('app').classList.remove('hidden');render()});
+    document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));$(btn.dataset.tab+'View').classList.remove('hidden')}));
+    $('tripForm').addEventListener('submit',e=>{e.preventDefault();state.trips.push({id:Date.now(),date:$('date').value,truck:$('truck').value,from:$('from').value,to:$('to').value,amount:Number($('amount').value)});e.target.reset();save();toast('Course ajoutée à la démo')});
+    $('expenseForm').addEventListener('submit',e=>{e.preventDefault();state.expenses.push({tripId:Number($('tripSelect').value),fuel:Number($('fuel').value),ration:Number($('ration').value),other:Number($('other').value)});e.target.reset();save();toast('Dépense ajoutée à la démo')});
+    $('fixedForm').addEventListener('submit',e=>{e.preventDefault();state.fixed.push({label:$('fixedLabel').value,amount:Number($('fixedAmount').value)});e.target.reset();save();toast('Charge ajoutée à la démo')});
+    $('resetBtn').addEventListener('click',()=>{state=copy(seed);save();toast('Données fictives réinitialisées')});
+    $('logoutBtn').addEventListener('click',()=>{$('app').classList.add('hidden');$('login').classList.remove('hidden')});
+    $('date').value=new Date().toISOString().slice(0,10);
+  </script>
+</body>
+</html>
