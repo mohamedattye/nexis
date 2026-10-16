@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1f3a" />
+    <title>SUNUTRANS | Pilotage logistique</title>
+    <link rel="stylesheet" href="sunutrans.css" />
+  </head>
+  <body>
+    <section id="auth-view" class="auth-shell">
+      <div class="auth-card">
+        <div class="brand-mark">S</div>
+        <p class="eyebrow">RYVO POUR SUNUTRANS</p>
+        <h1>Votre activité transport, clairement pilotée.</h1>
+        <p class="auth-intro">Courses, dépenses et rentabilité réunies dans un espace privé.</p>
+        <form id="auth-form" class="stack">
+          <label>Adresse e-mail<input id="auth-email" type="email" autocomplete="email" required placeholder="Votre adresse autorisée" /></label>
+          <label>Mot de passe<input id="auth-password" type="password" minlength="8" required placeholder="8 caractères minimum" /></label>
+          <button id="login-btn" type="submit">Se connecter</button>
+          <button id="signup-btn" type="button" class="button-secondary">Créer mon accès SUNUTRANS</button>
+        </form>
+        <p id="auth-message" class="message" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <main id="app-view" class="app-shell hidden">
+      <aside class="sidebar">
+        <div>
+          <div class="brand-row"><div class="brand-mark small">S</div><div><strong>SUNUTRANS</strong><span>Propulsé par RYVO</span></div></div>
+          <nav>
+            <button class="nav-btn active" data-target="dashboard">Vue d’ensemble</button>
+            <button class="nav-btn" data-target="trips">Courses</button>
+            <button class="nav-btn" data-target="expenses">Dépenses</button>
+            <button class="nav-btn" data-target="costs">Charges</button>
+            <button class="nav-btn" data-target="fleet">Parc</button>
+          </nav>
+        </div>
+        <button id="logout-btn" class="logout-btn">Se déconnecter</button>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div><p class="eyebrow">PILOTAGE LOGISTIQUE</p><h1 id="page-title">Vue d’ensemble</h1></div>
+          <div class="topbar-actions"><label class="month-control">Mois<input id="month-filter" type="month" /></label><span id="user-role" class="role-pill">Administrateur</span></div>
+        </header>
+        <div id="app-message" class="message hidden" aria-live="polite"></div>
+
+        <section id="dashboard" class="page active">
+          <div class="kpi-grid">
+            <article class="kpi"><span>Chiffre d’affaires</span><strong id="kpi-revenue">0 FCFA</strong></article>
+            <article class="kpi"><span>Dépenses de course</span><strong id="kpi-trip-expenses">0 FCFA</strong></article>
+            <article class="kpi"><span>Charges fixes</span><strong id="kpi-fixed-costs">0 FCFA</strong></article>
+            <article class="kpi accent"><span>Résultat net</span><strong id="kpi-net">0 FCFA</strong></article>
+          </div>
+          <div class="two-col">
+            <article class="panel"><div class="panel-head"><div><p class="eyebrow">ACTIVITÉ</p><h2>Courses récentes</h2></div><span id="trip-count" class="count-pill">0 course</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Camion</th><th>Client</th><th>Trajet</th><th>CA</th></tr></thead><tbody id="recent-trips-body"></tbody></table></div></article>
+            <article class="panel"><p class="eyebrow">RENTABILITÉ</p><h2>Lecture rapide du mois</h2><div id="profit-summary" class="profit-summary"></div></article>
+          </div>
+        </section>
+
+        <section id="trips" class="page">
+          <div class="two-col forms-layout">
+            <article class="panel"><p class="eyebrow">NOUVELLE OPÉRATION</p><h2>Ajouter une course</h2><form id="trip-form" class="form-grid"><label>Date<input id="trip-date" type="date" required /></label><label>Camion<select id="trip-truck" required></select></label><label>Client<input id="trip-client" required placeholder="Nom du client" /></label><label>Chargement<input id="trip-loading" required placeholder="Ville ou site" /></label><label>Déchargement<input id="trip-unloading" required placeholder="Ville ou site" /></label><label>Chiffre d’affaires<input id="trip-revenue" type="number" min="0" required /></label><button type="submit">Enregistrer la course</button></form></article>
+            <article class="panel"><div class="panel-head"><div><p class="eyebrow">HISTORIQUE</p><h2>Courses du mois</h2></div><button id="export-csv" class="button-secondary compact">Exporter CSV</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Camion</th><th>Client</th><th>Trajet</th><th>CA</th><th></th></tr></thead><tbody id="trips-body"></tbody></table></div></article>
+          </div>
+        </section>
+
+        <section id="expenses" class="page">
+          <div class="two-col forms-layout">
+            <article class="panel"><p class="eyebrow">COÛTS VARIABLES</p><h2>Dépense liée à une course</h2><form id="expense-form" class="form-grid"><label class="span-2">Course<select id="expense-trip" required></select></label><label>Kilomètres<input id="expense-km" type="number" min="0" value="0" /></label><label>Consommation / 100 km<input id="expense-consumption" type="number" min="0" step="0.1" value="0" /></label><label>Gasoil<input id="expense-fuel" type="number" min="0" value="0" /></label><label>Ration<input id="expense-ration" type="number" min="0" value="0" /></label><label>Rapido<input id="expense-rapido" type="number" min="0" value="0" /></label><label>Manœuvre<input id="expense-manoeuvre" type="number" min="0" value="0" /></label><label>Frais annexes<input id="expense-misc" type="number" min="0" value="0" /></label><button type="submit" class="span-2">Enregistrer la dépense</button></form></article>
+            <article class="panel"><p class="eyebrow">SUIVI</p><h2>Dépenses du mois</h2><div class="table-wrap"><table><thead><tr><th>Course</th><th>KM</th><th>Total</th><th></th></tr></thead><tbody id="expenses-body"></tbody></table></div></article>
+          </div>
+        </section>
+
+        <section id="costs" class="page">
+          <div class="two-col forms-layout">
+            <article class="panel"><p class="eyebrow">CHARGES VÉHICULE</p><h2>Ajouter les charges mensuelles</h2><form id="vehicle-cost-form" class="form-grid"><label>Camion<select id="cost-truck" required></select></label><label>Mois<input id="cost-month" type="month" required /></label><label>Entretien<input id="cost-maintenance" type="number" min="0" value="0" /></label><label>Mécanique<input id="cost-mechanical" type="number" min="0" value="0" /></label><label>Assurance<input id="cost-insurance" type="number" min="0" value="0" /></label><label>Salaire chauffeur<input id="cost-salary" type="number" min="0" value="0" /></label><label>Charges sociales<input id="cost-social" type="number" min="0" value="0" /></label><label>Autres charges<input id="cost-other" type="number" min="0" value="0" /></label><button type="submit" class="span-2">Enregistrer les charges</button></form></article>
+            <article class="panel"><p class="eyebrow">CHARGES GÉNÉRALES</p><h2>Ajouter une dépense d’entreprise</h2><form id="general-form" class="form-grid"><label>Date<input id="general-date" type="date" required /></label><label>Catégorie<input id="general-category" required placeholder="Bureau, communication…" /></label><label class="span-2">Description<input id="general-description" placeholder="Précision facultative" /></label><label>Montant<input id="general-amount" type="number" min="0" required /></label><label>Paiement<select id="general-payment"><option>Cash</option><option>Wave</option><option>Orange Money</option><option>Virement</option><option>Carte</option><option>Autre</option></select></label><button type="submit" class="span-2">Enregistrer la charge</button></form></article>
+          </div>
+        </section>
+
+        <section id="fleet" class="page">
+          <div class="two-col forms-layout">
+            <article class="panel"><p class="eyebrow">PARC SUNUTRANS</p><h2>Ajouter un camion</h2><form id="truck-form" class="form-grid"><label>Immatriculation<input id="truck-plate" required placeholder="Ex : DK-0000-AA" /></label><label>Marque<input id="truck-brand" placeholder="Mercedes, Renault…" /></label><label>Modèle<input id="truck-model" placeholder="Actros, T…" /></label><label>Statut<select id="truck-status"><option>Disponible</option><option>En mission</option><option>En maintenance</option><option>Immobilisé</option></select></label><button type="submit" class="span-2">Ajouter au parc</button></form></article>
+            <article class="panel"><p class="eyebrow">VÉHICULES</p><h2>Liste du parc</h2><div id="fleet-grid" class="fleet-grid"></div></article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="sunutrans.js"></script>
+  </body>
+</html>
